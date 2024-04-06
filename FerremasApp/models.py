@@ -1,12 +1,15 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
-# Create your models here.
-class Tipo_Us(models.Model):
-	nombre= models.CharField(max_length=20)
-	def __str__(slf):
-		return str(slf.nombre)
 
-class Usuario(models.Model):
-	nombre = models.CharField(max_length=45)
-	correo = models.EmailField()
-	tipo = models.ForeignKey(Tipo_Us,on_delete=models.CASCADE)
+class User(AbstractUser):
+	tipos={
+		"Internos":{
+			"Bod":"Bodegero",
+			"Con":"Contador"
+		},
+		"Externos":{
+			"Cli":"Cliente"
+		}
+	}
+	type = models.CharField(max_length=20,choices=tipos)
