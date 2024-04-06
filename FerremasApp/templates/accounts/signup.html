@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/style.css">
+		<title>signup</title>
+</head>
+<body>
+	<form action="" method="post">
+		{%csrf_token%}
+		{{form.username}}
+		{{form.email}}
+		{{form.password1}} <!-- contraseña -->
+		{{form.password2}} <!-- confirmacion contraseña -->
+
+		{{form.errors}}
+		<input type="submit" name="create user">
+	</form>
+</body>
+</html>
