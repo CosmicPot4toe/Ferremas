@@ -11,10 +11,10 @@ def login(req):
 	return render(req,'accounts/login.html')
 
 def signup(req):
-	form = RegUserForm
+	form = RegUserForm()
 
 	if req.POST:
-		form = UserCreationForm(req.POST)
+		form = RegUserForm(req.POST)
 		if form.is_valid():
 			form.save()
 			name =form.cleaned_data.get('username')
