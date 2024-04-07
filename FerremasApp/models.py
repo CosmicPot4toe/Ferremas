@@ -3,13 +3,9 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-	tipos={
-		"Internos":{
-			"Bod":"Bodegero",
-			"Con":"Contador"
-		},
-		"Externos":{
-			"Cli":"Cliente"
-		}
-	}
-	type = models.CharField(max_length=20,choices=tipos)
+    TIPOS_CHOICES = (
+        ('Bod', 'Bodegero (Interno)'),
+        ('Con', 'Contador (Interno)'),
+        ('Cli', 'Cliente (Externo)'),
+    )
+    type = models.CharField(max_length=20, choices=TIPOS_CHOICES, default='Cli')
