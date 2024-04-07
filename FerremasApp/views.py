@@ -3,29 +3,38 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages as msgs
 from .form import *
+from .models import User
+
 
 # Create your views here.
 
 #restrinje que el ususario este iniciado
 @login_required(login_url='login')
 def test(req):
-	return render(req,'clienteView.html')
+    if req.user.type == 'Bod':
+        return render(req, 'bodegueroView.html')
+    elif req.user.type == 'Ven':
+        return render(req, 'vendedorView.html')
+    elif req.user.type == 'Con':
+        return render(req, 'contadorView.html')
+    else:
+        return render(req, 'clienteView.html')
 
 def logoutP(req):
 	logout(req)
 	return redirect('login')
 
 def loginP(req):
-	if req.POST:
-		usern=req.POST.get('username')
-		passw=req.POST.get('password')
-		user = authenticate(req,username=usern,password=passw)
-		if user is not None:
-			login(req,user)
-			return redirect('client')
-		else:
-			msgs.info(req,'username or password is incorrect')
-	return render(req,'accounts/login.html')
+    if req.method == 'POST':
+        usern = req.POST.get('username')
+        passw = req.POST.get('password')
+        user = authenticate(req, username=usern, password=passw)
+        if user is not None:
+            login(req, user)
+            return redirect('client')  # Llama a la vista 'test' en lugar de 'client'
+        else:
+            msgs.info(req, 'Nombre de usuario o contraseña incorrectos')
+    return render(req, 'accounts/login.html')
 
 def signup(req):
 	form = RegUserForm()
