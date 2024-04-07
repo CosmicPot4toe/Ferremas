@@ -1,13 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="static/style.css">
-    <title>Document</title>
-</head>
-<body>
-	<p>hello, {{request.user}}</p>
-  <a href="{% url 'logout' %}">logout</a>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+
+<p>hello, {{request.user}}</p>
+  <a href="{%url 'logout'%}">logout</a>
+  
+  {% endblock content %}
