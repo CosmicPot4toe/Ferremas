@@ -1,22 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/style.css">
-		<title>signup</title>
-</head>
-<body>
-	<form action="" method="post">
-		{%csrf_token%}
-		{{form.username}}
-		{{form.email}}
-		{{form.password1}} <!-- contraseña -->
-		{{form.password2}} <!-- confirmacion contraseña -->
-		{{form.type}}
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
 
+<contenedor>
+	<form action="" method="post">
+		<h1>Regístrate</h1>
+						<hr style="height: 1px; color:var(--text); width: 80%; margin: 0;">
+		{%csrf_token%}
+		<div class="input1">
+			<label for="username" class="form-label">Usuario</label>
+			{{form.username}}
+		</div>
+		<hr style="height: 1px; color:var(--text); width: 80%; margin: 0;">
+		<div class="input1">
+			<label for="email" class="form-label">Email</label>
+		{{form.email}}
+		</div>
+		<hr style="height: 1px; color:var(--text); width: 80%; margin: 0;">
+		<div class="input1">
+			<label for="password1" class="form-label">Contraseña</label>
+			{{form.password1}} <!-- contraseña -->
+
+			<label for="password2" class="form-label">Confirma Contraseña</label>
+		{{form.password2}} <!-- confirmacion contraseña -->
+		</div>
+		<hr style="height: 1px; color:var(--text); width: 80%; margin: 0;">
+		<br>
+		{{form.type}}
+		<br>
 		{{form.errors}}
-		<input type="submit" name="create user">
+		<button type="submit" name="create user">Registrarse</button>
 	</form>
-</body>
-</html>
+</contenedor>
+{% endblock content %}
