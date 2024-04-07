@@ -31,7 +31,7 @@ contenedor{
     url("../static/img/PI_SE_Viva_Walnut_8581006.jpg") ;
     
 }
-.bodeguero{
+.staff{
     background-image: linear-gradient(to bottom,rgba(0, 0, 0, 0.74), rgba(131, 131, 131, 0.5)),
     url("../static/img/cedar1.jpg");
     background-size: cover;
