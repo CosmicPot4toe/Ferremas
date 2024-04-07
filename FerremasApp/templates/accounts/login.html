@@ -1,20 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/style.css">
-		<title>Login</title>
-</head>
-<body>
-	<form action="" method="post">
-		{%csrf_token%}
-		<input type="text" name="username">
-		<input type="password" name="password">
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+
+<form action="" method="post">
+	{%csrf_token%}
+	<input type="text" name="username">
+	<input type="password" name="password">
     {% for msg in messages %}
-			<p>{{msg}}</p>
-		{% endfor %}
-		<input type="submit" name="submit">
-	</form>
-</body>
-</html>
+	<p>{{msg}}</p>
+	{% endfor %}
+	<button type="submit" name="submit">LOGIN</button>
+</form>
+
+{% endblock content %}
