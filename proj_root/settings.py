@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"
+
 
 # Application definition
 
@@ -38,7 +40,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 		'FerremasApp',
+        'colorfield',
+        'django.contrib.humanize',
+        'crispy_forms',
+        'crispy_bootstrap5'
 ]
+
+X_FRAME_OPTIONS = "SAMEORIGIN"
+CRISPY_TEMPLATE_PACK ='bootstrap5'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
