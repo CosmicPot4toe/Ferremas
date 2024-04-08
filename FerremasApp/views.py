@@ -12,6 +12,7 @@ from .models import User
 @login_required(login_url='login')
 def test(req):
     if req.user.type == 'Bod':
+        #print(req.user[])
         return render(req, 'bodegueroView.html')
     elif req.user.type == 'Ven':
         return render(req, 'vendedorView.html')
