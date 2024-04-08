@@ -1,11 +1,5 @@
-{% extends 'base.html' %}
+{% extends 'overlay.html' %}
 {% load static %}
 {% block content %}
 
-
-
-<p>hello, {{request.user}}</p>
-<br>
-<a href="{%url 'logout'%}">logout</a>
-  
-  {% endblock content %}
+{% endblock content %}

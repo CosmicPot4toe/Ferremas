@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block content %}
+{% block base %}
 
 <contenedor>
 	<form action="" method="post">
@@ -29,7 +29,9 @@
 		{{form.type}}
 		<br>
 		{{form.errors}}
+		<br>
+		<p>Ya tienes cuenta?   <a  href="{% url 'login' %}">Ingresa!</a></p>
 		<button type="submit" name="create user">Registrarse</button>
 	</form>
 </contenedor>
-{% endblock content %}
+{% endblock base %}

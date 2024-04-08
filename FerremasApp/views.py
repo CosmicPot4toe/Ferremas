@@ -11,15 +11,15 @@ from .models import User
 #restrinje que el ususario este iniciado
 @login_required(login_url='login')
 def test(req):
+    ctx={'t':req.user.get_type_display().split(' ',1)[0]}
     if req.user.type == 'Bod':
-        #print(req.user[])
-        return render(req, 'bodegueroView.html')
+        return render(req, 'bodegueroView.html',ctx)
     elif req.user.type == 'Ven':
-        return render(req, 'vendedorView.html')
+        return render(req, 'vendedorView.html',ctx)
     elif req.user.type == 'Con':
-        return render(req, 'contadorView.html')
+        return render(req, 'contadorView.html',ctx)
     else:
-        return render(req, 'clienteView.html')
+        return render(req, 'clienteView.html',ctx)
 
 def logoutP(req):
 	logout(req)
