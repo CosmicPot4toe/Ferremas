@@ -38,17 +38,16 @@ contenedor{
 }
 navbar{
     background: linear-gradient(to right, #29596d, #00109c);
-    height: 15%;
-    width: 100%;
     border-bottom: solid 5px var(--secondaryy);
     display: flex;
     align-items: center;
     justify-content: center;
 
 }
-navbar h1{
-    font-size:65px;
+.navbar_h1{
+    font-size:40px;
     color: white;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
 }
 
 form{
@@ -100,4 +99,9 @@ footer{
     padding: 1%;
     gap: 3px;
 }
+.navbar-nav .nav-link {
+    display: flex;
+    align-items: center; /* Centrar verticalmente */
+  }
+
 
