@@ -11,7 +11,7 @@ from .models import User
 
 #restrinje que el ususario este iniciado
 @login_required(login_url='login')
-def test(req: HttpRequest ):
+def userView(req: HttpRequest ):
     ctx={'t':req.user.get_type_display().split(' ',1)[0]}
     if req.user.type == 'Bod':
         return render(req, 'bodegueroView.html',ctx)
@@ -33,7 +33,7 @@ def loginP(req: HttpRequest):
         user = authenticate(req, username=usern, password=passw)
         if user is not None:
             login(req, user)
-            return redirect('client')  # Llama a la vista 'test' en lugar de 'client'
+            return redirect('userview')  # Llama a la vista 'test' en lugar de 'client'
         else:
             msgs.info(req, 'Nombre de usuario o contraseña incorrectos')
     return render(req, 'accounts/login.html')
