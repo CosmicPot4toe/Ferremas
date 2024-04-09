@@ -1,3 +1,4 @@
+from django.http import HttpRequest
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
@@ -10,7 +11,7 @@ from .models import User
 
 #restrinje que el ususario este iniciado
 @login_required(login_url='login')
-def test(req):
+def test(req: HttpRequest ):
     ctx={'t':req.user.get_type_display().split(' ',1)[0]}
     if req.user.type == 'Bod':
         return render(req, 'bodegueroView.html',ctx)
@@ -21,11 +22,11 @@ def test(req):
     else:
         return render(req, 'clienteView.html',ctx)
 
-def logoutP(req):
+def logoutP(req: HttpRequest):
 	logout(req)
 	return redirect('login')
 
-def loginP(req):
+def loginP(req: HttpRequest):
     if req.method == 'POST':
         usern = req.POST.get('username')
         passw = req.POST.get('password')
@@ -37,7 +38,7 @@ def loginP(req):
             msgs.info(req, 'Nombre de usuario o contraseña incorrectos')
     return render(req, 'accounts/login.html')
 
-def signup(req):
+def signup(req: HttpRequest):
 	form = RegUserForm()
 	if req.POST:
 		form = RegUserForm(req.POST)
