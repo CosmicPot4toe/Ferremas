@@ -28,14 +28,28 @@ def logoutP(req: HttpRequest):
 
 def loginP(req: HttpRequest):
     if req.method == 'POST':
-        usern = req.POST.get('username')
+        usern_or_email = req.POST.get('username_or_email')
         passw = req.POST.get('password')
-        user = authenticate(req, username=usern, password=passw)
-        if user is not None:
-            login(req, user)
-            return redirect('userview')  # Llama a la vista 'test' en lugar de 'client'
+
+        if usern_or_email is not None and passw is not None:
+            # Buscar si el usuario existe con el nombre de usuario o correo electrónico
+            user = None
+            if '@' in usern_or_email:
+                try:
+                    user = User.objects.get(email=usern_or_email)
+                except User.DoesNotExist:
+                    pass
+            else:
+                user = authenticate(req, username=usern_or_email, password=passw)
+
+            if user is not None:
+                login(req, user)
+                return redirect('userview')
+            else:
+                msgs.info(req, 'Nombre de usuario, correo electrónico o contraseña incorrectos')
         else:
-            msgs.info(req, 'Nombre de usuario o contraseña incorrectos')
+            msgs.info(req, 'Nombre de usuario o contraseña no proporcionados')
+            
     return render(req, 'accounts/login.html')
 
 def signup(req: HttpRequest):
