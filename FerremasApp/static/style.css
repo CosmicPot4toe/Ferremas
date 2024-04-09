@@ -32,10 +32,32 @@ contenedor{
     url("../static/img/PI_SE_Viva_Walnut_8581006.jpg") ;
     
 }
-.staff{
+.grid{
+    display: grid;
+    width: 80%;
+    background-color: white;
+    grid-template-columns: 2fr 2fr;
+    margin-top: 10%;
+    background-color: #00000081;
+    height: 300px;
+}
+
+.bodeguero{
     background-image: linear-gradient(to bottom,rgba(0, 0, 0, 0.74), rgba(131, 131, 131, 0.5)),
     url("../static/img/cedar1.jpg");
     background-size: cover;
+}
+.contador{
+    background-size: cover;
+
+    background-image: linear-gradient(60deg, rgb(0, 0, 0) ,rgb(54, 54, 54) 60%);
+}
+.cliente{
+    background-size: cover;
+    background-image: linear-gradient(60deg, rgb(97, 97, 97) ,rgb(255, 196, 0) 60%)
+}
+.list-group{
+    font-size: xx-large;
 }
 nav{
     background: linear-gradient(to bottom, rgb(52, 52, 52), #000000);
