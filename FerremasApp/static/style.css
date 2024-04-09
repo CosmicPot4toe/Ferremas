@@ -84,12 +84,59 @@ form button:hover{
 
 footer{
     width: 100%;
-    height: 15%;
-    position: fixed;
+    height: 25%;
     bottom: 0;
+    display: flex;
+    flex-direction: column;
     background: linear-gradient(to left, rgb(255, 255, 255), rgb(141, 141, 141));
 }
+.footer1, .footer2{
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.footer1{
+    background-color: #00109cca;
+    height: 30%;
+    padding: 30px;
 
+}
+.footer1 svg{
+    transform: scale(0.8);
+}
+.footer1 svg:hover{
+    transform: scale(1);
+    transition: ease-in 0.1s;
+}
+.footer2{
+    width: 100%;
+    background-color: var(--text);
+    height: 100%;
+    padding: 1% 5%;
+    flex-direction: column;
+    color: white;
+}
+.botInfo{
+    width:80% ;
+    height: 80%;
+    color: white;
+    display: flex;
+    justify-content:space-around ;
+    align-items: center;
+    border-top: whitesmoke solid 2px;
+    padding: 0 30px
+}
+.botInfo a{
+    text-decoration: none;
+    color: white;
+    font-size: larger;
+}
+.botInfo a:hover{
+    transform: scale(1.1);
+    transition: ease-in 0.1s;
+
+}
 .input1{
     height: 20%;
     width: 60%;
