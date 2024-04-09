@@ -1,5 +1,17 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block content %}
+{% block base %}
+<contenedor class="vendedor">
+    <div class="list-group">
+          
+        <a href="#" class="list-group-item list-group-item-action list-group-item-dark h-50" style="padding: 50px 0; text-align: center;" >Productos</a>
+        <a href="#" class="list-group-item list-group-item-action list-group-item-dark h-50" style="padding: 50px 0; text-align: center;" >Pedidos</a>
+        </div>
+    <div class="list-group">
+        <a href="#" class="list-group-item list-group-item-action list-group-item-dark h-50" style="padding: 50px 0; text-align: center;" >Pagos</a>
+        <a href="#" class="list-group-item list-group-item-action list-group-item-dark h-50" style="padding: 50px 0; text-align: center;" >Gestión</a>
 
-{% endblock content %}
+        
+        </div>
+</contenedor>
+{% endblock base %}

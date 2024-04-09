@@ -1,5 +1,18 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block content %}
+{% block base %}
+<contenedor class="contador">
+    <div class="grid">
+    <div class="list-group">
+          
+        <a href="#" class="list-group-item list-group-item-action list-group-item-dark h-50" style="padding: 50px 0; text-align: center;" >Transacciones</a>
+        <a href="#" class="list-group-item list-group-item-action list-group-item-dark h-50" style="padding: 50px 0; text-align: center;" >Venta</a>
+        </div>
+    <div class="list-group">
+        <a href="#" class="list-group-item list-group-item-action list-group-item-dark h-50" style="padding: 50px 0; text-align: center;" >Pagos y finanzas</a>
+        <a href="#" class="list-group-item list-group-item-action list-group-item-dark h-50" style="padding: 50px 0; text-align: center;" >Balances y reportes</a>
 
-{% endblock content %}
+    </div>
+        </div>
+</contenedor>
+{% endblock base %}
