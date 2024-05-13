@@ -1,0 +1,30 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block base %}
+
+<contenedor>
+
+	<form action="" method="POST">
+		<h1>BIENVENIDO</h1>
+		<hr style="height: 1px; color:var(--text); width: 80%; margin: 0;">
+		
+		{% csrf_token %}
+		<div class="input1">
+			<label for="username_or_email" class="form-label">Usuario o Correo Electrónico</label>
+			<input type="text" class="form-control" name="username_or_email">
+		</div>
+		<hr style="height: 1px; color:var(--text); width: 80%; margin: 0;">
+		<div class="input1">
+			<label for="password" class="form-label">Contraseña</label>
+			<input type="password" class="form-control" name="password">
+		</div>
+		{% for msg in messages %}
+		<p>{{msg}}</p>
+		{% endfor %}
+		
+		<p>No tienes cuenta? <a href="{% url 'signup' %}">Registrate!</a></p>
+		
+		<button type="submit" name="submit">Iniciar Sesión</button>
+	</form>
+	</contenedor>
+{% endblock base %}
