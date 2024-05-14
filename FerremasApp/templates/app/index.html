@@ -174,10 +174,10 @@
         <div class="col-md-2">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Marca del Producto</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Nombre del Producto</h6>
+                    <h5 class="card-title">{{t.marca}}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{t.nombre}}</h6>
                     <img src="{% static 'app/img/taladro.jpeg'%}" class="card-img-top" alt="Imagen del Producto">
-                    <p class="card-text">Precio: <strong>$XX.XX</strong></p>
+                    <p class="card-text">Precio: <strong>${{t.precio}}</strong></p>
                     <div class="input-group mb-3">
                       <button class="btn btn-outline-secondary" type="button">-</button>
                       <input type="text" class="form-control" value="1">
@@ -230,4 +230,5 @@
   }
 );
 </script>
+
 {% endblock %}

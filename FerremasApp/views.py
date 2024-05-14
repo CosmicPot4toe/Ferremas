@@ -5,14 +5,16 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages as msgs
 from .form import *
 from .models import User
-
+from .apis import *
 
 # Create your views here.
 
 #@login_required(login_url='login')
 def userView(req: HttpRequest ):
 	#ctx={'t':req.user.get_type_display().split(' ',1)[0]}
-	ctx={'t':'lul'}
+	url = 'http://localhost/php_api/api/service.php?'
+	prod=PhpApi('Producto',url)
+	ctx={'t':prod.getOne(1)}
 	return render(req, 'app/index.html',ctx)
 	# match req.user.type:
 	# 	case 'Bod':
