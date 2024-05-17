@@ -1,0 +1,70 @@
+{% extends 'app/base.html' %}
+
+{% load static %}
+
+{% load humanize %}
+{% block contenido %}
+<br><br><br><br><br><br>
+<div class="container-flex">
+    <div class="row">
+        <div class="col-12 col-md-6 col-lg-6">
+            <!-- Aquí va la imagen del producto -->
+            <img src="{{producto.imagen_url}}" alt="Imagen del Producto" class="img-fluid">
+        </div>
+        <div class="col-12 col-md-6 col-lg-6" style="text-align: left;">
+            <!-- Detalles del producto -->
+            <br><br><br>
+            <h3>{{producto.marca}}</h3>
+            <h1>{{producto.nombre}}</h1>
+            <hr style="width: 700px;">
+            <!-- Descripción del producto en un cuadro -->
+            <p>Descripción del producto</p>
+            <div class="descripcion-container" style="text-align: left; margin-left: initial;">
+                <p>{{ producto.descripcion|linebreaks }}</p>
+            </div>
+            <!-- Precio -->
+            <br>
+            <div class="precio-container ">
+                <h3 class="card-text">Precio: <strong>${{ producto.precio|stringformat:".0f"|intcomma}}</strong>/u</h3>
+            </div>
+            <br>
+            <p>Codigo del producto: {{producto.codigo_producto}}</p>
+            
+            <!-- Cuadro de cantidad de productos -->
+            <div style="width: 180px;"> <!-- Ajusta el valor de width según tu preferencia -->
+                <div class="input-group mb-3">
+                    <button class="btn btn-outline-secondary" type="button" name="btn-decrement">-</button>
+                    <input type="number" disabled style="height: 1.4em; font-size: 1.7em;" class="form-control cantidad" value="1" name="cantidad_producto">
+                    <button class="btn btn-outline-secondary" type="button" name="btn-increment">+</button>
+                </div>
+            </div>
+            <!-- Botón de agregar al carrito -->
+            <br>
+            <button type="button" class="btn btn-primary mb-3">Agregar al Carrito</button>
+            <button type="button" class="btn btn-success mb-3">Comprar Ahora</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const decrementBtn = document.querySelector('[name="btn-decrement"]');
+    const incrementBtn = document.querySelector('[name="btn-increment"]');
+    const cantidadInput = document.querySelector('[name="cantidad_producto"]');
+
+    decrementBtn.addEventListener('click', function() {
+        let cantidad = parseInt(cantidadInput.value);
+        cantidad = cantidad > 1 ? cantidad - 1 : 1;
+        cantidadInput.value = cantidad;
+    });
+
+    incrementBtn.addEventListener('click', function() {
+        let cantidad = parseInt(cantidadInput.value);
+        cantidad += 1;
+        cantidadInput.value = cantidad;
+    });
+});
+</script>
+{% endblock %}
+
+

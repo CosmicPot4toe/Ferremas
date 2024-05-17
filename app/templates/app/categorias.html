@@ -1,0 +1,70 @@
+{% extends 'app/base.html' %}
+
+{% load static %}
+
+{% block contenido %}
+
+<br><br><br><br><br>
+<div class="container-flex">
+    <h1 class="text-center">¡{{categoria.nombre}}!</h1>
+    <br>
+    <div class="row justify-content-center">
+        {% load humanize %}
+        
+      {% for producto in producto %}
+      
+      <div class="col-md-2">
+          <div class="card">
+              <div class="card-body" style="height: 600px">
+                  <h5 class="card-title">{{producto.marca}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{producto.nombre}}</h6>
+                  <img src="{{producto.imagen_url}}" class="card-img-top" alt="Imagen del Producto">
+                  <p class="card-text">Precio: <strong>${{ producto.precio|stringformat:".0f"|intcomma}}</strong>/u</p>
+                  <div class="input-group mb-3">
+                    <button class="btn btn-outline-secondary btn-decrement" type="button" data-producto="{{ producto.id_producto }}">-</button>
+                    <input type="number" class="form-control cantidad" value="1" name="cantidad_producto_{{ producto.id_producto }}" data-producto="{{ producto.id_producto }}">
+                    <button class="btn btn-outline-secondary btn-increment" type="button" data-producto="{{ producto.id_producto }}">+</button>
+                </div>
+                  
+                  <center><a class="btn btn-primary" href="{% url 'detalle_producto' id=producto.id_producto %}">Ver Detalles</a></center>
+                  <br>
+                  <center><button type="button" class="btn btn-success">Añadir al Carrito</button></center>
+                </div>
+            </div>
+            <br><br>
+        </div>
+        
+        {% endfor %}
+        
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const decrementBtns = document.querySelectorAll('.btn-decrement');
+    const incrementBtns = document.querySelectorAll('.btn-increment');
+    const cantidadInputs = document.querySelectorAll('.cantidad');
+
+    decrementBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const productoId = this.dataset.producto;
+            const cantidadInput = document.querySelector(`input[name="cantidad_producto_${productoId}"]`);
+            let cantidad = parseInt(cantidadInput.value);
+            cantidad = cantidad > 1 ? cantidad - 1 : 1;
+            cantidadInput.value = cantidad;
+        });
+    });
+
+    incrementBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const productoId = this.dataset.producto;
+            const cantidadInput = document.querySelector(`input[name="cantidad_producto_${productoId}"]`);
+            let cantidad = parseInt(cantidadInput.value);
+            cantidad += 1;
+            cantidadInput.value = cantidad;
+        });
+    });
+});
+</script>
+
+{% endblock %}

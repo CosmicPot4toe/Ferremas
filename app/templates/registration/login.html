@@ -1,0 +1,40 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block contenido %}
+<title>Ferremas | Login</title>
+<br><br><br><br>
+<div class="container-flex mt-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6 offset-md-4 ">
+            <div class="card custom-card justify-content-center">
+                <div class="card-body">
+                    <h3 class="card-title text-center">¡Inicia con tu cuenta FERREMAS!</h3>
+					<hr>
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label for="username_or_email" class="form-label">Usuario o Correo Electrónico</label>
+                            <input type="text" class="form-control" name="username_or_email" id="username_or_email">
+                        </div>
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" name="password" id="password">
+                        </div>
+                        {% for msg in messages %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ msg }}
+                        </div>
+                        {% endfor %}
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+                        </div>
+                    </form>
+                    <p class="mt-3 text-center">¿No tienes cuenta? <a href="{% url 'signup' %}">Regístrate aquí</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

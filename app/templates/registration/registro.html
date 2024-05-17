@@ -1,0 +1,69 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block contenido %}
+<title>Ferremas | Registro</title>
+<br><br><br><br>
+<div class="container-flex mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <div class="card-body">
+                <div class="custom-card">
+                    <h2 class="card-title text-center">Regístrate</h2>
+					<hr>
+					<br>
+                    <form action="" method="post" class="row g-3">
+
+                        {% csrf_token %}
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="username" class="form-label">Usuario</label>
+                                <input type="text" class="form-control" id="username" name="username">
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email">
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="password1" class="form-label">Contraseña</label>
+                                <input type="password" class="form-control" id="password1" name="password1">
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="password2" class="form-label">Confirma Contraseña</label>
+                                <input type="password" class="form-control" id="password2" name="password2">
+                            </div>
+                        </div>
+
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <div class="col-12">
+                                    <div class="alert alert-danger" role="alert">
+                                        {{ error }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+
+                        <div class="col-12 text-center">
+                            <p>¿Ya tienes cuenta? <a href="{% url 'login' %}">Ingresa aquí</a></p>
+                            <button type="submit" class="btn btn-primary" name="create user">Registrarse</button>
+							<br>
+                        </div>
+						<br>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
