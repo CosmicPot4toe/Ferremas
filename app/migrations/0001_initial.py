@@ -136,7 +136,7 @@ class Migration(migrations.Migration):
                 ('descripcion', models.TextField()),
                 ('precio', models.IntegerField(default=0)),
                 ('imagen_url', models.CharField(max_length=200)),
-                ('id_C', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.categoriaproducto')),
+                ('categoria', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.categoriaproducto')),
             ],
             bases=(tracking_model.mixins.TrackingModelMixin, models.Model),
         ),
