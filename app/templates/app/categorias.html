@@ -8,10 +8,6 @@
 <div class="container-flex">
     <h1 class="text-center">¡{{categoria.nombre}}!</h1>
     <br>
-    <span class="text-end">
-        <a href="{% url 'index' %}" style="color: grey; text-decoration: none;">Index</a>/ 
-        <span style="color: black; font-weight: bold;">{{ categoria.nombre }}</span>
-    </span>
     <div class="row justify-content-center">
         {% load humanize %}
         
@@ -19,26 +15,20 @@
       
       <div class="col-md-2">
           <div class="card">
-              <div class="card-body" style="height: 460px">
+              <div class="card-body" style="height: 600px">
                   <h5 class="card-title">{{producto.marca}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{producto.nombre}}</h6>
-                  <center><img src="{{producto.imagen_url}}" class="card-img-top" alt="Imagen del Producto" style="width: 150px;"></center>
+                  <img src="{{producto.imagen_url}}" class="card-img-top" alt="Imagen del Producto">
                   <p class="card-text">Precio: <strong>${{ producto.precio|stringformat:".0f"|intcomma}}</strong>/u</p>
-                  <form action="{% url 'add' producto.id_producto %}" method="post">
-                    {% csrf_token %}
-                    <div class="input-group mb-3">
-                        <button class="btn btn-outline-secondary btn-decrement" type="button">-</button>
-                        <input type="number" name="cantidad" class="form-control" value="1" min="1" style="height: 30px;">
-                        <button class="btn btn-outline-secondary btn-increment" type="button">+</button>
-                    </div>
-                    <br>
-
-                    <div class="btn-group mb-3 ms-3" role="group">
-                        <button type="submit" class="btn btn-sm btn-success" style="margin-right: 10px;">Añadir al carrito</button>
-                        
-                        <a class="btn btn-primary btn-sm" href="{% url 'detalle_producto' producto.id_producto %}">Más detalles</a>
-                    </div>
-                </form>
+                  <div class="input-group mb-3">
+                    <button class="btn btn-outline-secondary btn-decrement" type="button" data-producto="{{ producto.id_producto }}">-</button>
+                    <input type="number" class="form-control cantidad" value="1" name="cantidad_producto_{{ producto.id_producto }}" data-producto="{{ producto.id_producto }}">
+                    <button class="btn btn-outline-secondary btn-increment" type="button" data-producto="{{ producto.id_producto }}">+</button>
+                </div>
+                  
+                  <center><a class="btn btn-primary" href="{% url 'detalle_producto' id=producto.id_producto %}">Ver Detalles</a></center>
+                  <br>
+                  <center><button type="button" class="btn btn-success">Añadir al Carrito</button></center>
                 </div>
             </div>
             <br><br>

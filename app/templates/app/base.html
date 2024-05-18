@@ -10,7 +10,7 @@
     <link rel="icon" href="{%static 'app/img/martillo.png' %}" type="image/x-icon">
     <link rel="shortcut icon" href="{%static 'app/img/martillo.png' %}" type="image/x-icon">
 </head>
-
+<body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-color fixed-top">
       <div class="container">
@@ -41,13 +41,13 @@
                   </li>
               </ul>
   
-              <form class="d-flex align-items-center form-search" action="{% url 'buscar' %}" method="GET">
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-search"></i></span>
-                    <input type="search" class="form-control" name="q" placeholder="¿Buscas algo? ¡Encuéntralo aquí!" aria-label="Search">
-                </div>
-            </form>
-            
+              <form class="d-flex align-items-center form-search">
+                  <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-search"></i></span>
+                      <input type="search" class="form-control" placeholder="¿Buscas algo? ¡Encuéntralo aquí!"
+                          aria-label="Search">
+                  </div>
+              </form>
   
               <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                   <li class="nav-item me-3">
@@ -80,22 +80,16 @@
                 </li>
                   {% endif %}
                   
-                
                   <li class="nav-item carrito-icon">
-                    <a class="nav-link" href="{% url 'carrito' %}">
-                      <span class="position-absolute translate-middle badge rounded-pill bg-danger" style="right: 285px;">
-                          {{carro_home}}
-                            <span class="visually-hidden">unread messages</span>
-                        </span>
-                        <img src="{% static 'app/img/carrito.png' %}" alt="Carrito" height="32" width="32">
-                    </a>
-                </li>
+                      <a class="nav-link" href="#!"><img src="{% static 'app/img/carrito.png' %}" alt="Carrito"
+                              height="32" width="32"></a>
+                  </li>
               </ul>
           </div>
       </div>
   </nav>
   <!-- Navbar -->
-  <body>        
+        
 <div class="container-flex">
         {% block contenido %}
 
