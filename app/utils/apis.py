@@ -18,24 +18,23 @@ class PhpApi:
 	url = 'http://localhost/php_api/api/service.php?'
 	#							^^^^^^^^^
 	#change host here
-	def __init__(self,modelo:str,id_n:str='id'):
+	def __init__(self,modelo:str):
 		self.model = modelo
-		self.id_n = id_n
 	def getAll(self):
 		res = requests.get(
 			url=self.url,
 			params={'model':self.model}
 		)
-		data = json.loads(res.text.encode("utf-8"))
+		data:dict = json.loads(res.text.encode("utf-8"))
 		pretty_json = json.dumps(data, indent=2)
 		return data
 	def getOne(self,id:int):
 		res = requests.get(
 			url=self.url,
 			params={'model':self.model},
-			json={f'{self.id_n}':id}
+			json={'id':id}
 		)
-		data = json.loads(res.text.encode("utf-8"))
+		data:dict = json.loads(res.text.encode("utf-8"))
 		pretty_json = json.dumps(data, indent=2)
 		return data
 	def post(self,data):
@@ -46,7 +45,7 @@ class PhpApi:
 		)
 		data = json.loads(res.text.encode("utf-8"))
 		pretty_json = json.dumps(data, indent=2)
-		return data
+		return pretty_json
 	def put(self,data):
 		res = requests.put(
 			url=self.url,
@@ -55,13 +54,13 @@ class PhpApi:
 		)
 		data = json.loads(res.text.encode("utf-8"))
 		pretty_json = json.dumps(data, indent=2)
-		return data
+		return pretty_json
 	def Del(self,id:int):
 		res = requests.delete(
 			url=self.url,
 			params={'model':self.model},
-			json={f'{self.id_n}':id}
+			json={'id':id}
 		)
 		data = json.loads(res.text.encode("utf-8"))
 		pretty_json = json.dumps(data, indent=2)
-		return data
+		return pretty_json

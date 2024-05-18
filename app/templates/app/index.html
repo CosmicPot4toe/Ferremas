@@ -123,12 +123,12 @@
               <div class="card-body" style="height: 560px">
                   <h5 class="card-title">{{producto.marca}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{producto.nombre}}</h6>
-                  <a href="{% url 'detalle_producto' producto.id_producto %}">
+                  <a href="{% url 'detalle_producto' producto.id %}">
                     <img src="{{ producto.imagen_url }}" class="card-img-top" alt="Imagen del Producto">
                 </a>
                   <br><br>
                   <p class="card-text">Precio: <strong>${{ producto.precio|intcomma}}</strong>/u</p>
-                  <form action="{% url 'add' producto.id_producto %}" method="post">
+                  <form action="{% url 'add' producto.id %}" method="post">
                       {% csrf_token %}
                       <div class="input-group mb-3">
                           <button class="btn btn-outline-secondary btn-decrement" type="button">-</button>
@@ -140,7 +140,7 @@
                       <div class="btn-group mb-3 ms-3" role="group">
                           <button type="submit" class="btn btn-sm btn-success" style="margin-right: 10px;">Añadir al carrito</button>
                           
-                          <a class="btn btn-primary btn-sm" href="{% url 'detalle_producto' producto.id_producto %}">Más detalles</a>
+                          <a class="btn btn-primary btn-sm" href="{% url 'detalle_producto' producto.id %}">Más detalles</a>
                       </div>
                   </form>
               </div>
