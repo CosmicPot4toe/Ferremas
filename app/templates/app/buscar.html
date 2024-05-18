@@ -1,0 +1,76 @@
+{% extends 'app/base.html' %}
+
+{% block contenido %}
+<br><br><br><br><br>
+<div class="container-flex">
+    <div class="row justify-content-center">
+        <h1 class="text-center">Resultados de búsqueda para "{{ query }}"</h1>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        {% load humanize %}
+        {% if resultados %}
+            {% for producto in resultados %}
+                <div class="col-md-2">
+                    <div class="card">
+                        <div class="card-body" style="height: 450px">
+                            <h5 class="card-title">{{ producto.marca }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ producto.nombre }}</h6>
+                            <center><img src="{{ producto.imagen_url }}" class="card-img-top" alt="Imagen del Producto" style="width: 150px;"></center>
+                            <p class="card-text">Precio: <strong>${{ producto.precio|stringformat:".0f"|intcomma }}</strong>/u</p>
+                            <form action="{% url 'add' producto.id_producto %}" method="post">
+                                {% csrf_token %}
+                                <div class="input-group mb-3">
+                                    <button class="btn btn-outline-secondary btn-decrement" type="button">-</button>
+                                    <input type="number" name="cantidad" class="form-control" value="1" min="1" style="height: 30px;">
+                                    <button class="btn btn-outline-secondary btn-increment" type="button">+</button>
+                                </div>
+                                <br>
+            
+                                <div class="btn-group mb-3 ms-3" role="group">
+                                    <button type="submit" class="btn btn-sm btn-success" style="margin-right: 10px;">Añadir al carrito</button>
+                                    
+                                    <a class="btn btn-primary btn-sm" href="{% url 'detalle_producto' producto.id_producto %}">Más detalles</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <br><br>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-md-12">
+                <p>No se encontraron resultados para "{{ query }}".</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const decrementBtns = document.querySelectorAll('.btn-decrement');
+        const incrementBtns = document.querySelectorAll('.btn-increment');
+
+        decrementBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const productoId = this.dataset.producto;
+                const cantidadInput = document.querySelector(`input[name="cantidad_producto_${productoId}"]`);
+                let cantidad = parseInt(cantidadInput.value);
+                cantidad = cantidad > 1 ? cantidad - 1 : 1;
+                cantidadInput.value = cantidad;
+            });
+        });
+
+        incrementBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const productoId = this.dataset.producto;
+                const cantidadInput = document.querySelector(`input[name="cantidad_producto_${productoId}"]`);
+                let cantidad = parseInt(cantidadInput.value);
+                cantidad += 1;
+                cantidadInput.value = cantidad;
+            });
+        });
+    });
+</script>
+
+{% endblock %}
