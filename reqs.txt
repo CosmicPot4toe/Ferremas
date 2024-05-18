@@ -1,0 +1,6 @@
+django
+django_colorfield
+django_crispy_forms
+django_tracking_model
+requests
+crispy_bootstrap5

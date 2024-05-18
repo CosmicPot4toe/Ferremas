@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+#model tracker
+from tracking_model import TrackingModelMixin
 # Create your models here.
 
 class User(AbstractUser):
@@ -30,7 +32,7 @@ class Empleado(models.Model):
     apellido = models.CharField(max_length=100)
     tienda = models.ForeignKey(Tienda, on_delete=models.CASCADE)
 
-class Producto(models.Model):
+class Producto(TrackingModelMixin,models.Model):
     id_producto = models.AutoField(primary_key=True)
     marca = models.CharField(max_length=100)
     nombre = models.CharField(max_length=100)

@@ -15,9 +15,11 @@ class Mindicador:
 				return data
 
 class PhpApi:
-	def __init__(self,modelo:str,url:str,id_n:str='id'):
+	url = 'http://localhost/php_api/api/service.php?'
+	#							^^^^^^^^^
+	#change host here
+	def __init__(self,modelo:str,id_n:str='id'):
 		self.model = modelo
-		self.url = url
 		self.id_n = id_n
 	def getAll(self):
 		res = requests.get(
@@ -26,7 +28,7 @@ class PhpApi:
 		)
 		data = json.loads(res.text.encode("utf-8"))
 		pretty_json = json.dumps(data, indent=2)
-		return pretty_json
+		return data
 	def getOne(self,id:int):
 		res = requests.get(
 			url=self.url,
@@ -35,7 +37,7 @@ class PhpApi:
 		)
 		data = json.loads(res.text.encode("utf-8"))
 		pretty_json = json.dumps(data, indent=2)
-		return pretty_json
+		return data
 	def post(self,data):
 		res = requests.post(
 			url=self.url,
@@ -44,7 +46,7 @@ class PhpApi:
 		)
 		data = json.loads(res.text.encode("utf-8"))
 		pretty_json = json.dumps(data, indent=2)
-		return pretty_json
+		return data
 	def put(self,data):
 		res = requests.put(
 			url=self.url,
@@ -53,7 +55,7 @@ class PhpApi:
 		)
 		data = json.loads(res.text.encode("utf-8"))
 		pretty_json = json.dumps(data, indent=2)
-		return pretty_json
+		return data
 	def Del(self,id:int):
 		res = requests.delete(
 			url=self.url,
@@ -62,4 +64,4 @@ class PhpApi:
 		)
 		data = json.loads(res.text.encode("utf-8"))
 		pretty_json = json.dumps(data, indent=2)
-		return pretty_json
+		return data
