@@ -13,7 +13,7 @@ class User(AbstractUser):
     )
     type = models.CharField(max_length=20, choices=TIPOS_CHOICES, default='Cli')
 
-class Tienda(models.Model):
+class Tienda(TrackingModelMixin,models.Model):
     id_tienda = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
     direccion = models.CharField(max_length=200)
@@ -21,6 +21,7 @@ class Tienda(models.Model):
     region = models.CharField(max_length=100)
     telefono = models.CharField(max_length=20)
     email = models.EmailField()
+
 
 class ResponsabilidadTienda(models.Model):
     tienda = models.ForeignKey(Tienda, on_delete=models.CASCADE)
@@ -42,14 +43,14 @@ class Producto(TrackingModelMixin,models.Model):
     categoria = models.ForeignKey('CategoriaProducto', on_delete=models.CASCADE)
     imagen_url = models.CharField(max_length=200) #url de la imagen
 
-class Categoria(models.Model):
+class Categoria(TrackingModelMixin,models.Model):
     id_categoria = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
 
     def __str__(self):
         return self.nombre
 
-class CategoriaProducto(models.Model):
+class CategoriaProducto(TrackingModelMixin,models.Model):
     categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE, null=True)
     nombre_categoria = models.CharField(max_length=100)
     subcategoria = models.CharField(max_length=100)
@@ -80,7 +81,7 @@ class MetodoPago(models.Model):
     id_metodo_pago = models.AutoField(primary_key=True)
     metodo = models.CharField(max_length=50)
 
-class Stock(models.Model):
+class Stock(TrackingModelMixin,models.Model):
     id = models.AutoField(primary_key=True)
     sucursal = models.ForeignKey(Tienda, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='stocks')
