@@ -9,19 +9,24 @@ class Carrito:
         else:
             self.carrito = carrito
 
+    def obtener_cantidad_productos(self):
+        cantidad_total = sum(item["cantidad"] for item in self.carrito.values())
+        return cantidad_total
 
-    def agregar(self, producto, cantidad=1):  # Modificar para aceptar cantidad como parámetro
+    def agregar(self, producto, cantidad=1):
         id_producto = str(producto.id_producto)
         if id_producto not in self.carrito.keys():
             self.carrito[id_producto] = {
                 "id": producto.id_producto,
                 "nombre": producto.nombre,
-                "precio": producto.precio,
-                "cantidad": cantidad,  # Utilizar la cantidad proporcionada
+                "precio_unitario": producto.precio,
+                "cantidad": cantidad,
+                "precio_total": producto.precio * cantidad,
+                "imagen_url": producto.imagen_url  # Asegúrate de tener esta línea si necesitas la imagen
             }
         else:
-            self.carrito[id_producto]["cantidad"] += cantidad  # Sumar la cantidad proporcionada
-            self.carrito[id_producto]["precio"] += producto.precio * cantidad  # Actualizar el precio total
+            self.carrito[id_producto]["cantidad"] += cantidad
+            self.carrito[id_producto]["precio_total"] = self.carrito[id_producto]["precio_unitario"] * self.carrito[id_producto]["cantidad"]
         self.guardar_carrito()
 
     def guardar_carrito(self):
@@ -34,11 +39,11 @@ class Carrito:
             del self.carrito[id_producto]
             self.guardar_carrito()
 
-    def restar(self,Producto):
+    def restar(self, Producto):
         id_producto = str(Producto.id_producto)
         if id_producto in self.carrito.keys():
             self.carrito[id_producto]["cantidad"] -= 1
-            self.carrito[id_producto]["precio"] -= Producto.precio
+            self.carrito[id_producto]["precio_total"] = self.carrito[id_producto]["precio_unitario"] * self.carrito[id_producto]["cantidad"]
             if self.carrito[id_producto]["cantidad"] <= 0:
                 self.eliminar(Producto)
             self.guardar_carrito()

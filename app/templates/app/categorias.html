@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block contenido %}
-
+<title>Ferremas | Categoria</title>
 <br><br><br><br><br>
 <div class="container-flex">
     <h1 class="text-center">¡{{categoria.nombre}}!</h1>
@@ -53,12 +53,11 @@
     document.addEventListener('DOMContentLoaded', function() {
     const decrementBtns = document.querySelectorAll('.btn-decrement');
     const incrementBtns = document.querySelectorAll('.btn-increment');
-    const cantidadInputs = document.querySelectorAll('.cantidad');//no imput with this class
+    const cantidadInputs = document.querySelectorAll('input[name="cantidad"]');
 
     decrementBtns.forEach(btn => {
         btn.addEventListener('click', function() {
-            const productoId = this.dataset.producto;
-            const cantidadInput = document.querySelector(`input[name="cantidad_producto_${productoId}"]`);//same as before, no imput with this name
+            const cantidadInput = this.nextElementSibling;
             let cantidad = parseInt(cantidadInput.value);
             cantidad = cantidad > 1 ? cantidad - 1 : 1;
             cantidadInput.value = cantidad;
@@ -67,8 +66,7 @@
 
     incrementBtns.forEach(btn => {
         btn.addEventListener('click', function() {
-            const productoId = this.dataset.producto;
-            const cantidadInput = document.querySelector(`input[name="cantidad_producto_${productoId}"]`);
+            const cantidadInput = this.previousElementSibling;
             let cantidad = parseInt(cantidadInput.value);
             cantidad += 1;
             cantidadInput.value = cantidad;

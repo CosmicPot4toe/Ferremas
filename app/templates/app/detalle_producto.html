@@ -4,6 +4,7 @@
 
 {% load humanize %}
 {% block contenido %}
+<title>Ferremas | Producto {{producto.nombre}}</title>
 <br><br><br><br><br><br>
 <div class="container-flex">
     <div class="row">
@@ -50,7 +51,7 @@
                     <hr>
                     <ul>
                         {% for tienda, cantidad in stocks_por_tienda.items %}
-                        <li>{{ tienda }}: {{ cantidad }}</li>
+                        <li>{{ tienda }}: Stock {{ cantidad }}</li>
                         {% endfor %}
                     </ul>
                 </div>

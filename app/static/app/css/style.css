@@ -298,3 +298,9 @@ body {
   font-weight: 600;
   font-size: 12px;
 }
+
+.cuadrado_webpay{
+  width: 200px;
+  max-height: auto;
+  background-color: #53184e7c;
+}

@@ -1,0 +1,145 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+{% block contenido %}
+<style>
+.card-deck {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: stretch;
+    margin-top: 20px;
+}
+
+.card {
+    flex: 1;
+    margin: 10px;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-bottom: 1px solid #dee2e6;
+    text-align: center;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.product-item {
+    text-align: center;
+}
+
+.product-info {
+    text-align: center;
+}
+
+img {
+    display: block;
+    margin: 0 auto;
+}
+
+.page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+</style>
+<title>Ferremas | Pago realizado</title>
+<br><br><br><br><br>
+
+<div class="container overflow-hidden" style="margin-top: 30px;">
+    <div class="col-12 justify-content-center">
+        <div class="steps text-center">
+            <div class="row">
+                <div class="col">
+                    <span class="steps_number">1</span>
+                    <div class="steps_title">Carro</div>
+                </div>
+                <div class="col">
+                    <span class="steps_number">2</span>
+                    <div class="steps_title">Método de Envío</div>
+                </div>
+                <div class="col activo">
+                    <span class="steps_number">3</span>
+                    <div class="steps_title">Pago</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-container">
+    <div class="page-header">
+        <h1>Confirmación de Pago</h1>
+    </div>
+    
+    <div class="card-deck">
+        <div class="card">
+            <div class="card-header">
+                <h2>Detalles de la compra</h2>
+            </div>
+            <div class="card-body">
+                <p><strong>Número de pedido:</strong> {{ response.buy_order }}</p>
+                <p><strong>Fecha de compra:</strong> {{ transaction_date|date:"d-m-Y" }} a las {{ transaction_date|date:"H:i:s" }}</p>
+                <p><strong>Estado de pedido:</strong> {{ response.status }}</p>
+                <p><strong>Últimos 4 dígitos:</strong> {{ response.card_detail.card_number }}</p>
+                <p><strong>Tipo de pago:</strong> {{ response.payment_type_code }}</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h2>Productos</h2>
+            </div>
+            <div class="card-body">
+                {% for key, value in carrito_dict.items %}
+                    <div class="product-item mb-3" style="width: 100%;">
+                        <img src="{{ value.imagen_url }}" alt="{{ value.nombre }}" class="card-img-top" style="width: 100px; margin: 0 auto; display: block;">
+                        <div class="product-info mt-2" style="text-align: left;">
+                            <p><strong>Nombre:</strong> {{ value.nombre }}</p>
+                            <p><strong>Cantidad:</strong> {{ value.cantidad }}</p>
+                            <p><strong>Precio unitario:</strong> ${{ value.precio_unitario|intcomma }}</p>
+                            <p><strong>Precio total:</strong> ${{ value.precio_total|intcomma }}</p>
+                        </div>
+                    </div>
+                    <hr>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h2>Detalle de envío</h2>
+            </div>
+            <div class="card-body">
+                <p><strong>Nombre:</strong> {{ pedido.nombre }}</p>
+                <p><strong>RUT:</strong> {{ pedido.rut }}</p>
+                <p><strong>Email:</strong> {{ pedido.email }}</p>
+                <p><strong>Dirección:</strong> {{ pedido.direccion }}</p>
+                <p><strong>País:</strong> {{ pedido.pais }}</p>
+                <p><strong>Ciudad:</strong> {{ pedido.ciudad }}</p>
+                <p><strong>Región:</strong> {{ pedido.region }}</p>
+                <p><strong>Código Postal:</strong> {{ pedido.codigo_postal }}</p>
+                <p><strong>Teléfono:</strong> {{ pedido.telefono }}</p>
+                <p><strong>Método de Envío:</strong> {{ pedido.metodo_envio }}</p>
+                <p><strong>Tienda Seleccionada:</strong> {{ pedido.tienda_seleccionada }}</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h2>Total de la compra</h2>
+            </div>
+            <div class="card-body">
+                <p><strong>Total:</strong> ${{ total_carrito.total_carrito|intcomma }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

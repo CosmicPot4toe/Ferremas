@@ -75,34 +75,6 @@ class Contacto(models.Model):
 
 class TipoContacto(models.Model):
     id_tipo_contacto = models.AutoField(primary_key=True)
-    tipo = models.CharField(max_length=50)
-
-class Pedido(models.Model):
-    id_pedido = models.AutoField(primary_key=True)
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
-    fecha = models.DateField()
-    total = models.DecimalField(max_digits=10, decimal_places=2)
-    ESTADOS = (
-        ('Pendiente', 'Pendiente'),
-        ('Aprobado', 'Aprobado'),
-        ('Enviado', 'Enviado'),
-        ('Entregado', 'Entregado'),
-    )
-    estado = models.CharField(max_length=20, choices=ESTADOS)
-
-class DetallePedido(models.Model):
-    id_detalle = models.AutoField(primary_key=True)
-    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    cantidad = models.IntegerField()
-    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
-
-class Pago(models.Model):
-    id_pago = models.AutoField(primary_key=True)
-    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
-    metodo_pago = models.ForeignKey('MetodoPago', on_delete=models.CASCADE)
-    monto = models.DecimalField(max_digits=10, decimal_places=2)
-    fecha = models.DateField()
 
 class MetodoPago(models.Model):
     id_metodo_pago = models.AutoField(primary_key=True)
@@ -113,3 +85,42 @@ class Stock(models.Model):
     sucursal = models.ForeignKey(Tienda, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='stocks')
     cantidad = models.IntegerField(default=0)
+
+class DetallesCompra(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(auto_now_add=True)
+    numero_pedido = models.CharField(max_length=100)
+    estado_pedido = models.CharField(max_length=100)
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Compra realizada por {self.usuario.email} el {self.fecha}"
+
+class Pedido(models.Model):
+    numero_pedido = models.IntegerField()
+    nombre = models.CharField(max_length=100)
+    email = models.EmailField()
+    direccion = models.CharField(max_length=200)
+    pais = models.CharField(max_length=100)
+    ciudad = models.CharField(max_length=100)
+    region = models.CharField(max_length=100)
+    codigo_postal = models.CharField(max_length=10)
+    telefono = models.CharField(max_length=20)
+    rut = models.CharField(max_length=14)
+    metodo_envio = models.CharField(max_length=100)
+    tienda_seleccionada = models.CharField(max_length=200, blank=True, null=True)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Pedido #{self.numero_pedido} - {self.nombre}"
+
+class DetallePedido(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    producto_nombre = models.CharField(max_length=200)
+    cantidad = models.PositiveIntegerField()
+    precio_unitario = models.IntegerField(default=0)
+    precio_total = models.IntegerField(default=0)
+    imagen_url = models.URLField(max_length=200, blank=True, null=True)
+
+    def __str__(self):
+        return f"Detalle del Pedido #{self.pedido.numero_pedido} - {self.producto_nombre}"

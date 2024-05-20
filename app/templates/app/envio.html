@@ -1,0 +1,269 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+{% block contenido %}
+<title>Ferremas | Detalles de Envío</title>
+<style>
+    .section p {
+        margin-bottom: 2px;
+        margin-top: 2px;
+    }
+    .section-header {
+        cursor: pointer;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        margin-bottom: 10px;
+    }
+    .section-header h3 {
+        margin: 0;
+    }
+</style>
+
+<br><br><br><br>
+<div class="container overflow-hidden" style="margin-top: 30px;">
+    <div class="col-12 justify-content-center">
+        <div class="steps text-center">
+            <div class="row">
+                <div class="col">
+                    <span class="steps_number">1</span>
+                    <div class="steps_title">Carro</div>
+                </div>
+                <div class="col activo">
+                    <span class="steps_number">2</span>
+                    <div class="steps_title">Método de Envío</div>
+                </div>
+                <div class="col">
+                    <span class="steps_number">3</span>
+                    <div class="steps_title">Pago</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--  -->
+<form method="post" action="{% url 'envio' %}">
+{% csrf_token %}
+    <div class="container mt-5" style="margin-left: 25%;">
+        <div class="row">
+            <div class="col-md-8">
+                
+                    
+                    <!-- Detalles de Envío -->
+                    <div class="section" style="text-align: left;">
+                        <div class="section-header">
+                            <h3 style="display: flex; justify-content: space-between;">Detalles de Envío <a href="#" id="cambiar-detalles-envio" style="font-size: 15px; color: black;">Cambiar</a></h3> 
+                        </div>
+                        <div id="detalles-envio">
+                            {{ form.nombre|as_crispy_field }}
+                            {{ form.email|as_crispy_field }}
+                            {{ form.direccion|as_crispy_field }}
+                            {{ form.ciudad|as_crispy_field }}
+                            {{ form.pais|as_crispy_field }}
+                            {{ form.region|as_crispy_field }}
+                            {{ form.codigo_postal|as_crispy_field }}
+                            {{ form.telefono|as_crispy_field }}
+                            {{ form.rut|as_crispy_field }}
+                            <button type="button" class="btn w-100" id="continue-to-metodo-envio" style="background-color: black; color: #ffffff;">Continuar</button>
+                            <br><br>
+                        </div>
+                        <div id="detalle-envio" style="display: none;">
+                            <p id="confirm-nombre"></p>
+                            <p id="confirm-email"></p>
+                            <p id="confirm-telefono"></p>
+                            <p id="confirm-rut"></p>
+                            <p id="confirm-direccion-completa"></p>
+                        </div>    
+                    </div>
+
+                   <!-- Método de Envío -->
+                        <div class="section" style="text-align: left;">
+                            <div class="section-header">
+                                <h3 style="display: flex; justify-content: space-between;">Método de Envío <a href="#" id="cambiar-metodo-envio" style="font-size: 15px; color: black;">Cambiar</a></h3>
+                            </div>
+                            <div id="metodo-envio" style="display: none; text-align: left;">
+                                <div>
+                                    <input type="radio" name="metodo_envio" value="envio-domicilio" id="envio-domicilio">
+                                    <label for="envio-domicilio">Envío a domicilio</label>
+                                </div>
+                                <div>
+                                    <input type="radio" name="metodo_envio" value="retiro-tienda" id="retiro-tienda">
+                                    <label for="retiro-tienda">Retiro en tienda</label>
+                                </div>
+                                <div id="select-tienda" style="display: none;">
+                                    <label for="tienda-select">Seleccione la tienda:</label>
+                                    <select id="tienda-select" name="tienda_select" class="form-control">
+                                        {% for tienda in tiendas_validas %}
+                                            <option value="{{ tienda.id_tienda }}">{{ tienda.nombre }} - {{ tienda.direccion }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <br>
+                                </div>
+                                <button type="button" class="btn w-100" style="background-color: black; color: #ffffff;" id="continue-to-pago">Continuar al Pago</button>
+                                <br><br>
+                            </div>
+                            <div id="metodos-envio" style="display: none; text-align: left;">
+                                <p>Envio:</p> <span><p id="confirm-envio"></p></span>
+                            </div>
+                        </div>
+
+                    <!-- Pago -->
+                    <div class="section" style="text-align: left;">
+                        <div class="section-header">
+                            <h3>Pago</h3>
+                        </div>                  
+                    
+                        <div style="background-color: #f2f2ff; padding: 20px; border-radius: 5px; width: 500px; margin: 0 auto;">
+                            <!-- Div con fondo morado claro -->
+                            <div style="text-align: left;">
+                                <!-- Aquí va el div con la imagen en el centro arriba y abajo un texto -->
+                                <img src="{% static 'app/img/1.Webpay_FB_800px.png' %}" alt="Imagen de Pago" style="display: block; margin: 0 auto; width: 150px;">
+                                <p style="text-align: center;">Una vez que hagas clic para continuar, se te redireccionará a Webpay Plus by Transbank</p>
+                            </div>
+                        </div>
+                    
+                        <hr>
+                    
+                        <div style="text-align: left;">
+                            <input type="checkbox" id="terminos" onchange="habilitarPago()"> Estoy de acuerdo con los términos y condiciones
+                        </div>
+                        
+                    </div>         
+                    <button type="submit" style="background-color: black; color: #ffffff;" class="btn w-100" id="btn-pago" disabled>Pagar con Webpay</button>
+
+            </div>
+    
+            <!-- resumen del pedido -->
+            <div class="col-md-4">
+                <div class="card" style="width: 400px;">
+                    <div class="card-body">
+                        
+                        <a href="{% url 'carrito' %}" style="font-size: 15px; color: black;">Volver al carrito</a>
+                        <h2>Resumen del Pedido</h2>
+                        <hr>
+                        {% for key, value in carrito_dict.items %}
+                            <div class="row mb-3">
+                                <div class="col-4">
+                                    <img src="{{ value.imagen_url }}" class="img-fluid" alt="{{ value.nombre }}">
+                                </div>
+                                <div class="col-8">
+                                    <h5 class="card-title">{{ value.marca }}</h5>
+                                    <p class="card-text">{{ value.nombre }}</p>
+                                    <p class="card-text">Cantidad: {{ value.cantidad }}</p>
+                                    <p class="card-text">Precio unitario: ${{ value.precio_base|intcomma }}</p>
+                                    <p class="card-text">Precio total: ${{ value.precio_total|intcomma }}</p>
+                                </div>
+                            </div>
+                            <hr>
+                        {% endfor %}
+                        <div class="row">
+                            <div class="col">
+                                <h6 class="text-start">Neto:</h6>
+                            </div>
+                            <div class="col text-end">
+                                <p>${{ neto|intcomma }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <h6 class="text-start">IVA:</h6>
+                            </div>
+                            <div class="col text-end">
+                                <p>${{ iva|intcomma }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="text-start">TOTAL:</h4>
+                            </div>
+                            <div class="col text-end">
+                                <h5>${{ total_carrito|intcomma }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<script>
+    document.getElementById('continue-to-metodo-envio').addEventListener('click', function() {
+            var detallesEnvio = document.getElementById('detalles-envio');
+            var detalleEnvio = document.getElementById('detalle-envio');
+            var metodoEnvio = document.getElementById('metodo-envio');
+    
+            detallesEnvio.style.display = 'none';
+            detalleEnvio.style.display = 'block';
+            metodoEnvio.style.display = 'block';
+    
+            document.getElementById('confirm-nombre').innerText = document.getElementById('id_nombre').value;
+            document.getElementById('confirm-email').innerText = document.getElementById('id_email').value;
+            document.getElementById('confirm-telefono').innerText = document.getElementById('id_telefono').value;
+            document.getElementById('confirm-rut').innerText = document.getElementById('id_rut').value;
+            document.getElementById('confirm-direccion-completa').innerText = document.getElementById('id_direccion').value + ', ' + document.getElementById('id_ciudad').value + ', ' + document.getElementById('id_pais').value + ', ' + document.getElementById('id_region').value + ', ' + document.getElementById('id_codigo_postal').value;
+        });
+    
+        document.querySelectorAll('input[name="metodo_envio"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        if (this.value === 'retiro-tienda') {
+            document.getElementById('select-tienda').style.display = 'block';
+        } else {
+            document.getElementById('select-tienda').style.display = 'none';
+        }
+    });
+});
+
+    
+document.getElementById('continue-to-pago').addEventListener('click', function() {
+    var metodoEnvio = document.getElementById('metodo-envio');
+    var metodosEnvio = document.getElementById('metodos-envio');
+
+    if (document.getElementById('envio-domicilio').checked) {
+        document.getElementById('confirm-envio').innerText = 'Envío a domicilio';
+    } else if (document.getElementById('retiro-tienda').checked) {
+        var tiendaSelect = document.getElementById('tienda-select');
+        var selectedOption = tiendaSelect.options[tiendaSelect.selectedIndex];
+        document.getElementById('confirm-envio').innerText = 'Retiro en tienda: ' + selectedOption.text;
+    }
+
+    metodoEnvio.style.display = 'none';
+    metodosEnvio.style.display = 'block';
+});
+
+    
+    document.getElementById('cambiar-detalles-envio').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('detalles-envio').style.display = 'block';
+        document.getElementById('detalle-envio').style.display = 'none';
+        document.getElementById('metodo-envio').style.display = 'none'; // Oculta el método de envío si se cambian los detalles
+        document.getElementById('metodos-envio').style.display = 'none'; // Oculta los detalles de envío si se cambian los detalles
+        document.getElementById('pago').style.display = 'none'; // Oculta el paso de pago si se cambian los detalles
+    });
+    
+    document.getElementById('cambiar-metodo-envio').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('metodo-envio').style.display = 'block';
+        document.getElementById('metodos-envio').style.display = 'none';
+        document.getElementById('pago').style.display = 'none'; // Oculta el paso de pago si cambias el método de envío
+        document.getElementById('detalles-envio').style.display = 'none'; // Oculta los detalles de envío si se cambia el método de envío
+        document.getElementById('detalle-envio').style.display = 'block'; // Oculta el mensaje de confirmación de envío si se cambia el método de envío
+    });
+    
+    document.getElementById('envio-domicilio').addEventListener('change', function() {
+            document.getElementById('select-tienda').style.display = 'none';
+        });
+    
+    document.getElementById('retiro-tienda').addEventListener('change', function() {
+            document.getElementById('select-tienda').style.display = 'block';
+        });
+    
+    function habilitarPago() {
+            document.getElementById('btn-pago').disabled = !document.getElementById('terminos').checked;
+        }
+    </script>
+
+{% endblock %}

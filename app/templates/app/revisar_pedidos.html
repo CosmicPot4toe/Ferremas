@@ -1,0 +1,150 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block contenido %}
+<title>Mis Pedidos</title>
+<br><br><br><br><br>
+<div class="container pedidos-container">
+    <div class="text-center">
+        <h1>Mis pedidos</h1>
+        <p>Revisa tu historial de pedidos o verifica el estado de un pedido reciente.</p>
+    </div>
+    {% if pedidos %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Pedido</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pedido in pedidos %}
+                    <tr>
+                        <td>{{ pedido.fecha|date:"d M Y" }}</td>
+                        <td>#{{ pedido.numero_pedido }}</td>
+                        <td>Por Enviar</td>
+                        <td>${{ pedido.total_pedido|intcomma }}</td>
+                        <td>
+                            <button class="btn btn-primary" onclick="toggleDetalles({{ forloop.counter0 }})">
+                                <span id="icon-{{ forloop.counter0 }}">&#x25BC;</span>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr id="detalles-{{ forloop.counter0 }}" class="detalles-pedido" style="display: none;">
+                        <td colspan="5">
+                            <h4>Detalles del Pedido</h4>
+                            <div class="producto-detalle">
+                                {% for detalle in pedido.detallepedido_set.all %}
+                                    <div class="producto-item">
+                                        <img src="{{ detalle.imagen_url }}" alt="{{ detalle.producto_nombre }}" class="producto-imagen">
+                                        <div class="producto-info">
+                                            <p><strong>Nombre:</strong> {{ detalle.producto_nombre }}</p>
+                                            <p><strong>Cantidad:</strong> {{ detalle.cantidad }}</p>
+                                            <p><strong>Precio unitario:</strong> ${{ detalle.precio_unitario|intcomma }}</p>
+                                            <p><strong>Precio total:</strong> ${{ detalle.precio_total|intcomma }}</p>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <hr>
+                            <div class="total-info">
+                                <p><strong>Total del Pedido:</strong> ${{ pedido.total_pedido|intcomma }}</p>
+                                <p><strong>Pagado:</strong> ${{ pedido.total_pedido|intcomma }}</p>
+                                <p><strong>Saldo a pagar:</strong> $0</p>
+                            </div>
+                            <hr>
+                            <div class="facturacion-info">
+                                <h5>DATOS DE FACTURACIÓN</h5>
+                                <p><strong>Pagado con Webpay Plus - Transbank</strong></p>
+                                <p>{{ pedido.nombre }}</p>
+                                <p>{{ pedido.direccion }}</p>
+                                <p>{{ pedido.ciudad }}, {{ pedido.region }} {{ pedido.codigo_postal }}</p>
+                                <p>{{ pedido.pais }}</p>
+                                <p>{{ pedido.telefono }}</p>
+                                <p>{{pedido.metodo_envio}}</p>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No tienes pedidos registrados.</p>
+    {% endif %}
+</div>
+
+<script>
+function toggleDetalles(index) {
+    var detalles = document.getElementById('detalles-' + index);
+    var icon = document.getElementById('icon-' + index);
+    if (detalles.style.display === 'none') {
+        detalles.style.display = 'table-row';
+        icon.innerHTML = '&#x25B2;';  // Up arrow
+    } else {
+        detalles.style.display = 'none';
+        icon.innerHTML = '&#x25BC;';  // Down arrow
+    }
+}
+</script>
+
+<style>
+.pedidos-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.text-center {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.table {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.table th, .table td {
+    text-align: left;
+}
+
+.producto-detalle {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.producto-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.producto-imagen {
+    width: 100px;
+    height: auto;
+    margin-right: 10px;
+}
+
+.producto-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.total-info, .facturacion-info {
+    margin-top: 20px;
+}
+
+.total-info p, .facturacion-info p {
+    margin: 5px 0;
+}
+
+.facturacion-info h5 {
+    margin-bottom: 10px;
+}
+</style>
+<br><br><br><br><br><br><br><br><br><br><br>
+{% endblock %}

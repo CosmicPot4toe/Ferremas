@@ -15,5 +15,9 @@ urlpatterns = [
     path('restar/<int:Producto_id_producto>/', restar_producto, name="sub"),
     path('limpiar/', limpiar_carrito, name="clean"),
     path('carrito/', carrito, name='carrito'), 
+    path('envio/', envio, name='envio'),
+    path('api/tiendas-disponibles/', views.tiendas_disponibles, name='tiendas_disponibles'),
+    path('pago/commit/', views.commit, name='commit'),
+    path('revisar_pedidos/', views.revisar_pedidos, name='revisar_pedidos'),
 
 ]
