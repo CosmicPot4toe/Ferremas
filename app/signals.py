@@ -15,7 +15,7 @@ def handle_pre_save(sender,instance:modelTypes, **kargs):
 		for k in instance.tracker.changed:
 			update[k]=getattr(instance,k)
 		#havent connected to the api cuz i dont ahve it on, gotta get a host lol
-		print(PhpApi(MODEL_NAME).put(update))
+		#print(PhpApi(MODEL_NAME).put(update))
 	else:
 		vals={}
 		all_fields = [f.name for f in instance._meta.fields]
@@ -29,6 +29,7 @@ def handle_pre_save(sender,instance:modelTypes, **kargs):
 					vals[n]=getattr(instance,n).pk
 					continue
 			vals[n]=getattr(instance,n)
+		print(json.dumps(vals))
 		PhpApi(MODEL_NAME).post(vals)
 
 def handle_Del(sender,instance:modelTypes, **kargs):

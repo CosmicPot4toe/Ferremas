@@ -135,7 +135,6 @@ def logoutP(req: HttpRequest):
 	logout(req)
 	return redirect('index')
 
-
 #VISTAS PARA EL CARRITO
 def agregar_producto(request, Producto_id_producto):
     if request.method == 'POST':

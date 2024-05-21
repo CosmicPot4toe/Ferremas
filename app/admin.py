@@ -18,12 +18,9 @@ class UserAdmin(BUA):
 
 admin.site.register(User,UserAdmin)
 admin.site.register(Tienda)
-admin.site.register(ResponsabilidadTienda)
-admin.site.register(Empleado)
 admin.site.register(Producto)
 admin.site.register(CategoriaProducto)
 admin.site.register(Categoria)
-admin.site.register(Cliente)
 admin.site.register(Contacto)
 admin.site.register(TipoContacto)
 admin.site.register(Stock)
