@@ -10,6 +10,7 @@ from django.urls import reverse
 from flask import render_template, request
 from django.db.models import Sum
 from app.context_processor import total_carrito
+from .utils.apis import PhpApi
 from .forms import *
 from .models import *
 from app.carrito import Carrito
@@ -39,7 +40,8 @@ def buscar(request):
 
 def index(request):
     # Obtener los últimos 5 productos añadidos, ordenados por id_producto descendente
-    productos = Producto.objects.order_by('-id_producto')[:5]
+    productos = PhpApi('Producto').getAll()[-5:]
+    #productos = Producto.objects.order_by('-id_producto')[:5]
     return render(request, 'app/index.html', {'producto': productos})
 
 def detalle_producto(request, id):
