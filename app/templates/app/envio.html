@@ -3,7 +3,14 @@
 {% load humanize %}
 {% load crispy_forms_tags %}
 {% block contenido %}
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/country-region-selector@latest/dist/crs.min.js"></script>
 <title>Ferremas | Detalles de Envío</title>
+</head>
+
 <style>
     .section p {
         margin-bottom: 2px;
@@ -61,53 +68,84 @@
                             {{ form.email|as_crispy_field }}
                             {{ form.direccion|as_crispy_field }}
                             {{ form.ciudad|as_crispy_field }}
-                            {{ form.pais|as_crispy_field }}
-                            {{ form.region|as_crispy_field }}
+                            
+                            <div class="form-group">
+                                <label for="country">País</label>
+                                <select id="country" name="pais" class="form-control crs-country" data-region-id="region" data-default-option="Seleccionar país"></select>
+                            </div>
+                        <br>
+                            <div class="form-group">
+                                <label for="region">Región</label>
+                                <select id="region" name="region" class="form-control crs-region" data-default-option="Seleccionar región"></select>
+                            </div>
+                            <br>
                             {{ form.codigo_postal|as_crispy_field }}
-                            {{ form.telefono|as_crispy_field }}
-                            {{ form.rut|as_crispy_field }}
+                            
+                            <div class="form-group">
+                                <label for="phone">Teléfono</label>
+                                <input id="phone" name="telefono" type="tel" class="form-control">
+                            </div>
+                            
+                            
+                            <div class="form-group">
+                                <label for="rut" id="rut-label">RUT</label>
+                                <input type="text" id="id_rut" name="rut" maxlength="12" class="form-control" placeholder="Ej: 12.345.678-9">
+                            </div>
+                            <br>
                             <button type="button" class="btn w-100" id="continue-to-metodo-envio" style="background-color: black; color: #ffffff;">Continuar</button>
                             <br><br>
                         </div>
+                        
+                        <!-- Campo hidden para almacenar el código del país -->
+                        <input type="hidden" name="pais" id="country_code">
+                        
                         <div id="detalle-envio" style="display: none;">
                             <p id="confirm-nombre"></p>
                             <p id="confirm-email"></p>
                             <p id="confirm-telefono"></p>
                             <p id="confirm-rut"></p>
                             <p id="confirm-direccion-completa"></p>
-                        </div>    
+                        </div>
                     </div>
 
                    <!-- Método de Envío -->
-                        <div class="section" style="text-align: left;">
-                            <div class="section-header">
-                                <h3 style="display: flex; justify-content: space-between;">Método de Envío <a href="#" id="cambiar-metodo-envio" style="font-size: 15px; color: black;">Cambiar</a></h3>
-                            </div>
-                            <div id="metodo-envio" style="display: none; text-align: left;">
-                                <div>
-                                    <input type="radio" name="metodo_envio" value="envio-domicilio" id="envio-domicilio">
-                                    <label for="envio-domicilio">Envío a domicilio</label>
-                                </div>
-                                <div>
-                                    <input type="radio" name="metodo_envio" value="retiro-tienda" id="retiro-tienda">
-                                    <label for="retiro-tienda">Retiro en tienda</label>
-                                </div>
-                                <div id="select-tienda" style="display: none;">
-                                    <label for="tienda-select">Seleccione la tienda:</label>
-                                    <select id="tienda-select" name="tienda_select" class="form-control">
-                                        {% for tienda in tiendas_validas %}
-                                            <option value="{{ tienda.id_tienda }}">{{ tienda.nombre }} - {{ tienda.direccion }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <br>
-                                </div>
-                                <button type="button" class="btn w-100" style="background-color: black; color: #ffffff;" id="continue-to-pago">Continuar al Pago</button>
-                                <br><br>
-                            </div>
-                            <div id="metodos-envio" style="display: none; text-align: left;">
-                                <p>Envio:</p> <span><p id="confirm-envio"></p></span>
-                            </div>
-                        </div>
+<div class="section" style="text-align: left;">
+    <div class="section-header">
+        <h3 style="display: flex; justify-content: space-between;">Método de Envío <a href="#" id="cambiar-metodo-envio" style="font-size: 15px; color: black;">Cambiar</a></h3>
+    </div>
+    <div id="metodo-envio" style="display: none; text-align: left;">
+        <div id="envio-nacional">
+            <div>
+                <input type="radio" name="metodo_envio" value="envio-domicilio" id="envio-domicilio">
+                <label for="envio-domicilio">Envío a domicilio</label>
+            </div>
+            <div>
+                <input type="radio" name="metodo_envio" value="retiro-tienda" id="retiro-tienda">
+                <label for="retiro-tienda">Retiro en tienda</label>
+            </div>
+            <div id="select-tienda" style="display: none;">
+                <label for="tienda-select">Seleccione la tienda:</label>
+                <select id="tienda-select" name="tienda_select" class="form-control">
+                    {% for tienda in tiendas_validas %}
+                        <option value="{{ tienda.id_tienda }}">{{ tienda.nombre }} - {{ tienda.direccion }}</option>
+                    {% endfor %}
+                </select>
+                <br>
+            </div>
+        </div>
+        <div id="envio-internacional" style="display: none;">
+            <div>
+                <input type="radio" name="metodo_envio" value="envio-internacional" id="envio-internacional-radio">
+                <label for="envio-internacional-radio">Envío internacional</label>
+            </div>
+        </div>
+        <button type="button" class="btn w-100" style="background-color: black; color: #ffffff;" id="continue-to-pago">Continuar al Pago</button>
+        <br><br>
+    </div>
+    <div id="metodos-envio" style="display: none; text-align: left;">
+        <p>Envio:</p> <span><p id="confirm-envio"></p></span>
+    </div>
+</div>
 
                     <!-- Pago -->
                     <div class="section" style="text-align: left;">
@@ -125,13 +163,15 @@
                         </div>
                     
                         <hr>
-                    
-                        <div style="text-align: left;">
-                            <input type="checkbox" id="terminos" onchange="habilitarPago()"> Estoy de acuerdo con los términos y condiciones
-                        </div>
                         
-                    </div>         
-                    <button type="submit" style="background-color: black; color: #ffffff;" class="btn w-100" id="btn-pago" disabled>Pagar con Webpay</button>
+                    </div> 
+                    <div id="pago" style="display: block;">
+                        <input type="checkbox" id="terminos" name="terminos">
+                        <label for="terminos">Estoy de acuerdo con los términos y condiciones</label>
+                        <br>
+                        <button type="submit" style="background-color: black; color: #ffffff;" class="btn w-100" id="btn-pago" disabled>Pagar con Webpay</button>
+                    </div>        
+                    
 
             </div>
     
@@ -191,79 +231,123 @@
 
 
 <script>
-    document.getElementById('continue-to-metodo-envio').addEventListener('click', function() {
+    document.addEventListener("DOMContentLoaded", function() {
+        // Inicializar country-region-selector para los campos de país y región
+        window.crs.init();
+
+        // Mantener la inicialización del teléfono
+        const input = document.querySelector("#phone");
+        const iti = window.intlTelInput(input, {
+            initialCountry: "auto",
+            geoIpLookup: function(callback) {
+                fetch('https://ipinfo.io/json', { headers: { 'Accept': 'application/json' } })
+                    .then(response => response.json())
+                    .then(data => callback(data.country))
+                    .catch(() => callback("US"));
+            },
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+        });
+
+        // Actualizar el input hidden de país con el código del país seleccionado
+        input.addEventListener('countrychange', function() {
+            const countryData = iti.getSelectedCountryData();
+            document.querySelector("#country_code").value = countryData.iso2;
+        });
+
+        // Manejar el cambio de país
+        document.getElementById('country').addEventListener('change', function() {
+            const selectedCountry = document.getElementById('country').value;
+            const envioNacional = document.getElementById('envio-nacional');
+            const envioInternacional = document.getElementById('envio-internacional');
+            const rutLabel = document.getElementById('rut-label');
+            const rutInput = document.getElementById('id_rut');
+
+            if (selectedCountry === 'Chile') {
+                envioNacional.style.display = 'block';
+                envioInternacional.style.display = 'none';
+                rutLabel.innerText = 'RUT';
+                rutInput.placeholder = 'Ej: 12.345.678-9';
+            } else {
+                envioNacional.style.display = 'none';
+                envioInternacional.style.display = 'block';
+                rutLabel.innerText = 'Tax ID';
+                rutInput.placeholder = 'Enter your Tax ID';
+            }
+        });
+
+        // Listener para el botón "Continuar"
+        document.getElementById('continue-to-metodo-envio').addEventListener('click', function() {
             var detallesEnvio = document.getElementById('detalles-envio');
             var detalleEnvio = document.getElementById('detalle-envio');
             var metodoEnvio = document.getElementById('metodo-envio');
-    
+
+            // Actualizar los campos de confirmación con los valores del formulario
+            document.getElementById('confirm-nombre').innerText = document.getElementById('id_nombre').value;
+            document.getElementById('confirm-email').innerText = document.getElementById('id_email').value;
+            document.getElementById('confirm-telefono').innerText = document.getElementById('phone').value;
+            document.getElementById('confirm-rut').innerText = document.getElementById('id_rut').value;
+            document.getElementById('confirm-direccion-completa').innerText = document.getElementById('id_direccion').value + ', ' + document.getElementById('id_ciudad').value + ', ' + document.getElementById('country').value + ', ' + document.getElementById('region').value + ', ' + document.getElementById('id_codigo_postal').value;
+
+            // Cambiar la visibilidad de los elementos
             detallesEnvio.style.display = 'none';
             detalleEnvio.style.display = 'block';
             metodoEnvio.style.display = 'block';
-    
-            document.getElementById('confirm-nombre').innerText = document.getElementById('id_nombre').value;
-            document.getElementById('confirm-email').innerText = document.getElementById('id_email').value;
-            document.getElementById('confirm-telefono').innerText = document.getElementById('id_telefono').value;
-            document.getElementById('confirm-rut').innerText = document.getElementById('id_rut').value;
-            document.getElementById('confirm-direccion-completa').innerText = document.getElementById('id_direccion').value + ', ' + document.getElementById('id_ciudad').value + ', ' + document.getElementById('id_pais').value + ', ' + document.getElementById('id_region').value + ', ' + document.getElementById('id_codigo_postal').value;
         });
-    
-        document.querySelectorAll('input[name="metodo_envio"]').forEach(function(radio) {
-    radio.addEventListener('change', function() {
-        if (this.value === 'retiro-tienda') {
-            document.getElementById('select-tienda').style.display = 'block';
-        } else {
-            document.getElementById('select-tienda').style.display = 'none';
-        }
-    });
-});
 
-    
-document.getElementById('continue-to-pago').addEventListener('click', function() {
-    var metodoEnvio = document.getElementById('metodo-envio');
-    var metodosEnvio = document.getElementById('metodos-envio');
+        // Listener para el botón "Continuar al Pago"
+        document.getElementById('continue-to-pago').addEventListener('click', function() {
+            var metodoEnvio = document.getElementById('metodo-envio');
+            var metodosEnvio = document.getElementById('metodos-envio');
 
-    if (document.getElementById('envio-domicilio').checked) {
-        document.getElementById('confirm-envio').innerText = 'Envío a domicilio';
-    } else if (document.getElementById('retiro-tienda').checked) {
-        var tiendaSelect = document.getElementById('tienda-select');
-        var selectedOption = tiendaSelect.options[tiendaSelect.selectedIndex];
-        document.getElementById('confirm-envio').innerText = 'Retiro en tienda: ' + selectedOption.text;
-    }
+            if (document.getElementById('envio-domicilio').checked) {
+                document.getElementById('confirm-envio').innerText = 'Envío a domicilio';
+            } else if (document.getElementById('retiro-tienda').checked) {
+                var tiendaSelect = document.getElementById('tienda-select');
+                var selectedOption = tiendaSelect.options[tiendaSelect.selectedIndex];
+                document.getElementById('confirm-envio').innerText = 'Retiro en tienda: ' + selectedOption.text;
+            } else if (document.getElementById('envio-internacional-radio').checked) {
+                document.getElementById('confirm-envio').innerText = 'Envío internacional';
+            }
 
-    metodoEnvio.style.display = 'none';
-    metodosEnvio.style.display = 'block';
-});
+            metodoEnvio.style.display = 'none';
+            metodosEnvio.style.display = 'block';
+        });
 
-    
-    document.getElementById('cambiar-detalles-envio').addEventListener('click', function(e) {
-        e.preventDefault();
-        document.getElementById('detalles-envio').style.display = 'block';
-        document.getElementById('detalle-envio').style.display = 'none';
-        document.getElementById('metodo-envio').style.display = 'none'; // Oculta el método de envío si se cambian los detalles
-        document.getElementById('metodos-envio').style.display = 'none'; // Oculta los detalles de envío si se cambian los detalles
-        document.getElementById('pago').style.display = 'none'; // Oculta el paso de pago si se cambian los detalles
-    });
-    
-    document.getElementById('cambiar-metodo-envio').addEventListener('click', function(e) {
-        e.preventDefault();
-        document.getElementById('metodo-envio').style.display = 'block';
-        document.getElementById('metodos-envio').style.display = 'none';
-        document.getElementById('pago').style.display = 'none'; // Oculta el paso de pago si cambias el método de envío
-        document.getElementById('detalles-envio').style.display = 'none'; // Oculta los detalles de envío si se cambia el método de envío
-        document.getElementById('detalle-envio').style.display = 'block'; // Oculta el mensaje de confirmación de envío si se cambia el método de envío
-    });
-    
-    document.getElementById('envio-domicilio').addEventListener('change', function() {
+        document.getElementById('cambiar-detalles-envio').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('detalles-envio').style.display = 'block';
+            document.getElementById('detalle-envio').style.display = 'none';
+            document.getElementById('metodo-envio').style.display = 'none';
+            document.getElementById('metodos-envio').style.display = 'none';
+            document.getElementById('pago').style.display = 'none';
+        });
+
+        document.getElementById('cambiar-metodo-envio').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('metodo-envio').style.display = 'block';
+            document.getElementById('metodos-envio').style.display = 'none';
+            document.getElementById('pago').style.display = 'none';
+            document.getElementById('detalles-envio').style.display = 'none';
+            document.getElementById('detalle-envio').style.display = 'block';
+        });
+
+        document.getElementById('envio-domicilio').addEventListener('change', function() {
             document.getElementById('select-tienda').style.display = 'none';
         });
-    
-    document.getElementById('retiro-tienda').addEventListener('change', function() {
+
+        document.getElementById('retiro-tienda').addEventListener('change', function() {
             document.getElementById('select-tienda').style.display = 'block';
         });
-    
-    function habilitarPago() {
+
+        document.getElementById('terminos').addEventListener('change', function() {
+            document.getElementById('btn-pago').disabled = !this.checked;
+        });
+
+        function habilitarPago() {
             document.getElementById('btn-pago').disabled = !document.getElementById('terminos').checked;
         }
-    </script>
+    });
+</script>
+
 
 {% endblock %}

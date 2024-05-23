@@ -268,9 +268,10 @@ def envio(request: HttpRequest):
     if request.method == 'POST':
         form = DetalleEnvioForm(request.POST)
         if form.is_valid():
-            request.session['envio_datos'] = form.cleaned_data
+            envio_datos = form.cleaned_data
+            request.session['envio_datos'] = envio_datos
 
-            metodo_envio = request.POST.get('metodo_envio', '')
+            metodo_envio = 'envio-internacional' if envio_datos['pais'] != 'Chile' else request.POST.get('metodo_envio', '')
             tienda_seleccionada_id = request.POST.get('tienda_select', '')
 
             if metodo_envio == 'retiro-tienda' and tienda_seleccionada_id:
@@ -290,15 +291,15 @@ def envio(request: HttpRequest):
 
             pedido = Pedido(
                 numero_pedido=buy_order,
-                nombre=form.cleaned_data['nombre'],
-                email=form.cleaned_data['email'],
-                direccion=form.cleaned_data['direccion'],
-                pais=form.cleaned_data['pais'],
-                ciudad=form.cleaned_data['ciudad'],
-                region=form.cleaned_data['region'],
-                codigo_postal=form.cleaned_data['codigo_postal'],
-                telefono=form.cleaned_data['telefono'],
-                rut=form.cleaned_data['rut'],
+                nombre=envio_datos['nombre'],
+                email=envio_datos['email'],
+                direccion=envio_datos['direccion'],
+                pais=envio_datos['pais'],
+                ciudad=envio_datos['ciudad'],
+                region=envio_datos['region'],
+                codigo_postal=envio_datos['codigo_postal'],
+                telefono=envio_datos['telefono'],
+                rut=envio_datos['rut'],
                 metodo_envio=metodo_envio,
                 tienda_seleccionada=tienda_seleccionada
             )
