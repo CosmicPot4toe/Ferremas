@@ -32,7 +32,13 @@
             <!-- Precio -->
             <br>
             <div class="precio-container ">
-                <h3 class="card-text">Precio: <strong>${{ producto.precio|stringformat:".0f"|intcomma}}</strong>/u</h3>
+                <h3 class="card-text">Precio: <strong>
+                    {% if currency == 'USD' %}
+                        ${{ producto.precio|floatformat:2 }} USD
+                    {% else %}
+                        ${{ producto.precio|stringformat:".0f"|intcomma}} CLP
+                    {% endif %}
+                </strong>/u</h3>
             </div>
             <br>
             <p style="font-size: 12px;">Codigo del producto: {{producto.codigo_producto}}</p>

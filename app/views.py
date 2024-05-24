@@ -35,7 +35,15 @@ def buscar(request):
     else:
         resultados = Producto.objects.none()
 
-    return render(request, 'app/buscar.html', {'resultados': resultados, 'query': query})
+    mindicador = Mindicador('dolar')
+    dollar_value = mindicador.get_dollar_value_today()
+    currency = request.session.get('currency', 'CLP')
+    for producto in resultados:
+        if currency == 'USD' and dollar_value:
+            producto.precio = producto.precio / dollar_value
+
+
+    return render(request, 'app/buscar.html', {'resultados': resultados, 'query': query, 'currency':currency})
 
 
 def index(request):
@@ -57,6 +65,17 @@ def index(request):
 def detalle_producto(request, id):
     # Obtener el producto por su ID
     producto = get_object_or_404(Producto, id_producto=id)
+
+    # Obtener el valor del dólar de hoy
+    mindicador = Mindicador('dolar')
+    dollar_value = mindicador.get_dollar_value_today()
+
+    # Obtener la divisa seleccionada de la sesión
+    currency = request.session.get('currency', 'CLP')
+
+    # Ajustar el precio del producto según la divisa seleccionada
+    if currency == 'USD' and dollar_value:
+        producto.precio = producto.precio / dollar_value
 
     # Obtener la categoría asociada al producto
     categoria_producto = producto.categoria
@@ -81,6 +100,7 @@ def detalle_producto(request, id):
         'id_categoria': categoria.id_categoria,
         'nombre_categoria': categoria.nombre,
         'stocks_por_tienda': stocks_por_tienda,
+        'currency': currency,
     }
 
     # Renderizar el template con los datos
@@ -88,12 +108,24 @@ def detalle_producto(request, id):
 
 def categorias(request, id):
     # Obtener la categoría correspondiente al ID
-    categoria = Categoria.objects.get(id_categoria=id)
+    categoria = get_object_or_404(Categoria, id_categoria=id)
 
     # Filtrar los productos por el ID de la categoría
-    producto = Producto.objects.filter(categoria_id=id)
+    productos = Producto.objects.filter(categoria_id=id)
 
-    return render(request, 'app/categorias.html', {'categoria': categoria, 'producto': producto})
+    # Obtener el valor del dólar de hoy
+    mindicador = Mindicador('dolar')
+    dollar_value = mindicador.get_dollar_value_today()
+
+    # Obtener la divisa seleccionada de la sesión
+    currency = request.session.get('currency', 'CLP')
+
+    # Ajustar el precio de cada producto según la divisa seleccionada
+    for producto in productos:
+        if currency == 'USD' and dollar_value:
+            producto.precio = producto.precio / dollar_value
+
+    return render(request, 'app/categorias.html', {'categoria': categoria, 'productos': productos, 'currency': currency})
 
 
 def loginP(req: HttpRequest):
