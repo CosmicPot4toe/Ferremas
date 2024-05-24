@@ -1,18 +1,25 @@
+from datetime import datetime
 import json
 import requests
 
 class Mindicador:
-		def __init__(self, indicador, year):
-				self.indicador = indicador
-				self.year = year
-		def InfoApi(self):
-				# En este caso hacemos la solicitud para el caso de consulta de un indicador en un año determinado
-				url = f'https://mindicador.cl/api/{self.indicador}/{self.year}'
-				response = requests.get(url)
-				data = json.loads(response.text.encode("utf-8"))
-				# Para que el json se vea ordenado, retornar pretty_json
-				pretty_json = json.dumps(data, indent=2)
-				return data
+    def __init__(self, indicador):
+        self.indicador = indicador
+
+    def get_indicator_value(self, date=None):
+        if date is None:
+            date = datetime.now().strftime('%d-%m-%Y')
+        url = f'https://mindicador.cl/api/{self.indicador}/{date}'
+        response = requests.get(url)
+        data = json.loads(response.text.encode("utf-8"))
+        return data
+
+    def get_dollar_value_today(self):
+        data = self.get_indicator_value()
+        dollar_value = None 
+        if "serie" in data and len(data["serie"]) > 0:
+            dollar_value = data["serie"][0]["valor"]
+        return dollar_value
 
 class PhpApi:
 	url = 'http://localhost/php_api/api/service.php?'

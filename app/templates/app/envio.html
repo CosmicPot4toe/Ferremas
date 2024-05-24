@@ -273,6 +273,7 @@
                 rutLabel.innerText = 'Tax ID';
                 rutInput.placeholder = 'Enter your Tax ID';
             }
+            checkFormCompletion();
         });
 
         // Listener para el botón "Continuar"
@@ -333,21 +334,37 @@
 
         document.getElementById('envio-domicilio').addEventListener('change', function() {
             document.getElementById('select-tienda').style.display = 'none';
+            checkFormCompletion();
         });
 
         document.getElementById('retiro-tienda').addEventListener('change', function() {
             document.getElementById('select-tienda').style.display = 'block';
+            checkFormCompletion();
         });
 
-        document.getElementById('terminos').addEventListener('change', function() {
-            document.getElementById('btn-pago').disabled = !this.checked;
-        });
+        document.getElementById('terminos').addEventListener('change', checkFormCompletion);
 
-        function habilitarPago() {
-            document.getElementById('btn-pago').disabled = !document.getElementById('terminos').checked;
+        function checkFormCompletion() {
+            const nombre = document.getElementById('id_nombre').value.trim();
+            const email = document.getElementById('id_email').value.trim();
+            const direccion = document.getElementById('id_direccion').value.trim();
+            const ciudad = document.getElementById('id_ciudad').value.trim();
+            const pais = document.getElementById('country').value.trim();
+            const region = document.getElementById('region').value.trim();
+            const codigoPostal = document.getElementById('id_codigo_postal').value.trim();
+            const telefono = document.getElementById('phone').value.trim();
+            const rut = document.getElementById('id_rut').value.trim();
+            const terminos = document.getElementById('terminos').checked;
+
+            const isFormComplete = nombre && email && direccion && ciudad && pais && region && codigoPostal && telefono && rut && terminos;
+            document.getElementById('btn-pago').disabled = !isFormComplete;
         }
+
+        // Check form completion on load
+        checkFormCompletion();
     });
 </script>
+
 
 
 {% endblock %}

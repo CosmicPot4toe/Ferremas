@@ -19,5 +19,6 @@ urlpatterns = [
     path('api/tiendas-disponibles/', views.tiendas_disponibles, name='tiendas_disponibles'),
     path('pago/commit/', views.commit, name='commit'),
     path('revisar_pedidos/', views.revisar_pedidos, name='revisar_pedidos'),
+    path('set_currency/<str:currency>/', views.set_currency, name='set_currency'),
 
 ]

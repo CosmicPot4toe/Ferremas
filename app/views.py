@@ -10,7 +10,7 @@ from django.urls import reverse
 from flask import render_template, request
 from django.db.models import Sum
 from app.context_processor import total_carrito
-from .utils.apis import PhpApi
+from .utils.apis import Mindicador, PhpApi
 from .forms import *
 from .models import *
 from app.carrito import Carrito
@@ -41,8 +41,18 @@ def buscar(request):
 def index(request):
     # Obtener los últimos 5 productos añadidos, ordenados por id_producto descendente
     productos = PhpApi('Producto').getAll()[-5:]
-    #productos = Producto.objects.order_by('-id_producto')[:5]
-    return render(request, 'app/index.html', {'producto': productos})
+    mindicador = Mindicador('dolar')
+    dollar_value = mindicador.get_dollar_value_today()
+    currency = request.session.get('currency', 'CLP')
+    for producto in productos:
+        if currency == 'USD' and dollar_value:
+            producto['precio'] = producto['precio'] / dollar_value
+
+    data ={
+        'productos': productos,
+        'currency': currency,
+    }
+    return render(request, 'app/index.html', data)
 
 def detalle_producto(request, id):
     # Obtener el producto por su ID
@@ -363,3 +373,7 @@ def revisar_pedidos(request):
         'pedidos': pedidos,
         }
     return render(request, 'app/revisar_pedidos.html', context)
+
+def set_currency(request, currency):
+    request.session['currency'] = currency
+    return redirect(request.META.get('HTTP_REFERER', 'index'))

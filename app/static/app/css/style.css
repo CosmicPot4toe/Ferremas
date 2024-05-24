@@ -88,11 +88,6 @@
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
-.form-search .form-control {
-  width: 700px; /* Cambia el ancho del campo de búsqueda según tus necesidades */
-  height: 40px; /* Cambia la altura del campo de búsqueda según tus necesidades */
-}
-
 .carrito-icon img {
   filter: brightness(0) invert(1); /* Invierte el color de la imagen para hacerla blanca */
 }

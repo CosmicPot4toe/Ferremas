@@ -117,7 +117,7 @@
     <br>
     <div class="row justify-content-center">
       {% load humanize %}
-      {% for producto in producto %}
+      {% for producto in productos %}
       <div class="col-md-2">
           <div class="card">
               <div class="card-body" style="height: 560px">
@@ -127,7 +127,13 @@
                     <img src="{{ producto.imagen_url }}" class="card-img-top" alt="Imagen del Producto">
                 </a>
                   <br><br>
-                  <p class="card-text">Precio: <strong>${{ producto.precio|intcomma}}</strong>/u</p>
+                  <p class="card-text">Precio: <strong>
+                    {% if currency == 'USD' %}
+                        ${{ producto.precio|floatformat:2 }} USD
+                    {% else %}
+                        ${{ producto.precio|intcomma }} CLP
+                    {% endif %}
+                </strong>/u</p>
                   <form action="{% url 'add' producto.id %}" method="post">
                       {% csrf_token %}
                       <div class="input-group mb-3">

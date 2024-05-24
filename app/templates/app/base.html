@@ -12,93 +12,116 @@
     <link rel="shortcut icon" href="{%static 'app/img/martillo.png' %}" type="image/x-icon">
     
 </head>
+<style>
+.form-search .form-control {
+    flex: 1; /* Hacer que el campo de búsqueda se expanda */
+    min-width: 200px; /* Ancho mínimo para el campo de búsqueda */
+    height: 40px; /* Cambia la altura del campo de búsqueda según tus necesidades */
+}
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-color fixed-top">
-      <div class="container">
-          <a class="navbar-brand" href="{% url 'index' %}"><img id="Ferremas-logo"
-                  src="{%static 'app/img/logo_pre_upscayl_4x_ultrasharp-removebg.png' %}" alt="Ferremas Logo"
-                  draggable="false" height="80" width="150" /></a>
-  
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-          </button>
-  
-          <div class="collapse navbar-collapse" id="navbarNav">
-              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                  <li class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                          data-bs-toggle="dropdown" aria-expanded="false">
-                          Categorías
-                      </a>
-                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                          <li><a class="dropdown-item" href="{% url 'categorias' id=1 %}">Herramientas Manuales</a></li>
-                          <li><a class="dropdown-item" href="{% url 'categorias' id=2 %}">Materiales Básicos</a></li>
-                          <li><a class="dropdown-item" href="{% url 'categorias' id=3 %}">Equipos de Seguridad</a></li>
-                          <li><a class="dropdown-item" href="{% url 'categorias' id=4 %}">Tornillos y Anclajes</a></li>
-                          <li><a class="dropdown-item" href="{% url 'categorias' id=5 %}">Fijación y Adhesivos</a></li>
-                          <li><a class="dropdown-item" href="{% url 'categorias' id=6 %}">Equipos de Medicións</a></li>
-                      </ul>
-                  </li>
-              </ul>
-  
-              <form class="d-flex align-items-center form-search" action="{% url 'buscar' %}" method="GET">
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-search"></i></span>
-                    <input type="search" class="form-control" name="q" placeholder="¿Buscas algo? ¡Encuéntralo aquí!" aria-label="Search">
-                </div>
-            </form>
-            
-  
-              <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                  <li class="nav-item me-3">
-                      <a class="nav-link" href="#!">Contactanos</a>
-                  </li>
+.navbar-nav .dropdown-menu {
+    left: auto !important;
+    right: 0 !important;
+}
 
+.navbar-nav .nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+}
 
-                  {% if user.is_authenticated %}
-                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        {{user.username}}
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="nav-link" href="{% url 'revisar_pedidos' %}" style="color: black;">Mis Pedidos</a></li>
-                        
-                        <li><a class="nav-link" href="{% url 'logout' %}" style="color: black;">Cerrar Sesión</a></li>
-                    </ul>
-                </li>
-                      
-                  {% else %}
-                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        Cuenta
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'login' %}">Iniciar sesión</a></li>
-                        
-                        <li><a class="dropdown-item" href="{% url 'signup' %}">Registrarse</a></li>
-                    </ul>
-                </li>
-                  {% endif %}
-                  
-                
-                  <li class="nav-item carrito-icon">
-                    <a class="nav-link" href="{% url 'carrito' %}">
+.form-search .input-group-text {
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+}
+
+.form-search .form-control {
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+}
+</style>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark navbar-color fixed-top">
+  <div class="container">
+      <a class="navbar-brand" href="{% url 'index' %}">
+          <img id="Ferremas-logo" src="{% static 'app/img/logo_pre_upscayl_4x_ultrasharp-removebg.png' %}" alt="Ferremas Logo" draggable="false" height="80" width="150" />
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <!-- Currency selection dropdown -->
+               <!-- Currency selection dropdown -->
+               <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="currencyDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Moneda: {{ request.session.currency|default:"CLP" }}
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="currencyDropdown">
+                    <li><a class="dropdown-item {% if request.session.currency == 'CLP' %}active{% endif %}" href="{% url 'set_currency' 'CLP' %}">CLP</a></li>
+                    <li><a class="dropdown-item {% if request.session.currency == 'USD' %}active{% endif %}" href="{% url 'set_currency' 'USD' %}">USD</a></li>
+                </ul>
+            </li>
+              <!-- Categorías dropdown -->
+              <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Categorías
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <li><a class="dropdown-item" href="{% url 'categorias' id=1 %}">Herramientas Manuales</a></li>
+                      <li><a class="dropdown-item" href="{% url 'categorias' id=2 %}">Materiales Básicos</a></li>
+                      <li><a class="dropdown-item" href="{% url 'categorias' id=3 %}">Equipos de Seguridad</a></li>
+                      <li><a class="dropdown-item" href="{% url 'categorias' id=4 %}">Tornillos y Anclajes</a></li>
+                      <li><a class="dropdown-item" href="{% url 'categorias' id=5 %}">Fijación y Adhesivos</a></li>
+                      <li><a class="dropdown-item" href="{% url 'categorias' id=6 %}">Equipos de Medición</a></li>
+                  </ul>
+              </li>
+          </ul>
+
+          <form class="d-flex align-items-center form-search" action="{% url 'buscar' %}" method="GET" style="flex-grow: 1; margin-right: 10px;">
+              <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-search"></i></span>
+                  <input type="search" class="form-control" name="q" placeholder="¿Buscas algo? ¡Encuéntralo aquí!" aria-label="Search">
+              </div>
+          </form>
+
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li class="nav-item me-3">
+                  <a class="nav-link" href="#!">Contáctanos</a>
+              </li>
+              {% if user.is_authenticated %}
+              <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      {{ user.username }}
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <li><a class="nav-link" href="{% url 'revisar_pedidos' %}" style="color: black;">Mis Pedidos</a></li>
+                      <li><a class="nav-link" href="{% url 'logout' %}" style="color: black;">Cerrar Sesión</a></li>
+                  </ul>
+              </li>
+              {% else %}
+              <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Cuenta
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <li><a class="dropdown-item" href="{% url 'login' %}">Iniciar sesión</a></li>
+                      <li><a class="dropdown-item" href="{% url 'signup' %}">Registrarse</a></li>
+                  </ul>
+              </li>
+              {% endif %}
+              <li class="nav-item carrito-icon">
+                  <a class="nav-link" href="{% url 'carrito' %}">
                       <span class="position-absolute translate-middle badge rounded-pill bg-danger" style="right: 285px;">
-                          {{carro_home}}
-                            <span class="visually-hidden">unread messages</span>
-                        </span>
-                        <img src="{% static 'app/img/carrito.png' %}" alt="Carrito" height="32" width="32">
-                    </a>
-                </li>
-              </ul>
-          </div>
+                          {{ carro_home }}
+                          <span class="visually-hidden">unread messages</span>
+                      </span>
+                      <img src="{% static 'app/img/carrito.png' %}" alt="Carrito" height="32" width="32">
+                  </a>
+              </li>
+          </ul>
       </div>
-  </nav>
-  <!-- Navbar -->
+  </div>
+</nav>
+<!-- Navbar -->
   <body>        
 <div class="container-flex">
         {% block contenido %}
