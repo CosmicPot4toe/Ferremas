@@ -19,6 +19,7 @@ import random
 from django.shortcuts import render, redirect
 from django.http import HttpRequest
 from transbank.webpay.webpay_plus.transaction import Transaction
+from django.contrib.humanize.templatetags.humanize import intcomma
 
 
 def buscar(request):
@@ -213,38 +214,45 @@ def carrito(request):
     carrito_dict = request.session.get("carrito", {})
     carrito = Carrito(request)
     total_carrito = 0
-    neto_formateado = 0
-    iva_formateado = 0 
     cantidad_productos = carrito.obtener_cantidad_productos()
 
+    # Obtener el valor del dólar de hoy
+    mindicador = Mindicador('dolar')
+    dollar_value = mindicador.get_dollar_value_today()
+
+    # Obtener la divisa seleccionada de la sesión
+    currency = request.session.get('currency', 'CLP')
 
     for key, value in carrito_dict.items():
         # Obtener el precio base del producto desde la base de datos
         producto = Producto.objects.get(id_producto=value["id"])
         value["precio_base"] = producto.precio
+
         # Calcular el precio total por producto
         value["precio_total"] = producto.precio * value["cantidad"]
+
+        # Ajustar los precios según la divisa seleccionada
+        if currency == 'USD' and dollar_value:
+            value["precio_base"] = value["precio_base"] / dollar_value
+            value["precio_total"] = value["precio_total"] / dollar_value
+
         # Sumar al total del carrito
         value["imagen_url"] = producto.imagen_url
-
         value["marca"] = producto.marca
         total_carrito += value["precio_total"]
-
-        # Calcular el IVA y el precio total del carrito
-        iva = total_carrito * 0.19
-        neto = total_carrito * 0.81
-        neto_formateado = floatformat(neto, 0)  # Formatear neto con dos decimales
-        iva_formateado = floatformat(iva,0)
-        print(cantidad_productos)
-
 
     context = {
         "carrito_dict": carrito_dict,
         "total_carrito": total_carrito,
-        "neto": neto_formateado,
-        "iva": iva_formateado,
         "cantidad_productos": cantidad_productos,
+        "currency": currency,
     }
+
+    if currency == 'CLP':
+        iva = total_carrito * 0.19
+        neto = total_carrito * 0.81
+        context["neto"] = floatformat(neto, 0)  # Formatear neto con dos decimales
+        context["iva"] = floatformat(iva, 0)  # Formatear IVA con dos decimales
 
     return render(request, 'app/carrito.html', context)
 
@@ -280,9 +288,9 @@ def commit(request):
 
     # Convertir la fecha de la transacción en un objeto datetime
     transaction_date = datetime.strptime(response['transaction_date'], "%Y-%m-%dT%H:%M:%S.%fZ")
-
-    request.session.pop('carrito', None)
-    request.session.pop('envio_datos', None)
+    
+    # request.session.pop('carrito', None)
+    # request.session.pop('envio_datos', None)
 
     return render(request, 'app/pago.html', {
         'response': response,
@@ -296,16 +304,34 @@ def envio(request: HttpRequest):
     carrito_dict = request.session.get("carrito", {})
     total_carrito = 0
 
+    # Obtener el valor del dólar de hoy
+    mindicador = Mindicador('dolar')
+    dollar_value = mindicador.get_dollar_value_today()
+
+    # Obtener la divisa seleccionada de la sesión
+    currency = request.session.get('currency', 'CLP')
+
     for key, value in carrito_dict.items():
         producto = Producto.objects.get(id_producto=value["id"])
         value["precio_base"] = producto.precio
         value["precio_total"] = producto.precio * value["cantidad"]
+        
+        # Ajustar los precios según la divisa seleccionada
+        if currency == 'USD' and dollar_value:
+            value["precio_base"] = value["precio_base"] / dollar_value
+            value["precio_total"] = value["precio_total"] / dollar_value
+        
         value["imagen_url"] = producto.imagen_url
         value["marca"] = producto.marca
         total_carrito += value["precio_total"]
 
-    iva = total_carrito * 0.19
-    neto = total_carrito * 0.81
+    # Calcular IVA y Neto en CLP
+    total_carrito_clp = total_carrito
+    if currency == 'USD' and dollar_value:
+        total_carrito_clp = total_carrito * dollar_value
+
+    iva = total_carrito_clp * 0.19
+    neto = total_carrito_clp * 0.81
 
     if request.method == 'POST':
         form = DetalleEnvioForm(request.POST)
@@ -325,7 +351,8 @@ def envio(request: HttpRequest):
             session_id = str(random.randrange(1000000, 99999999))
             return_url = request.build_absolute_uri(reverse('commit'))
 
-            response = Transaction().create(buy_order, session_id, total_carrito, return_url)
+            # Crear transacción con el total en CLP
+            response = Transaction().create(buy_order, session_id, int(total_carrito_clp), return_url)
 
             request.session['webpay_response'] = response
             request.session['buy_order'] = buy_order
@@ -378,16 +405,24 @@ def envio(request: HttpRequest):
         )
         if tiene_todos_productos:
             tiendas_validas.append(tienda)
-    neto_formateado = floatformat(neto, 0)  # Formatear neto con dos decimales
-    iva_formateado = floatformat(iva,0)
+
+    # Formatear total_carrito_clp y total_carrito según la divisa seleccionada
+    if currency == 'CLP':
+        total_carrito_formatted = intcomma(int(total_carrito_clp))
+    else:
+        total_carrito_formatted = floatformat(total_carrito, 2)
+
+
     context = {
         "carrito_dict": carrito_dict,
         "total_carrito": total_carrito,
-        "neto": neto_formateado,
-        "iva": iva_formateado,
+        "total_carrito_formatted": total_carrito_formatted,
+        "neto": intcomma(int(neto)),
+        "iva": intcomma(int(iva)),
         "form": form,
         "envio_datos": request.session.get('envio_datos', {}),
         "tiendas_validas": tiendas_validas,
+        "currency": currency,
     }
 
     return render(request, 'app/envio.html', context)

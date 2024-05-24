@@ -176,55 +176,71 @@
             </div>
     
             <!-- resumen del pedido -->
-            <div class="col-md-4">
-                <div class="card" style="width: 400px;">
-                    <div class="card-body">
-                        
-                        <a href="{% url 'carrito' %}" style="font-size: 15px; color: black;">Volver al carrito</a>
-                        <h2>Resumen del Pedido</h2>
-                        <hr>
-                        {% for key, value in carrito_dict.items %}
-                            <div class="row mb-3">
-                                <div class="col-4">
-                                    <img src="{{ value.imagen_url }}" class="img-fluid" alt="{{ value.nombre }}">
-                                </div>
-                                <div class="col-8">
-                                    <h5 class="card-title">{{ value.marca }}</h5>
-                                    <p class="card-text">{{ value.nombre }}</p>
-                                    <p class="card-text">Cantidad: {{ value.cantidad }}</p>
-                                    <p class="card-text">Precio unitario: ${{ value.precio_base|intcomma }}</p>
-                                    <p class="card-text">Precio total: ${{ value.precio_total|intcomma }}</p>
-                                </div>
-                            </div>
-                            <hr>
-                        {% endfor %}
-                        <div class="row">
-                            <div class="col">
-                                <h6 class="text-start">Neto:</h6>
-                            </div>
-                            <div class="col text-end">
-                                <p>${{ neto|intcomma }}</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <h6 class="text-start">IVA:</h6>
-                            </div>
-                            <div class="col text-end">
-                                <p>${{ iva|intcomma }}</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <h4 class="text-start">TOTAL:</h4>
-                            </div>
-                            <div class="col text-end">
-                                <h5>${{ total_carrito|intcomma }}</h5>
-                            </div>
-                        </div>
+<div class="col-md-4">
+    <div class="card" style="width: 400px;">
+        <div class="card-body">
+            
+            <a href="{% url 'carrito' %}" style="font-size: 15px; color: black;">Volver al carrito</a>
+            <h2>Resumen del Pedido</h2>
+            <hr>
+            {% for key, value in carrito_dict.items %}
+                <div class="row mb-3">
+                    <div class="col-4">
+                        <img src="{{ value.imagen_url }}" class="img-fluid" alt="{{ value.nombre }}">
+                    </div>
+                    <div class="col-8">
+                        <h5 class="card-title">{{ value.marca }}</h5>
+                        <p class="card-text">{{ value.nombre }}</p>
+                        <p class="card-text">Cantidad: {{ value.cantidad }}</p>
+                        <p class="card-text">Precio unitario:
+                            {% if currency == 'USD' %}
+                            ${{ value.precio_base|floatformat:2 }} {{ currency }}
+                            {% else %}
+                            ${{ value.precio_base|intcomma }} {{ currency }}
+                            {% endif %}
+                        </p>
+                        <p class="card-text">Precio total: 
+                            {% if currency == 'USD' %}
+                            ${{ value.precio_total|floatformat:2 }} {{ currency }}
+                            {% else %}
+                            ${{ value.precio_total|intcomma }} {{ currency }}
+                            {% endif %}
+                        </p>
                     </div>
                 </div>
+                <hr>
+            {% endfor %}
+            {% if currency == 'CLP' %}
+                <div class="row">
+                    <div class="col">
+                        <h6 class="text-start">Neto:</h6>
+                    </div>
+                    <div class="col text-end">
+                        <p>${{ neto }} CLP</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h6 class="text-start">IVA:</h6>
+                    </div>
+                    <div class="col text-end">
+                        <p>${{ iva }} CLP</p>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="row">
+                <div class="col">
+                    <h4 class="text-start">TOTAL:</h4>
+                </div>
+                <div class="col text-end">
+                    <h5>
+                        ${{ total_carrito_formatted }} {{ currency }}
+                    </h5>
+                </div>
             </div>
+        </div>
+    </div>
+</div>
         </div>
     </div>
 </form>

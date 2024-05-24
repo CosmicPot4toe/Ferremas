@@ -99,14 +99,14 @@ img {
                 <h2>Productos</h2>
             </div>
             <div class="card-body">
-                {% for key, value in carrito_dict.items %}
+                {% for key, item in carrito_dict.items %}
                     <div class="product-item mb-3" style="width: 100%;">
-                        <img src="{{ value.imagen_url }}" alt="{{ value.nombre }}" class="card-img-top" style="width: 100px; margin: 0 auto; display: block;">
+                        <img src="{{ item.imagen_url }}" alt="{{ item.nombre }}" class="card-img-top" style="width: 100px; margin: 0 auto; display: block;">
                         <div class="product-info mt-2" style="text-align: left;">
-                            <p><strong>Nombre:</strong> {{ value.nombre }}</p>
-                            <p><strong>Cantidad:</strong> {{ value.cantidad }}</p>
-                            <p><strong>Precio unitario:</strong> ${{ value.precio_unitario|intcomma }}</p>
-                            <p><strong>Precio total:</strong> ${{ value.precio_total|intcomma }}</p>
+                            <p><strong>Nombre:</strong> {{ item.nombre }}</p>
+                            <p><strong>Cantidad:</strong> {{ item.cantidad }}</p>
+                            <p><strong>Precio unitario:</strong> ${{ item.precio_base |intcomma}}</p>
+                            <p><strong>Precio total:</strong> ${{ item.precio_total |intcomma}}</p>
                         </div>
                     </div>
                     <hr>
@@ -136,7 +136,7 @@ img {
                 <h2>Total de la compra</h2>
             </div>
             <div class="card-body">
-                <p><strong>Total:</strong> ${{ total_carrito.total_carrito|intcomma }}</p>
+                <p><strong>Total:</strong> ${{ total_carrito.total_carrito |intcomma }}</p>
             </div>
         </div>
     </div>
