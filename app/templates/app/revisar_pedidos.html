@@ -9,7 +9,7 @@
         <h1>Mis pedidos</h1>
         <p>Revisa tu historial de pedidos o verifica el estado de un pedido reciente.</p>
     </div>
-    {% if pedidos %}
+    {% if pedidos_detalles %}
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -21,12 +21,12 @@
                 </tr>
             </thead>
             <tbody>
-                {% for pedido in pedidos %}
+                {% for pedido in pedidos_detalles %}
                     <tr>
                         <td>{{ pedido.fecha|date:"d M Y" }}</td>
                         <td>#{{ pedido.numero_pedido }}</td>
                         <td>Por Enviar</td>
-                        <td>${{ pedido.total_pedido|intcomma }}</td>
+                        <td>{{ pedido.total_pedido_formatted }}</td>
                         <td>
                             <button class="btn btn-primary" onclick="toggleDetalles({{ forloop.counter0 }})">
                                 <span id="icon-{{ forloop.counter0 }}">&#x25BC;</span>
@@ -37,22 +37,22 @@
                         <td colspan="5">
                             <h4>Detalles del Pedido</h4>
                             <div class="producto-detalle">
-                                {% for detalle in pedido.detallepedido_set.all %}
+                                {% for detalle in pedido.detalles %}
                                     <div class="producto-item">
                                         <img src="{{ detalle.imagen_url }}" alt="{{ detalle.producto_nombre }}" class="producto-imagen">
                                         <div class="producto-info">
                                             <p><strong>Nombre:</strong> {{ detalle.producto_nombre }}</p>
                                             <p><strong>Cantidad:</strong> {{ detalle.cantidad }}</p>
-                                            <p><strong>Precio unitario:</strong> ${{ detalle.precio_unitario|intcomma }}</p>
-                                            <p><strong>Precio total:</strong> ${{ detalle.precio_total|intcomma }}</p>
+                                            <p><strong>Precio unitario:</strong> {{ detalle.precio_unitario_formatted }}</p>
+                                            <p><strong>Precio total:</strong> {{ detalle.precio_total_formatted }}</p>
                                         </div>
                                     </div>
                                 {% endfor %}
                             </div>
                             <hr>
                             <div class="total-info">
-                                <p><strong>Total del Pedido:</strong> ${{ pedido.total_pedido|intcomma }}</p>
-                                <p><strong>Pagado:</strong> ${{ pedido.total_pedido|intcomma }}</p>
+                                <p><strong>Total del Pedido:</strong> {{ pedido.total_pedido_formatted }}</p>
+                                <p><strong>Pagado:</strong> {{ pedido.total_pedido_formatted }}</p>
                                 <p><strong>Saldo a pagar:</strong> $0</p>
                             </div>
                             <hr>

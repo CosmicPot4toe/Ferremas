@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import requests
 
@@ -8,7 +8,8 @@ class Mindicador:
 
     def get_indicator_value(self, date=None):
         if date is None:
-            date = datetime.now().strftime('%d-%m-%Y')
+            # Obtener la fecha del día anterior
+            date = (datetime.now() - timedelta(days=1)).strftime('%d-%m-%Y')
         url = f'https://mindicador.cl/api/{self.indicador}/{date}'
         response = requests.get(url)
         data = json.loads(response.text.encode("utf-8"))

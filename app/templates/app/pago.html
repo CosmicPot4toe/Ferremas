@@ -11,42 +11,34 @@
     align-items: stretch;
     margin-top: 20px;
 }
-
 .card {
     flex: 1;
     margin: 10px;
 }
-
 .card-header {
     background-color: #f8f9fa;
     padding: 10px;
     border-bottom: 1px solid #dee2e6;
     text-align: center;
 }
-
 .card-body {
     padding: 20px;
 }
-
 .product-item {
     text-align: center;
 }
-
 .product-info {
     text-align: center;
 }
-
 img {
     display: block;
     margin: 0 auto;
 }
-
 .page-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
 }
-
 .page-header {
     text-align: center;
     margin-bottom: 40px;
@@ -54,7 +46,6 @@ img {
 </style>
 <title>Ferremas | Pago realizado</title>
 <br><br><br><br><br>
-
 <div class="container overflow-hidden" style="margin-top: 30px;">
     <div class="col-12 justify-content-center">
         <div class="steps text-center">
@@ -75,12 +66,10 @@ img {
         </div>
     </div>
 </div>
-
 <div class="page-container">
     <div class="page-header">
         <h1>Confirmación de Pago</h1>
     </div>
-    
     <div class="card-deck">
         <div class="card">
             <div class="card-header">
@@ -99,14 +88,26 @@ img {
                 <h2>Productos</h2>
             </div>
             <div class="card-body">
-                {% for key, item in carrito_dict.items %}
+                {% for item in carrito_dict %}
                     <div class="product-item mb-3" style="width: 100%;">
-                        <img src="{{ item.imagen_url }}" alt="{{ item.nombre }}" class="card-img-top" style="width: 100px; margin: 0 auto; display: block;">
+                        <img src="{{ item.imagen_url }}" alt="{{ item.producto_nombre }}" class="card-img-top" style="width: 100px; margin: 0 auto; display: block;">
                         <div class="product-info mt-2" style="text-align: left;">
-                            <p><strong>Nombre:</strong> {{ item.nombre }}</p>
+                            <p><strong>Nombre:</strong> {{ item.producto_nombre }}</p>
                             <p><strong>Cantidad:</strong> {{ item.cantidad }}</p>
-                            <p><strong>Precio unitario:</strong> ${{ item.precio_base |intcomma}}</p>
-                            <p><strong>Precio total:</strong> ${{ item.precio_total |intcomma}}</p>
+                            <p><strong>Precio unitario:</strong>
+                                {% if currency == 'USD' %}
+                                    ${{ item.precio_unitario|floatformat:2 }} USD
+                                {% else %}
+                                    ${{ item.precio_unitario|intcomma }} CLP
+                                {% endif %}
+                            </p>
+                            <p><strong>Precio total:</strong>
+                                {% if currency == 'USD' %}
+                                    ${{ item.precio_total|floatformat:2 }} USD
+                                {% else %}
+                                    ${{ item.precio_total|intcomma }} CLP
+                                {% endif %}
+                            </p>
                         </div>
                     </div>
                     <hr>
@@ -136,10 +137,9 @@ img {
                 <h2>Total de la compra</h2>
             </div>
             <div class="card-body">
-                <p><strong>Total:</strong> ${{ total_carrito.total_carrito |intcomma }}</p>
+                <p><strong>Total:</strong> {{ total_carrito }}</p>
             </div>
         </div>
     </div>
 </div>
-
 {% endblock %}

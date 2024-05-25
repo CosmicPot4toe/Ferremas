@@ -193,19 +193,10 @@
                         <p class="card-text">{{ value.nombre }}</p>
                         <p class="card-text">Cantidad: {{ value.cantidad }}</p>
                         <p class="card-text">Precio unitario:
-                            {% if currency == 'USD' %}
-                            ${{ value.precio_base|floatformat:2 }} {{ currency }}
-                            {% else %}
-                            ${{ value.precio_base|intcomma }} {{ currency }}
-                            {% endif %}
+                            ${{ value.precio_base_formatted }} {{ currency }}
                         </p>
                         <p class="card-text">Precio total: 
-                            {% if currency == 'USD' %}
-                            ${{ value.precio_total|floatformat:2 }} {{ currency }}
-                            {% else %}
-                            ${{ value.precio_total|intcomma }} {{ currency }}
-                            {% endif %}
-                        </p>
+                            ${{ value.precio_total_formatted }} {{ currency }}
                     </div>
                 </div>
                 <hr>
@@ -234,7 +225,7 @@
                 </div>
                 <div class="col text-end">
                     <h5>
-                        ${{ total_carrito_formatted }} {{ currency }}
+                        {{ total_carrito_formatted }} 
                     </h5>
                 </div>
             </div>

@@ -60,6 +60,7 @@ def index(request):
     data ={
         'productos': productos,
         'currency': currency,
+        'dollar_value':dollar_value
     }
     return render(request, 'app/index.html', data)
 
@@ -274,30 +275,104 @@ def tiendas_disponibles(request):
 
     return JsonResponse({'tiendas': tiendas_list})
 
-def commit(request):
+
     token = request.GET.get("token_ws")
     response = Transaction().commit(token=token)
     
     total_carrito_value = total_carrito(request)
-
-    carrito_dict = request.session.get("carrito", {})
+    if isinstance(total_carrito_value, dict):
+        total_carrito_value = total_carrito_value.get('total_carrito', 0)
     
+    carrito_dict = request.session.get("carrito", {})
     numero_pedido = request.session.get('buy_order')
-
     pedido = Pedido.objects.get(numero_pedido=numero_pedido)
-
-    # Convertir la fecha de la transacción en un objeto datetime
     transaction_date = datetime.strptime(response['transaction_date'], "%Y-%m-%dT%H:%M:%S.%fZ")
     
-    # request.session.pop('carrito', None)
-    # request.session.pop('envio_datos', None)
+    currency = request.session.get('currency', 'CLP')
+    mindicador = Mindicador('dolar')
+    dollar_value = mindicador.get_dollar_value_today()
+
+    # Realizar copia de carrito_dict para manipulación de precios sin afectar el carrito original
+    carrito_dict_converted = carrito_dict.copy()
+
+    # Ajustar los precios según la divisa seleccionada solo para la vista
+    for key, item in carrito_dict_converted.items():
+        if currency == 'USD' and dollar_value:
+            item['precio_base'] = item['precio_base'] / dollar_value
+            item['precio_total'] = item['precio_total'] / dollar_value
+
+    if currency == 'USD' and dollar_value:
+        total_carrito_value = total_carrito_value / dollar_value
 
     return render(request, 'app/pago.html', {
         'response': response,
-        'carrito_dict': carrito_dict,
+        'carrito_dict': carrito_dict_converted,
         'total_carrito': total_carrito_value,
+        'currency': currency,
         'pedido': pedido,
-        'transaction_date': transaction_date  # Pasar la fecha convertida
+        'transaction_date': transaction_date
+    })
+
+
+def commit(request):
+    token = request.GET.get("token_ws")
+    response = Transaction().commit(token=token)
+    
+    carrito_dict = request.session.get("carrito", {})
+    numero_pedido = request.session.get('buy_order')
+    pedido = Pedido.objects.get(numero_pedido=numero_pedido)
+    transaction_date = datetime.strptime(response['transaction_date'], "%Y-%m-%dT%H:%M:%S.%fZ")
+    
+    currency = request.session.get('currency', 'CLP')
+    mindicador = Mindicador('dolar')
+    dollar_value = mindicador.get_dollar_value_today()
+
+    # Rescatar los detalles del pedido guardados en CLP
+    detalles_pedido = DetallePedido.objects.filter(pedido=pedido)
+    detalles_pedido_dict = []
+    total_carrito_value = 0  # Inicializar el total del carrito
+
+    for detalle in detalles_pedido:
+        producto_id = detalle.producto_nombre
+        carrito_item = next((item for key, item in carrito_dict.items() if item.get('nombre') == producto_id), None)
+        imagen_url = carrito_item['imagen_url'] if carrito_item else ''
+
+        detalle_dict = {
+            'producto_nombre': detalle.producto_nombre,
+            'cantidad': detalle.cantidad,
+            'precio_unitario': detalle.precio_unitario,
+            'precio_total': detalle.precio_total,
+            'imagen_url': imagen_url,
+        }
+        total_carrito_value += detalle.precio_total  # Calcular el total del carrito en CLP
+
+        # Ajustar los precios según la divisa seleccionada solo para la visualización
+        if currency == 'USD' and dollar_value:
+            detalle_dict['precio_unitario'] = detalle.precio_unitario / dollar_value
+            detalle_dict['precio_total'] = detalle.precio_total / dollar_value
+        
+        detalles_pedido_dict.append(detalle_dict)
+
+    # Ajustar el total del carrito según la divisa seleccionada solo para la visualización
+    if currency == 'USD' and dollar_value:
+        total_carrito_value = total_carrito_value / dollar_value
+
+    # Formatear el total del carrito para la visualización
+    if currency == 'USD':
+        total_carrito_formatted = f'${total_carrito_value:,.2f} USD'
+    else:
+        total_carrito_formatted = f'${intcomma(int(total_carrito_value))} CLP'
+
+    request.session.pop('carrito', None)
+    request.session.pop('envio_datos', None)
+    
+    return render(request, 'app/pago.html', {
+        'response': response,
+        'carrito_dict': detalles_pedido_dict,  # Usar los detalles del pedido convertidos
+        'total_carrito': total_carrito_formatted,
+        'currency': currency,
+        'pedido': pedido,
+        'transaction_date': transaction_date
     })
 
 def envio(request: HttpRequest):
@@ -315,20 +390,21 @@ def envio(request: HttpRequest):
         producto = Producto.objects.get(id_producto=value["id"])
         value["precio_base"] = producto.precio
         value["precio_total"] = producto.precio * value["cantidad"]
-        
+
         # Ajustar los precios según la divisa seleccionada
         if currency == 'USD' and dollar_value:
             value["precio_base"] = value["precio_base"] / dollar_value
             value["precio_total"] = value["precio_total"] / dollar_value
-        
+
+        value["precio_base_formatted"] = floatformat(value["precio_base"], 2) if currency == 'USD' else intcomma(value["precio_base"])
+        value["precio_total_formatted"] = floatformat(value["precio_total"], 2) if currency == 'USD' else intcomma(value["precio_total"])
+
         value["imagen_url"] = producto.imagen_url
         value["marca"] = producto.marca
         total_carrito += value["precio_total"]
 
     # Calcular IVA y Neto en CLP
-    total_carrito_clp = total_carrito
-    if currency == 'USD' and dollar_value:
-        total_carrito_clp = total_carrito * dollar_value
+    total_carrito_clp = total_carrito if currency == 'CLP' else total_carrito * dollar_value
 
     iva = total_carrito_clp * 0.19
     neto = total_carrito_clp * 0.81
@@ -379,8 +455,8 @@ def envio(request: HttpRequest):
                     pedido=pedido,
                     producto_nombre=value["nombre"],
                     cantidad=value["cantidad"],
-                    precio_unitario=value["precio_base"],
-                    precio_total=value["precio_total"],
+                    precio_unitario=producto.precio,  # Guardar siempre en CLP
+                    precio_total=producto.precio * value["cantidad"],  # Guardar siempre en CLP
                     imagen_url=value["imagen_url"]
                 )
                 detalle_pedido.save()
@@ -408,10 +484,9 @@ def envio(request: HttpRequest):
 
     # Formatear total_carrito_clp y total_carrito según la divisa seleccionada
     if currency == 'CLP':
-        total_carrito_formatted = intcomma(int(total_carrito_clp))
+        total_carrito_formatted = f"${intcomma(int(total_carrito_clp))} CLP"
     else:
-        total_carrito_formatted = floatformat(total_carrito, 2)
-
+        total_carrito_formatted = f"${floatformat(total_carrito, 2)} USD"
 
     context = {
         "carrito_dict": carrito_dict,
@@ -426,19 +501,64 @@ def envio(request: HttpRequest):
     }
 
     return render(request, 'app/envio.html', context)
-
-
 @login_required
 def revisar_pedidos(request):
     pedidos = Pedido.objects.filter(email=request.user.email)
     
+    currency = request.session.get('currency', 'CLP')
+    mindicador = Mindicador('dolar')
+    dollar_value = mindicador.get_dollar_value_today()
+
+    pedidos_detalles = []
+
     for pedido in pedidos:
         total_pedido = pedido.detallepedido_set.aggregate(total=Sum('precio_total'))['total']
         pedido.total_pedido = total_pedido if total_pedido else 0
 
+        detalles = []
+        for detalle in pedido.detallepedido_set.all():
+            if currency == 'USD' and dollar_value:
+                detalle_precio_unitario = detalle.precio_unitario / dollar_value
+                detalle_precio_total = detalle.precio_total / dollar_value
+                detalle_precio_unitario_formatted = f"${detalle_precio_unitario:,.2f} USD"
+                detalle_precio_total_formatted = f"${detalle_precio_total:,.2f} USD"
+            else:
+                detalle_precio_unitario_formatted = f"${detalle.precio_unitario:,} CLP"
+                detalle_precio_total_formatted = f"${detalle.precio_total:,} CLP"
+            
+            detalles.append({
+                'producto_nombre': detalle.producto_nombre,
+                'cantidad': detalle.cantidad,
+                'precio_unitario_formatted': detalle_precio_unitario_formatted,
+                'precio_total_formatted': detalle_precio_total_formatted,
+                'imagen_url': detalle.imagen_url
+            })
+        
+        if currency == 'USD' and dollar_value:
+            pedido_total_pedido_formatted = f"${pedido.total_pedido / dollar_value:,.2f} USD"
+        else:
+            pedido_total_pedido_formatted = f"${pedido.total_pedido:,} CLP"
+
+        pedidos_detalles.append({
+            'numero_pedido': pedido.numero_pedido,
+            'fecha': pedido.fecha,
+            'total_pedido_formatted': pedido_total_pedido_formatted,
+            'detalles': detalles,
+            'nombre': pedido.nombre,
+            'direccion': pedido.direccion,
+            'ciudad': pedido.ciudad,
+            'region': pedido.region,
+            'codigo_postal': pedido.codigo_postal,
+            'pais': pedido.pais,
+            'telefono': pedido.telefono,
+            'metodo_envio': pedido.metodo_envio
+        })
+
     context = {
-        'pedidos': pedidos,
-        }
+        'pedidos_detalles': pedidos_detalles,
+        'currency': currency,
+        'dollar_value': dollar_value,
+    }
     return render(request, 'app/revisar_pedidos.html', context)
 
 def set_currency(request, currency):
