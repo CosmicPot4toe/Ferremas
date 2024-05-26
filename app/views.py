@@ -506,6 +506,7 @@ def envio(request: HttpRequest):
     }
 
     return render(request, 'app/envio.html', context)
+
 @login_required
 def revisar_pedidos(request):
     pedidos = Pedido.objects.filter(email=request.user.email)
@@ -559,10 +560,31 @@ def revisar_pedidos(request):
             'metodo_envio': pedido.metodo_envio
         })
 
+    # Obtener productos recomendados
+    productos_recomendados = list(Producto.objects.all())
+    random.shuffle(productos_recomendados)
+    productos_recomendados = productos_recomendados[:3]  # Mostrar 4 productos recomendados  # Ejemplo: seleccionar los primeros 3 productos
+
+    productos_recomendados_data = []
+    for producto in productos_recomendados:
+        if currency == 'USD' and dollar_value:
+            producto_precio_formatted = f"${producto.precio / dollar_value:,.2f} USD"
+        else:
+            producto_precio_formatted = f"${producto.precio:,} CLP"
+
+        productos_recomendados_data.append({
+            'id': producto.id_producto,
+            'nombre': producto.nombre,
+            'descripcion': producto.descripcion,
+            'imagen_url': producto.imagen_url,
+            'precio_formatted': producto_precio_formatted,
+        })
+
     context = {
         'pedidos_detalles': pedidos_detalles,
         'currency': currency,
         'dollar_value': dollar_value,
+        'productos_recomendados': productos_recomendados_data,
     }
     return render(request, 'app/revisar_pedidos.html', context)
 
