@@ -43,6 +43,10 @@ img {
     text-align: center;
     margin-bottom: 40px;
 }
+.button-container {
+    text-align: center;
+    margin-top: 20px;
+}
 </style>
 <title>Ferremas | Pago realizado</title>
 <br><br><br><br><br>
@@ -140,6 +144,9 @@ img {
                 <p><strong>Total:</strong> {{ total_carrito }}</p>
             </div>
         </div>
+    </div>
+    <div class="button-container">
+        <a href="{% url 'revisar_pedidos' %}" class="btn btn-primary">Ver mis pedidos</a>
     </div>
 </div>
 {% endblock %}

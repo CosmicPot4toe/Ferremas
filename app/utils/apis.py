@@ -6,11 +6,8 @@ class Mindicador:
     def __init__(self, indicador):
         self.indicador = indicador
 
-    def get_indicator_value(self, date=None):
-        if date is None:
-            # Obtener la fecha del día anterior
-            date = (datetime.now() - timedelta(days=1)).strftime('%d-%m-%Y')
-        url = f'https://mindicador.cl/api/{self.indicador}/{date}'
+    def get_indicator_value(self):
+        url = f'https://mindicador.cl/api/{self.indicador}'
         response = requests.get(url)
         data = json.loads(response.text.encode("utf-8"))
         return data
@@ -21,6 +18,12 @@ class Mindicador:
         if "serie" in data and len(data["serie"]) > 0:
             dollar_value = data["serie"][0]["valor"]
         return dollar_value
+
+# Uso de la clase Mindicador para obtener el valor más reciente del dólar
+mindicador = Mindicador('dolar')
+dollar_value = mindicador.get_dollar_value_today()
+print(f'El valor más reciente del dólar es: {dollar_value}')
+
 
 class PhpApi:
 	url = 'http://localhost/php_api/api/service.php?'

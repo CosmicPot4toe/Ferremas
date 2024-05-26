@@ -49,13 +49,14 @@ def buscar(request):
 
 def index(request):
     # Obtener los últimos 5 productos añadidos, ordenados por id_producto descendente
-    productos = PhpApi('Producto').getAll()[-5:]
+    productos = Producto.objects.all().order_by('-id_producto')[:5]
+    #productos = PhpApi('Producto').getAll()[-5:]
     mindicador = Mindicador('dolar')
     dollar_value = mindicador.get_dollar_value_today()
     currency = request.session.get('currency', 'CLP')
     for producto in productos:
         if currency == 'USD' and dollar_value:
-            producto['precio'] = producto['precio'] / dollar_value
+            producto.precio = producto.precio / dollar_value
 
     data ={
         'productos': productos,
@@ -134,6 +135,7 @@ def loginP(req: HttpRequest):
     if req.method == 'POST':
         usern_or_email = req.POST.get('username_or_email')
         passw = req.POST.get('password')
+        next_url = req.POST.get('next', 'index')
 
         print("Username or email:", usern_or_email)  # Mensaje de depuración
         print("Password:", passw)  # Mensaje de depuración
@@ -152,15 +154,18 @@ def loginP(req: HttpRequest):
             if user is not None:
                 print("Usuario autenticado:", user.username)  # Mensaje de depuración
                 login(req, user)
-                return redirect('index')
+                return redirect(next_url)
             else:
                 print("Usuario no autenticado")  # Mensaje de depuración
                 msgs.info(req, 'Nombre de usuario, correo electrónico o contraseña incorrectos')
         else:
             print("Nombre de usuario o contraseña no proporcionados")  # Mensaje de depuración
             msgs.info(req, 'Nombre de usuario o contraseña no proporcionados')
-            
-    return render(req, 'registration/login.html')
+
+    else:
+        next_url = req.GET.get('next', 'index')
+
+    return render(req, 'registration/login.html', {'next': next_url})
 
 def signup(request):
     if request.method == 'POST':
@@ -365,7 +370,7 @@ def commit(request):
 
     request.session.pop('carrito', None)
     request.session.pop('envio_datos', None)
-    
+
     return render(request, 'app/pago.html', {
         'response': response,
         'carrito_dict': detalles_pedido_dict,  # Usar los detalles del pedido convertidos

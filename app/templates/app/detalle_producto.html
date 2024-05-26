@@ -1,71 +1,48 @@
 {% extends 'app/base.html' %}
-
 {% load static %}
-
 {% load humanize %}
-{% block contenido %}
-<title>Ferremas | Producto {{producto.nombre}}</title>
-<br><br><br><br><br><br>
-<div class="container-flex">
-    <div class="row">
-        <div class="col-12 col-md-6 col-lg-6">
-            <span>
-                <a href="{% url 'index' %}" style="color: grey; text-decoration: none;">Index</a>/ 
-                <a href="{% url 'categorias' id=id_categoria %}" style="color: grey; text-decoration: none;">{{ nombre_categoria }}</a>/ 
-                <span style="color: black; font-weight: bold;">{{ producto.nombre }}</span>
-            </span>
 
-            <!-- Aquí va la imagen del producto -->
-            <img src="{{producto.imagen_url}}" alt="Imagen del Producto" class="img-fluid" style="border-style: solid; border-width: 1px; border-radius: 2%; border-color: rgba(0, 0, 0, 0.253);">
+{% block contenido %}
+<title>Ferremas | Producto {{ producto.nombre }}</title>
+<br><br><br><br>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'index' %}" style="color: grey;">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'categorias' id=id_categoria %}" style="color: grey;">{{ nombre_categoria }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ producto.nombre }}</li>
+                </ol>
+            </nav>
+            <img src="{{ producto.imagen_url }}" alt="Imagen del Producto" class="img-fluid border rounded p-3">
         </div>
-        <div class="col-12 col-md-6 col-lg-6" style="text-align: left;">
-            <!-- Detalles del producto -->
-            <br>
-            <h3>{{producto.marca}}</h3>
-            <h1>{{producto.nombre}}</h1>
-            <hr style="width: 700px;">
-            <!-- Descripción del producto en un cuadro -->
-            <p>Descripción del producto</p>
-            <div class="descripcion-container" style="text-align: left; margin-left: initial; font-size: 12px;">
+        <div class="col-12 col-md-6">
+            <h3 class="text-muted">{{ producto.marca }}</h3>
+            <h1 class="display-4">{{ producto.nombre }}</h1>
+            <hr>
+            <h5>Descripción del producto</h5>
+            <div class="border p-3 rounded" style="font-size: 14px;">
                 <p>{{ producto.descripcion|linebreaks }}</p>
             </div>
-            <!-- Precio -->
             <br>
-            <div class="precio-container ">
-                <h3 class="card-text">Precio: <strong>
-                    {% if currency == 'USD' %}
-                        ${{ producto.precio|floatformat:2 }} USD
-                    {% else %}
-                        ${{ producto.precio|stringformat:".0f"|intcomma}} CLP
-                    {% endif %}
-                </strong>/u</h3>
-            </div>
-            <br>
-            <p style="font-size: 12px;">Codigo del producto: {{producto.codigo_producto}}</p>
-            
-            <!-- Cuadro de cantidad de productos -->
+            <h3 class="text-success">Precio: 
+                {% if currency == 'USD' %}
+                    ${{ producto.precio|floatformat:2 }} USD
+                {% else %}
+                    ${{ producto.precio|stringformat:".0f"|intcomma }} CLP
+                {% endif %}
+            </h3>
+            <p class="text-muted">Código del producto: {{ producto.codigo_producto }}</p>
             <form action="{% url 'add' producto.id_producto %}" method="post">
                 {% csrf_token %}
-                <div class="input-group mb-3" style="width: 120px;;">
+                <center><div class="input-group mb-3" style="width: 200px;">
                     <button class="btn btn-outline-secondary btn-decrement" type="button">-</button>
-                    <input type="number" name="cantidad" class="form-control" value="1" min="1" style="height: 30px; ">
+                    <input type="number" name="cantidad" class="form-control text-center" value="1" min="1" style="height: 30px; width: 50px;">
                     <button class="btn btn-outline-secondary btn-increment" type="button">+</button>
-                </div>
-                
-                <div class="container mt-2">
-                    <h5>Stock por Tienda: </h5>
-                    <hr>
-                    <ul>
-                        {% for tienda, cantidad in stocks_por_tienda.items %}
-                        <li>{{ tienda }}: Stock {{ cantidad }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-
-                <div class="btn-group mb-3 ms-3" role="group">
-                    <button type="submit" class="btn btn-sm btn-success"  style="margin-right: 10px;">Añadir al carrito</button>
-                    <a class="btn btn-primary btn-sm" href="">Comprar ahora</a>
-                </div>
+                </div></center>
+                <button type="submit" class="btn btn-success btn-lg">Añadir al carrito</button>
+                <a class="btn btn-primary btn-lg ms-3" href="#">Comprar ahora</a>
             </form>
         </div>
     </div>
@@ -73,27 +50,27 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-    const decrementBtns = document.querySelectorAll('.btn-decrement');
-    const incrementBtns = document.querySelectorAll('.btn-increment');
-    const cantidadInputs = document.querySelectorAll('input[name="cantidad"]');
+        const decrementBtns = document.querySelectorAll('.btn-decrement');
+        const incrementBtns = document.querySelectorAll('.btn-increment');
+        const cantidadInputs = document.querySelectorAll('input[name="cantidad"]');
 
-    decrementBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const cantidadInput = this.nextElementSibling;
-            let cantidad = parseInt(cantidadInput.value);
-            cantidad = cantidad > 1 ? cantidad - 1 : 1;
-            cantidadInput.value = cantidad;
+        decrementBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const cantidadInput = this.nextElementSibling;
+                let cantidad = parseInt(cantidadInput.value);
+                cantidad = cantidad > 1 ? cantidad - 1 : 1;
+                cantidadInput.value = cantidad;
+            });
+        });
+
+        incrementBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const cantidadInput = this.previousElementSibling;
+                let cantidad = parseInt(cantidadInput.value);
+                cantidad += 1;
+                cantidadInput.value = cantidad;
+            });
         });
     });
-
-    incrementBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const cantidadInput = this.previousElementSibling;
-            let cantidad = parseInt(cantidadInput.value);
-            cantidad += 1;
-            cantidadInput.value = cantidad;
-        });
-    });
-});
 </script>
 {% endblock %}

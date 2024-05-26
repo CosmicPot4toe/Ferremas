@@ -22,7 +22,7 @@
               <div class="card-body" style="height: 460px">
                   <h5 class="card-title">{{producto.marca}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{producto.nombre}}</h6>
-                  <center><img src="{{producto.imagen_url}}" class="card-img-top" alt="Imagen del Producto" style="width: 150px;"></center>
+                  <center> <a href="{% url 'detalle_producto' producto.id_producto %}"> <img src="{{producto.imagen_url}}" class="card-img-top" alt="Imagen del Producto" style="width: 150px;"></center></a>
                   <p class="card-text">Precio: <strong>
                     {% if currency == 'USD' %}
                         ${{ producto.precio|floatformat:2 }} USD
