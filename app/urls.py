@@ -20,5 +20,7 @@ urlpatterns = [
     path('pago/commit/', views.commit, name='commit'),
     path('revisar_pedidos/', views.revisar_pedidos, name='revisar_pedidos'),
     path('set_currency/<str:currency>/', views.set_currency, name='set_currency'),
+    path('contacto/',contacto, name="contacto"),
+    path('nosotros/',nosotros, name="nosotros"),
 
 ]

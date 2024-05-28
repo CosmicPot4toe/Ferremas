@@ -591,3 +591,23 @@ def revisar_pedidos(request):
 def set_currency(request, currency):
     request.session['currency'] = currency
     return redirect(request.META.get('HTTP_REFERER', 'index'))
+
+def contacto (request):
+    data = {
+        'form': ContactosFrom()
+    }
+
+    if request.method == 'POST':
+        formulario = ContactosFrom (data=request.POST)
+        if formulario.is_valid():
+            formulario.save()
+            msgs.success(request,"¡Enviado correctamente! Recibira su respuesta a su correo electronico en breve!")
+            return redirect(to="index")
+        else:
+            data["form"] = formulario
+
+    return render(request, 'app/contacto.html',data )
+
+
+def nosotros (request):
+    return render(request, 'app/nosotros.html')

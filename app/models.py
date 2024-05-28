@@ -91,3 +91,20 @@ class DetallePedido(models.Model):
 
     def __str__(self):
         return f"Detalle del Pedido #{self.pedido.numero_pedido} - {self.producto_nombre}"
+    
+opciones_consulta = [
+    [0, "Consulta General"],
+    [1, "Cotización"],
+    [2, "Servicio al cliente"],
+
+]
+
+class Contactos(models.Model):
+    nombre = models.CharField(max_length=50)
+    email = models.EmailField()
+    tipo_consulta = models.IntegerField(choices=opciones_consulta)
+    mensaje = models.TextField()
+    avisos = models.BooleanField()
+
+    def __str__(self):
+        return self.nombre

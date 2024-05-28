@@ -5,21 +5,43 @@
 
 {% block contenido %}
 <title>Ferremas | Inicio</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
 <link rel="stylesheet" href="{% static 'app/css/style.css' %}">
 
-<br><br><br><br><br><br>
+<br><br><br><br>
 
 
-<div class="container-flex">
-    <div class="texto-derecha text-end"> <!-- Aquí agregamos la clase text-end -->
-      
-      
-        <p>Nosotros</p>  
-    </div>
-    
+<style>
+  .container-flex-nosotros {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      height: 100px;
+      background-color: #140020;
+      padding: 20px;
+  }
+  .texto-derecha {
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.2rem;
+      color: white;
+      margin-right: 20px;
+      text-align: right;
+      transition: transform 0.3s ease, color 0.3s ease;
+  }
+  .texto-derecha:hover {
+      transform: scale(1.1);
+      color: #6351ce;
+  }
+</style>
+
+<!-- HTML Structure -->
+<div class="container-flex-nosotros">
+  <div class="texto-derecha">
+     <a href="{% url 'nosotros' %}" style="color: white; text-decoration: none;">Nosotros</a>
+  </div>
 </div>
 
-<hr>
 
   <div id="carouselExampleIndicators" class="carousel slide">
     <div class="carousel-indicators">
@@ -218,6 +240,9 @@
     $(this).removeClass("hover");
   }
 );
+
+AOS.init({
+    });
 
 </script>
 {% endblock %}

@@ -327,14 +327,14 @@
             document.getElementById('detalle-envio').style.display = 'none';
             document.getElementById('metodo-envio').style.display = 'none';
             document.getElementById('metodos-envio').style.display = 'none';
-            document.getElementById('pago').style.display = 'none';
+            document.getElementById('pago').style.display = 'block';
         });
 
         document.getElementById('cambiar-metodo-envio').addEventListener('click', function(e) {
             e.preventDefault();
             document.getElementById('metodo-envio').style.display = 'block';
             document.getElementById('metodos-envio').style.display = 'none';
-            document.getElementById('pago').style.display = 'none';
+            document.getElementById('pago').style.display = 'block';
             document.getElementById('detalles-envio').style.display = 'none';
             document.getElementById('detalle-envio').style.display = 'block';
         });

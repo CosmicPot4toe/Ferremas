@@ -1,6 +1,6 @@
 from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
-from .models import User
+from .models import *
 from django import forms
 
 
@@ -21,3 +21,13 @@ class DetalleEnvioForm(forms.Form):
     rut = forms.CharField(max_length=12, label='RUT')
     metodo_envio = forms.CharField(max_length=100, label='Método de Envío')
     tienda_seleccionada = forms.CharField(max_length=100, required=False, label='Tienda Seleccionada')
+
+class ContactosFrom (forms.ModelForm):
+
+    #nombre = forms.CharField(widget=forms.TextInput(attrs={"class":"form-control"}))
+    
+
+    class Meta:
+        model = Contactos
+        #fields = ["nombre","correo","tipo_consulta","mensaje","avisos"] para dar el orden que uno quiera
+        fields = '__all__'

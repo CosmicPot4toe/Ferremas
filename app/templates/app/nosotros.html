@@ -1,0 +1,111 @@
+{% extends 'app/base.html' %}
+
+{% load static %}
+
+{% block contenido %}
+<!-- Load AOS Library for Animations -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
+
+<!-- Custom CSS -->
+<style>
+    .about-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px;
+    }
+    .about-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .about-header h1 {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        font-family: 'Roboto', sans-serif;
+    }
+    .about-header p {
+        font-size: 1.2rem;
+        color: #555;
+        font-family: 'Roboto', sans-serif;
+    }
+    .about-content {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        align-items: center;
+    }
+    .about-image {
+        flex: 1;
+        max-width: 500px;
+        text-align: center;
+    }
+    .about-image img {
+        width: 100%;
+        border-radius: 10px;
+    }
+    .about-text {
+        flex: 2;
+        text-align: center;
+    }
+    .about-text p {
+        font-size: 1.3rem;
+        color: #333;
+        line-height: 1.6;
+        font-family: 'Roboto', sans-serif;
+    }
+    .mission-vision {
+        margin-top: 40px;
+        text-align: center;
+    }
+    .mission-vision h2 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+        font-family: 'Roboto', sans-serif;
+    }
+    .mission-vision p {
+        font-size: 1rem;
+        color: #333;
+        line-height: 1.6;
+        font-family: 'Roboto', sans-serif;
+    }
+</style>
+
+<br><br><br><br>
+<div class="about-container">
+    <div class="about-header" data-aos="fade-up">
+        <h1>Sobre Nosotros</h1>
+        <p>Conoce más sobre Ferremas, nuestra historia, misión y visión.</p>
+    </div>
+    <div class="about-content">
+        <div class="about-image" data-aos="fade-right">
+            <img src="{% static 'app/img/ferremas_edificio.jpg' %}" alt="Ferremas Building">
+        </div>
+        <div class="about-text" data-aos="fade-left">
+            <p>
+                Ferremas es una empresa dedicada a la venta de herramientas y materiales de construcción. Con años de experiencia en el mercado, nos hemos posicionado como una de las principales ferreterías en la región. Nuestro compromiso es ofrecer productos de alta calidad a precios competitivos, siempre buscando la satisfacción de nuestros clientes.
+            </p>
+            <p>
+                Nos enorgullece contar con un equipo de profesionales capacitados, listos para asesorar y ayudar a nuestros clientes en sus proyectos. En Ferremas, valoramos la honestidad, la integridad y el compromiso con la excelencia.
+            </p>
+        </div>
+    </div>
+    <div class="mission-vision">
+        <h2 data-aos="fade-up">Nuestra Misión</h2>
+        <p data-aos="fade-up">
+            Proveer soluciones integrales en herramientas y materiales de construcción, garantizando calidad, innovación y servicio excepcional, para contribuir al éxito de los proyectos de nuestros clientes.
+        </p>
+        <h2 data-aos="fade-up">Nuestra Visión</h2>
+        <p data-aos="fade-up">
+            Ser la ferretería líder en el mercado, reconocida por nuestra excelencia en productos y servicios, y por nuestra contribución al desarrollo y crecimiento de la industria de la construcción.
+        </p>
+    </div>
+</div>
+
+<!-- Initialize AOS Library -->
+<script>
+    AOS.init({
+        duration: 1200,
+    });
+</script>
+{% endblock %}
