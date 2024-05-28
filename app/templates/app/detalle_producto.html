@@ -34,15 +34,17 @@
                 {% endif %}
             </h3>
             <p class="text-muted">Código del producto: {{ producto.codigo_producto }}</p>
-            <form action="{% url 'add' producto.id_producto %}" method="post">
+            <form method="post">
                 {% csrf_token %}
-                <center><div class="input-group mb-3" style="width: 200px;">
-                    <button class="btn btn-outline-secondary btn-decrement" type="button">-</button>
-                    <input type="number" name="cantidad" class="form-control text-center" value="1" min="1" style="height: 30px; width: 50px;">
-                    <button class="btn btn-outline-secondary btn-increment" type="button">+</button>
-                </div></center>
-                <button type="submit" class="btn btn-success btn-lg">Añadir al carrito</button>
-                <a class="btn btn-primary btn-lg ms-3" href="#">Comprar ahora</a>
+                <center>
+                    <div class="input-group mb-3" style="width: 200px;">
+                        <button class="btn btn-outline-secondary btn-decrement" type="button">-</button>
+                        <input type="number" name="cantidad" class="form-control text-center" value="1" min="1" style="height: 30px; width: 50px;">
+                        <button class="btn btn-outline-secondary btn-increment" type="button">+</button>
+                    </div>
+                </center>
+                <button type="submit" class="btn btn-success btn-lg" name="action" value="add_to_cart">Añadir al carrito</button>
+                <button type="submit" class="btn btn-primary btn-lg ms-3" name="action" value="buy_now">Comprar ahora</button>
             </form>
         </div>
     </div>

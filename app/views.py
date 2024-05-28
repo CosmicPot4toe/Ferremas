@@ -66,29 +66,19 @@ def index(request):
     return render(request, 'app/index.html', data)
 
 def detalle_producto(request, id):
-    # Obtener el producto por su ID
     producto = get_object_or_404(Producto, id_producto=id)
-
-    # Obtener el valor del dólar de hoy
     mindicador = Mindicador('dolar')
     dollar_value = mindicador.get_dollar_value_today()
-
-    # Obtener la divisa seleccionada de la sesión
     currency = request.session.get('currency', 'CLP')
 
-    # Ajustar el precio del producto según la divisa seleccionada
     if currency == 'USD' and dollar_value:
         producto.precio = producto.precio / dollar_value
 
-    # Obtener la categoría asociada al producto
     categoria_producto = producto.categoria
     categoria = categoria_producto.categoria
-
-    # Obtener todos los stocks para el producto
     stocks = Stock.objects.filter(producto=producto)
-
-    # Crear un diccionario para almacenar el stock por tienda
     stocks_por_tienda = {}
+
     for stock in stocks:
         tienda = stock.sucursal.nombre
         cantidad = stock.cantidad
@@ -97,7 +87,19 @@ def detalle_producto(request, id):
         else:
             stocks_por_tienda[tienda] = cantidad
 
-    # Preparar los datos a enviar al template
+    if request.method == 'POST':
+        cantidad = int(request.POST.get('cantidad', 1))
+        carrito = Carrito(request)
+        action = request.POST.get('action')
+
+        if action == 'add_to_cart':
+            carrito.agregar(producto, cantidad=cantidad)
+            return redirect('carrito')
+        elif action == 'buy_now':
+            carrito.vaciar()
+            carrito.agregar(producto, cantidad=cantidad)
+            return redirect('envio')
+
     data = {
         'producto': producto,
         'id_categoria': categoria.id_categoria,
@@ -105,8 +107,6 @@ def detalle_producto(request, id):
         'stocks_por_tienda': stocks_por_tienda,
         'currency': currency,
     }
-
-    # Renderizar el template con los datos
     return render(request, 'app/detalle_producto.html', data)
 
 def categorias(request, id):
@@ -420,7 +420,7 @@ def envio(request: HttpRequest):
             envio_datos = form.cleaned_data
             request.session['envio_datos'] = envio_datos
 
-            metodo_envio = 'envio-internacional' if envio_datos['pais'] != 'Chile' else request.POST.get('metodo_envio', '')
+            metodo_envio = 'envio-internacional' if envio_datos['pais'] != 'cl' else request.POST.get('metodo_envio', '')
             tienda_seleccionada_id = request.POST.get('tienda_select', '')
 
             if metodo_envio == 'retiro-tienda' and tienda_seleccionada_id:
@@ -611,3 +611,15 @@ def contacto (request):
 
 def nosotros (request):
     return render(request, 'app/nosotros.html')
+
+def add_and_checkout(request, Producto_id_producto):
+    if request.method == 'POST':
+        cantidad = int(request.POST.get('cantidad', 1))  # Obtener la cantidad del formulario POST
+        carrito = Carrito(request)
+        producto = Producto.objects.get(id_producto=Producto_id_producto)
+        carrito.agregar(producto, cantidad=cantidad)  # Pasar la cantidad al método agregar
+        return redirect('envio')  # Redirigir a la página de método de envío
+    else:
+        # Manejar el caso en que no se reciba una solicitud POST
+        # Por ejemplo, redirigir o mostrar un mensaje de error
+        return HttpResponse("Método no permitido")

@@ -51,3 +51,7 @@ class Carrito:
     def limpiar(self):
         self.session["carrito"] = {}
         self.session.modified = True
+        
+    def vaciar(self):
+        self.carrito = {}
+        self.guardar_carrito()

@@ -22,5 +22,6 @@ urlpatterns = [
     path('set_currency/<str:currency>/', views.set_currency, name='set_currency'),
     path('contacto/',contacto, name="contacto"),
     path('nosotros/',nosotros, name="nosotros"),
+    path('add_and_checkout/<int:Producto_id_producto>/', views.add_and_checkout, name='add_and_checkout'),
 
 ]
