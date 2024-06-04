@@ -56,7 +56,7 @@ def index(request):
     currency = request.session.get('currency', 'CLP')
     for producto in productos:
         if currency == 'USD' and dollar_value:
-            producto.precio = producto.precio / dollar_value
+            producto['precio']= producto['precio'] / dollar_value
 
     data ={
         'productos': productos,
