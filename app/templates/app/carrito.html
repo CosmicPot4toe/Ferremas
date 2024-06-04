@@ -1,0 +1,159 @@
+{% extends 'app/index.html' %}
+
+{% load static %}
+{% load humanize %}
+<link rel="stylesheet" href="{% static 'app/css/style.css' %}">
+
+<style>
+    .disabled-link {
+        pointer-events: none; /* Evita que el enlace sea clickeable */
+        opacity: 0.6; /* Reduce la opacidad para indicar visualmente que está desactivado */
+        cursor: not-allowed; /* Cambia el cursor para indicar que no se puede interactuar */
+    }
+</style>
+
+{% block contenido %}
+<title>Ferremas | Carrito</title>
+<br><br><br><br><br>
+<div class="container overflow-hidden" style="margin-top: 30px;">
+    <div class="col-12 justify-content-center">
+        <div class="steps text-center">
+            <div class="row">
+                <div class="col activo">
+                    <span class="steps_number">1</span>
+                    <div class="steps_title">Carro</div>
+                </div>
+                <div class="col">
+                    <span class="steps_number">2</span>
+                    <div class="steps_title">Metodo de envio</div>
+                </div>
+                <div class="col">
+                    <span class="steps_number">3</span>
+                    <div class="steps_title">Pago</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="contaier-flex">
+    <br>
+    <h3 class="text-md-start" style="margin-left: 120px;">Carrito de compra</h3>
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card" style="width: 1000px; margin-left: 50px;">
+                <div class="card-body">
+                    {% for key, value in carrito_dict.items %}
+                        <div class="position-relative">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <img src="{{ value.imagen_url }}" class="img-fluid" alt="{{ value.nombre }}" style="width: 150px; margin-left: 50px; margin-top: 30px;">
+                                </div>
+                                <div class="col-md-8">
+                                    <h8 class="card-title">{{ value.marca }}</h8>
+                                    <h5 class="card-text">{{ value.nombre }}</h5>
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <p class="card-text">Precio unitario: 
+                                                {% if currency == 'USD' %}
+                                                    ${{ value.precio_base|floatformat:2 }} USD
+                                                {% else %}
+                                                    ${{ value.precio_base|intcomma }} CLP
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p class="card-text">Precio total: 
+                                                {% if currency == 'USD' %}
+                                                    ${{ value.precio_total|floatformat:2 }} USD
+                                                {% else %}
+                                                    ${{ value.precio_total|intcomma }} CLP
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <br><br>
+                                    <div class="btn-group" role="group" aria-label="Botones de cantidad">
+                                        <a href="{% url 'sub' value.id %}" class="btn" style="color: white; background-color: #380e53; overflow: visible;">-</a>
+                                        <span class="btn">{{ value.cantidad }}</span>
+                                        <form action="{% url 'add' value.id %}" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn" style="color: white; background-color: #380e53;">+</button>
+                                        </form>
+                                    </div>
+                                    <a href="{% url 'del' value.id %}" class="btn btn-outline-danger position-absolute end-0">Eliminar</a>
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card mb-3" style="width: 500px;">
+                <div class="card-body">
+                    <h2 class="card-title">Resumen del pedido</h2>
+                    <hr>
+                    {% if currency == 'CLP' %}
+                        <div class="row">
+                            <div class="col">
+                                <h6 class="text-start">Neto:</h6>
+                            </div>
+                            <div class="col text-end">
+                                <p><span>${{ neto|intcomma }}</span></p> 
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <h6 class="text-start">IVA:</h6>
+                            </div>
+                            <div class="col text-end">
+                                <p><span>${{ iva|intcomma }}</span></p> 
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="row">
+                        <div class="col">
+                            <h4 class="text-start">TOTAL:</h4>
+                        </div>
+                        <div class="col text-end">
+                            <h5><span>
+                                {% if currency == 'USD' %}
+                                    ${{ total_carrito|floatformat:2 }} USD
+                                {% else %}
+                                    ${{ total_carrito|intcomma }} CLP
+                                {% endif %}
+                            </span></h5> 
+                        </div>
+                    </div>
+                    {% if carrito_dict %}
+                        <button id="boton-pago" class="btn btn-success w-100" onclick="window.location.href='{% url 'envio' %}'">Continuar con el pago</button>
+                    {% else %}
+                        <button id="boton-pago" class="btn btn-success w-100" disabled>Continuar con el pago</button>
+                        <br><br>
+                        <div class="col-12">
+                            <div class="alert alert-danger" role="alert">
+                                <p style="text-align: center;">Añade al menos un producto en el carrito</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="container-flex">
+                    <svg width="12" height="14" viewBox="0 0 11 14" xmlns="http://www.w3.org/2000/svg" class="sPUvcMC" data-hook="SecureCheckout.lock" aria-label="Pago seguro">
+                        <g fill="currentColor" fill-rule="evenodd">
+                            <path d="M0 12.79c0 .558.445 1.01.996 1.01h9.008A1 1 0 0 0 11 12.79V6.01c0-.558-.445-1.01-.996-1.01H.996A1 1 0 0 0 0 6.01v6.78Z"></path>
+                            <path d="M9.5 5v-.924C9.5 2.086 7.696.5 5.5.5c-2.196 0-4 1.586-4 3.576V5h1v-.924c0-1.407 1.33-2.576 3-2.576s3 1.17 3 2.576V5h1Z" fill-rule="nonzero"></path>
+                        </g>
+                    </svg>
+                    <span class="sbYRU74 oTAHjON---typography-11-runningText oTAHjON---priority-7-primary sgLtc0l" aria-hidden="false" data-hook="SecureCheckout.text">Pago seguro con Webpay</span>
+                </div>
+                <br>  
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

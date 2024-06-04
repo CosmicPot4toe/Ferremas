@@ -1,0 +1,78 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block contenido %}
+<title>Ferremas | Producto {{ producto.nombre }}</title>
+<br><br><br><br>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'index' %}" style="color: grey;">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'categorias' id=id_categoria %}" style="color: grey;">{{ nombre_categoria }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ producto.nombre }}</li>
+                </ol>
+            </nav>
+            <img src="{{ producto.imagen_url }}" alt="Imagen del Producto" class="img-fluid border rounded p-3">
+        </div>
+        <div class="col-12 col-md-6">
+            <h3 class="text-muted">{{ producto.marca }}</h3>
+            <h1 class="display-4">{{ producto.nombre }}</h1>
+            <hr>
+            <h5>Descripción del producto</h5>
+            <div class="border p-3 rounded" style="font-size: 14px;">
+                <p>{{ producto.descripcion|linebreaks }}</p>
+            </div>
+            <br>
+            <h3 class="text-success">Precio: 
+                {% if currency == 'USD' %}
+                    ${{ producto.precio|floatformat:2 }} USD
+                {% else %}
+                    ${{ producto.precio|stringformat:".0f"|intcomma }} CLP
+                {% endif %}
+            </h3>
+            <p class="text-muted">Código del producto: {{ producto.codigo_producto }}</p>
+            <form method="post">
+                {% csrf_token %}
+                <center>
+                    <div class="input-group mb-3" style="width: 200px;">
+                        <button class="btn btn-outline-secondary btn-decrement" type="button">-</button>
+                        <input type="number" name="cantidad" class="form-control text-center" value="1" min="1" style="height: 30px; width: 50px;">
+                        <button class="btn btn-outline-secondary btn-increment" type="button">+</button>
+                    </div>
+                </center>
+                <button type="submit" class="btn btn-success btn-lg" name="action" value="add_to_cart">Añadir al carrito</button>
+                <button type="submit" class="btn btn-primary btn-lg ms-3" name="action" value="buy_now">Comprar ahora</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const decrementBtns = document.querySelectorAll('.btn-decrement');
+        const incrementBtns = document.querySelectorAll('.btn-increment');
+        const cantidadInputs = document.querySelectorAll('input[name="cantidad"]');
+
+        decrementBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const cantidadInput = this.nextElementSibling;
+                let cantidad = parseInt(cantidadInput.value);
+                cantidad = cantidad > 1 ? cantidad - 1 : 1;
+                cantidadInput.value = cantidad;
+            });
+        });
+
+        incrementBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const cantidadInput = this.previousElementSibling;
+                let cantidad = parseInt(cantidadInput.value);
+                cantidad += 1;
+                cantidadInput.value = cantidad;
+            });
+        });
+    });
+</script>
+{% endblock %}

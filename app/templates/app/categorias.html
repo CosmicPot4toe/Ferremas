@@ -1,0 +1,84 @@
+{% extends 'app/base.html' %}
+
+{% load static %}
+
+{% block contenido %}
+<title>Ferremas | Categoria</title>
+<br><br><br><br><br>
+<div class="container-flex">
+    <h1 class="text-center">¡{{categoria.nombre}}!</h1>
+    <br>
+    <span class="text-end">
+        <a href="{% url 'index' %}" style="color: grey; text-decoration: none;">Index</a>/ 
+        <span style="color: black; font-weight: bold;">{{ categoria.nombre }}</span>
+    </span>
+    <div class="row justify-content-center">
+        {% load humanize %}
+        
+      {% for producto in productos %}
+      
+      <div class="col-md-2">
+          <div class="card">
+              <div class="card-body" style="height: 460px">
+                  <h5 class="card-title">{{producto.marca}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{producto.nombre}}</h6>
+                  <center> <a href="{% url 'detalle_producto' producto.id_producto %}"> <img src="{{producto.imagen_url}}" class="card-img-top" alt="Imagen del Producto" style="width: 150px;"></center></a>
+                  <p class="card-text">Precio: <strong>
+                    {% if currency == 'USD' %}
+                        ${{ producto.precio|floatformat:2 }} USD
+                    {% else %}
+                        ${{ producto.precio|stringformat:".0f"|intcomma }} CLP
+                    {% endif %}
+                </strong>/u</p>
+                  <form action="{% url 'add' producto.id_producto %}" method="post">
+                    {% csrf_token %}
+                    <div class="input-group mb-3">
+                        <button class="btn btn-outline-secondary btn-decrement" type="button">-</button>
+                        <input type="number" name="cantidad" class="form-control" value="1" min="1" style="height: 30px;">
+                        <button class="btn btn-outline-secondary btn-increment" type="button">+</button>
+                    </div>
+                    <br>
+
+                    <div class="btn-group mb-3 ms-3" role="group">
+                        <button type="submit" class="btn btn-sm btn-success" style="margin-right: 10px;">Añadir al carrito</button>
+                        
+                        <a class="btn btn-primary btn-sm" href="{% url 'detalle_producto' producto.id_producto %}">Más detalles</a>
+                    </div>
+                </form>
+                </div>
+            </div>
+            <br><br>
+        </div>
+        
+        {% endfor %}
+        
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const decrementBtns = document.querySelectorAll('.btn-decrement');
+    const incrementBtns = document.querySelectorAll('.btn-increment');
+    const cantidadInputs = document.querySelectorAll('input[name="cantidad"]');
+
+    decrementBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const cantidadInput = this.nextElementSibling;
+            let cantidad = parseInt(cantidadInput.value);
+            cantidad = cantidad > 1 ? cantidad - 1 : 1;
+            cantidadInput.value = cantidad;
+        });
+    });
+
+    incrementBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const cantidadInput = this.previousElementSibling;
+            let cantidad = parseInt(cantidadInput.value);
+            cantidad += 1;
+            cantidadInput.value = cantidad;
+        });
+    });
+});
+</script>
+
+{% endblock %}
