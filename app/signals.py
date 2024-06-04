@@ -6,7 +6,7 @@ import json
 
 modelTypes=Producto|CategoriaProducto|Categoria|Tienda|Stock
 
-def handle_pre_save(sender,instance:modelTypes, **kargs):
+def handle_post_save(sender,instance:modelTypes, **kargs):
 	#when its an update
 	MODEL_NAME=instance._meta.model.__name__
 	if not instance.tracker.newly_created:
@@ -14,7 +14,6 @@ def handle_pre_save(sender,instance:modelTypes, **kargs):
 		update={"id":instance.pk}
 		for k in instance.tracker.changed:
 			update[k]=getattr(instance,k)
-		#havent connected to the api cuz i dont ahve it on, gotta get a host lol
 		PhpApi(MODEL_NAME).put(update)
 	else:
 		vals={}
@@ -22,7 +21,8 @@ def handle_pre_save(sender,instance:modelTypes, **kargs):
 		for n in all_fields:
 			match n:
 				case "id_producto"|"id"|"id_tienda"|"id_categoria":
-					#todavia no guardamos en la bdd asiq la id no existe
+					#quiero la id de la instancia para ponerla en la api
+					vals['id']=instance.pk
 					continue
 				case "categoria"|"categoria_id"|"producto"|"sucursal":
 					#tengo un foreing key dame su id
@@ -34,7 +34,6 @@ def handle_pre_save(sender,instance:modelTypes, **kargs):
 def handle_Del(sender,instance:modelTypes, **kargs):
 	MODEL_NAME=instance._meta.model.__name__
 	PhpApi(MODEL_NAME).Del(instance.pk)
-	#print(MODEL_NAME,instance.pk)
 
 
 

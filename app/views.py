@@ -49,8 +49,8 @@ def buscar(request):
 
 def index(request):
     # Obtener los últimos 5 productos añadidos, ordenados por id_producto descendente
-    productos = Producto.objects.all().order_by('-id_producto')[:5]
-    #productos = PhpApi('Producto').getAll()[-5:]
+    #productos = Producto.objects.all().order_by('-id_producto')[:5]
+    productos = PhpApi('Producto').getAll()[-5:]
     mindicador = Mindicador('dolar')
     dollar_value = mindicador.get_dollar_value_today()
     currency = request.session.get('currency', 'CLP')
