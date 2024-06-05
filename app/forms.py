@@ -31,3 +31,17 @@ class ContactosFrom (forms.ModelForm):
         model = Contactos
         #fields = ["nombre","correo","tipo_consulta","mensaje","avisos"] para dar el orden que uno quiera
         fields = '__all__'
+
+class ActualizarEstadoEnvioForm(forms.ModelForm):
+    class Meta:
+        model = DetallePedido
+        fields = ['estado_envio']
+        widgets = {
+            'estado_envio': forms.Select(choices=[
+                ('Por Enviar', 'Por Enviar'),
+                ('Por Retirar', 'Por Retirar'),
+                ('Enviado', 'Enviado'),
+                ('Recogido', 'Recogido'),
+                ('Completado', 'Completado'),
+            ])
+        }

@@ -1,0 +1,82 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block contenido %}
+<br><br><br><br><br><br>
+<div class="container">
+    <h1 class="mb-4">Pedidos Pendientes</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Pedido</th>
+                <th>Cliente</th>
+                <th>Producto</th>
+                <th>Método de Envío</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pedido in pedidos %}
+            <tr>
+                <td>#{{ pedido.pedido.numero_pedido }}</td>
+                <td>{{ pedido.pedido.nombre }}</td>
+                <td>{{ pedido.producto_nombre }}</td>
+                <td>{{ pedido.pedido.metodo_envio }}</td>
+                <td>{{ pedido.estado_envio }}</td>
+                <td>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalActualizarEstado" data-pedido-id="{{ pedido.id }}">Actualizar Estado</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% include 'app/paginator.html' %}
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalActualizarEstado" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Actualizar Estado de Envío</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formActualizarEstado" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="hidden" name="pedido_id" id="pedidoId">
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    var modalActualizarEstado = document.getElementById('modalActualizarEstado');
+    modalActualizarEstado.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var pedidoId = button.getAttribute('data-pedido-id');
+        var modalTitle = modalActualizarEstado.querySelector('.modal-title');
+        var inputPedidoId = modalActualizarEstado.querySelector('#pedidoId');
+        
+        modalTitle.textContent = 'Actualizar Estado de Envío para Pedido #' + pedidoId;
+        inputPedidoId.value = pedidoId;
+    });
+</script>
+
+<style>
+    .modal-backdrop {
+        background-color: rgba(0,0,0,0.5);
+    }
+    .modal-dialog {
+        max-width: 500px;
+        margin: 1.75rem auto;
+    }
+    .modal-content {
+        border-radius: 10px;
+        padding: 20px;
+    }
+</style>
+{% endblock %}

@@ -23,5 +23,7 @@ urlpatterns = [
     path('contacto/',contacto, name="contacto"),
     path('nosotros/',nosotros, name="nosotros"),
     path('add_and_checkout/<int:Producto_id_producto>/', views.add_and_checkout, name='add_and_checkout'),
+    path('pedidos_pendientes/', pedidos_pendientes, name='pedidos_pendientes'),
+    path('actualizar_estado_envio/<int:detalle_pedido_id>/', actualizar_estado_envio, name='actualizar_estado_envio'),
 
 ]

@@ -20,6 +20,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest
 from transbank.webpay.webpay_plus.transaction import Transaction
 from django.contrib.humanize.templatetags.humanize import intcomma
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 def buscar(request):
@@ -578,3 +579,58 @@ def add_and_checkout(request, Producto_id_producto):
         # Manejar el caso en que no se reciba una solicitud POST
         # Por ejemplo, redirigir o mostrar un mensaje de error
         return HttpResponse("Método no permitido")
+    
+#cuenta de bodeguero bodeguero@ferremas.cl y contra Cavernicola1618
+
+@login_required
+def pedidos_pendientes(request):
+    if request.user.type != 'Bod':
+        return redirect('login')
+    
+    pedidos = DetallePedido.objects.filter(estado_envio__in=['Por Enviar', 'Por Retirar'])
+    
+    page = request.GET.get('page', 1)
+    paginator = Paginator(pedidos, 5)
+    
+    try:
+        pedidos = paginator.page(page)
+    except PageNotAnInteger:
+        pedidos = paginator.page(1)
+    except EmptyPage:
+        pedidos = paginator.page(paginator.num_pages)
+    
+    if request.method == 'POST':
+        pedido_id = request.POST.get('pedido_id')
+        pedido = get_object_or_404(DetallePedido, id=pedido_id)
+        form = ActualizarEstadoEnvioForm(request.POST, instance=pedido)
+        
+        if form.is_valid():
+            form.save()
+            return redirect('pedidos_pendientes')
+    else:
+        form = ActualizarEstadoEnvioForm()
+    
+    context = {
+        'pedidos': pedidos,
+        'paginator': paginator,
+        'form': form,
+    }
+    
+    return render(request, 'bodeguero/pedidos_pendientes.html', context)
+
+def actualizar_estado_envio(request, detalle_pedido_id):
+    detalle_pedido = get_object_or_404(DetallePedido, id=detalle_pedido_id)
+
+    if request.method == 'POST':
+        form = ActualizarEstadoEnvioForm(request.POST, instance=detalle_pedido)
+        if form.is_valid():
+            form.save()
+            return redirect('pedidos_pendientes')
+    else:
+        form = ActualizarEstadoEnvioForm(instance=detalle_pedido)
+
+    context = {
+        'form': form,
+        'detalle_pedido': detalle_pedido,
+    }
+    return render(request, 'bodeguero/actualizar_estado_envio.html', context)
