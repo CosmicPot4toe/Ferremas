@@ -25,7 +25,7 @@
                     <tr>
                         <td>{{ pedido.fecha|date:"d M Y" }}</td>
                         <td>#{{ pedido.numero_pedido }}</td>
-                        <td>Por Enviar</td>
+                        <td>{{ pedido.detalles.0.estado_envio }}</td>
                         <td>{{ pedido.total_pedido_formatted }}</td>
                         <td>
                             <button class="btn btn-primary" onclick="toggleDetalles({{ forloop.counter0 }})">
@@ -47,6 +47,7 @@
                                                     <p><strong>Cantidad:</strong> {{ detalle.cantidad }}</p>
                                                     <p><strong>Precio unitario:</strong> {{ detalle.precio_unitario_formatted }}</p>
                                                     <p><strong>Precio total:</strong> {{ detalle.precio_total_formatted }}</p>
+                                                    <p><strong>Estado de Envío:</strong> {{ detalle.estado_envio }}</p>
                                                 </div>
                                             </div>
                                         {% endfor %}
@@ -66,7 +67,7 @@
                                         <p>{{ pedido.ciudad }}, {{ pedido.region }} {{ pedido.codigo_postal }}</p>
                                         <p>{{ pedido.pais }}</p>
                                         <p>{{ pedido.telefono }}</p>
-                                        <p>{{pedido.metodo_envio}}</p>
+                                        <p>{{ pedido.metodo_envio }}</p>
                                     </div>
                                 </div>
                             </div>

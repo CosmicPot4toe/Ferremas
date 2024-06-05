@@ -88,6 +88,7 @@ class DetallePedido(models.Model):
     precio_unitario = models.IntegerField(default=0)
     precio_total = models.IntegerField(default=0)
     imagen_url = models.URLField(max_length=200, blank=True, null=True)
+    estado_envio = models.CharField(max_length=100)
 
     def __str__(self):
         return f"Detalle del Pedido #{self.pedido.numero_pedido} - {self.producto_nombre}"

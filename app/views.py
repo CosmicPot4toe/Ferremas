@@ -345,18 +345,14 @@ def envio(request: HttpRequest):
     carrito_dict = request.session.get("carrito", {})
     total_carrito = 0
 
-    # Obtener el valor del dólar de hoy
     mindicador = Mindicador('dolar')
     dollar_value = mindicador.get_dollar_value_today()
-
-    # Obtener la divisa seleccionada de la sesión
     currency = request.session.get('currency', 'CLP')
 
     for key, value in carrito_dict.items():
         producto = Producto.objects.get(id_producto=int(key))
         value["marca"] = producto.marca
 
-        # Ajustar los precios según la divisa seleccionada
         if currency == 'USD' and dollar_value:
             value["precio_unitario"] = value["precio_unitario"] / dollar_value
             value["precio_total"] = value["precio_total"] / dollar_value
@@ -366,9 +362,7 @@ def envio(request: HttpRequest):
 
         total_carrito += value["precio_total"]
 
-    # Calcular IVA y Neto en CLP
     total_carrito_clp = total_carrito if currency == 'CLP' else total_carrito * dollar_value
-
     iva = total_carrito_clp * 0.19
     neto = total_carrito_clp * 0.81
 
@@ -383,14 +377,15 @@ def envio(request: HttpRequest):
 
             if metodo_envio == 'retiro-tienda' and tienda_seleccionada_id:
                 tienda_seleccionada = Tienda.objects.get(id_tienda=tienda_seleccionada_id).nombre
+                estado_envio = 'Por Retirar'
             else:
                 tienda_seleccionada = ''
+                estado_envio = 'Por Enviar'
 
             buy_order = str(random.randrange(1000000, 99999999))
             session_id = str(random.randrange(1000000, 99999999))
             return_url = request.build_absolute_uri(reverse('commit'))
 
-            # Crear transacción con el total en CLP
             response = Transaction().create(buy_order, session_id, int(total_carrito_clp), return_url)
 
             request.session['webpay_response'] = response
@@ -419,9 +414,10 @@ def envio(request: HttpRequest):
                     pedido=pedido,
                     producto_nombre=value["nombre"],
                     cantidad=value["cantidad"],
-                    precio_unitario=producto.precio,  # Guardar siempre en CLP
-                    precio_total=producto.precio * value["cantidad"],  # Guardar siempre en CLP
-                    imagen_url=value["imagen_url"]
+                    precio_unitario=producto.precio,
+                    precio_total=producto.precio * value["cantidad"],
+                    imagen_url=value["imagen_url"],
+                    estado_envio=estado_envio
                 )
                 detalle_pedido.save()
 
@@ -430,7 +426,6 @@ def envio(request: HttpRequest):
         form = DetalleEnvioForm(initial=request.session.get('envio_datos', {}))
 
     productos_ids = [value["id"] for value in carrito_dict.values()]
-
     tiendas_disponibles = Tienda.objects.filter(
         id_tienda__in=Stock.objects.filter(
             producto_id__in=productos_ids, cantidad__gt=0
@@ -446,7 +441,6 @@ def envio(request: HttpRequest):
         if tiene_todos_productos:
             tiendas_validas.append(tienda)
 
-    # Formatear total_carrito_clp y total_carrito según la divisa seleccionada
     if currency == 'CLP':
         total_carrito_formatted = f"${intcomma(int(total_carrito_clp))} CLP"
     else:
@@ -465,6 +459,7 @@ def envio(request: HttpRequest):
     }
 
     return render(request, 'app/envio.html', context)
+
 
 @login_required
 def revisar_pedidos(request):
@@ -496,7 +491,8 @@ def revisar_pedidos(request):
                 'cantidad': detalle.cantidad,
                 'precio_unitario_formatted': detalle_precio_unitario_formatted,
                 'precio_total_formatted': detalle_precio_total_formatted,
-                'imagen_url': detalle.imagen_url
+                'imagen_url': detalle.imagen_url,
+                'estado_envio': detalle.estado_envio
             })
         
         if currency == 'USD' and dollar_value:
