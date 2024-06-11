@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib import messages as msgs
 from django.urls import reverse
-from flask import render_template, request
 from django.db.models import Sum
 from app.context_processor import total_carrito
 from .utils.apis import Mindicador, PhpApi

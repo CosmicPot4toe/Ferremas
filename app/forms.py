@@ -41,7 +41,6 @@ class ActualizarEstadoEnvioForm(forms.ModelForm):
                 ('Por Enviar', 'Por Enviar'),
                 ('Por Retirar', 'Por Retirar'),
                 ('Enviado', 'Enviado'),
-                ('Recogido', 'Recogido'),
                 ('Completado', 'Completado'),
             ])
         }
