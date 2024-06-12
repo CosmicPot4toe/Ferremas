@@ -24,8 +24,14 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def buscar(request):
     query = request.GET.get('q')
+    filtro_precio = request.GET.get('precio')
+    filtro_marca = request.GET.get('marca')
+    filtro_categoria = request.GET.get('categoria')
+
+    resultados = Producto.objects.all()
+
     if query:
-        resultados = Producto.objects.filter(
+        resultados = resultados.filter(
             Q(nombre__icontains=query) |
             Q(descripcion__icontains=query) |
             Q(marca__icontains=query) |
@@ -33,18 +39,38 @@ def buscar(request):
             Q(categoria__subcategoria__icontains=query) |
             Q(categoria__sub_tipo_producto__icontains=query)
         ).distinct()
-    else:
-        resultados = Producto.objects.none()
+
+    if filtro_precio:
+        precios = filtro_precio.split('-')
+        if len(precios) == 2:
+            resultados = resultados.filter(precio__gte=precios[0], precio__lte=precios[1])
+        elif len(precios) == 1:
+            resultados = resultados.filter(precio__gte=precios[0])
+
+    if filtro_marca:
+        resultados = resultados.filter(marca=filtro_marca)
+
+    if filtro_categoria:
+        resultados = resultados.filter(categoria__nombre_categoria=filtro_categoria)
 
     mindicador = Mindicador('dolar')
     dollar_value = mindicador.get_dollar_value_today()
     currency = request.session.get('currency', 'CLP')
+
     for producto in resultados:
         if currency == 'USD' and dollar_value:
             producto.precio = producto.precio / dollar_value
 
+    marcas = Producto.objects.values_list('marca', flat=True).distinct()
+    categorias = Producto.objects.values_list('categoria__nombre_categoria', flat=True).distinct()
 
-    return render(request, 'app/buscar.html', {'resultados': resultados, 'query': query, 'currency':currency})
+    return render(request, 'app/buscar.html', {
+        'resultados': resultados,
+        'query': query,
+        'currency': currency,
+        'marcas': marcas,
+        'categorias': categorias,
+    })
 
 
 def index(request):

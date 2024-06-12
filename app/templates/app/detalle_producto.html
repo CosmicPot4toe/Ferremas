@@ -12,7 +12,7 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{% url 'index' %}" style="color: grey;">Inicio</a></li>
                     <li class="breadcrumb-item"><a href="{% url 'categorias' id=id_categoria %}" style="color: grey;">{{ nombre_categoria }}</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ producto.nombre }}</li>
+                    <li class="breadcrumb-item active" style="color: black; text-decoration: underline; font-weight: bold;" aria-current="page">{{ producto.nombre }}</li>
                 </ol>
             </nav>
             <img src="{{ producto.imagen_url }}" alt="Imagen del Producto" class="img-fluid border rounded p-3">
