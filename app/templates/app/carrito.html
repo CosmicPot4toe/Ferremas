@@ -38,8 +38,13 @@
 
 <div class="contaier-flex">
     <br>
-    <h3 class="text-md-start" style="margin-left: 120px;">Carrito de compra</h3>
-    <a href="{% url 'clean' %}" class="text-end" style="font-size: 15px; color: black;">Limpiar Carrito</a>
+    
+    <div class="d-flex align-items-center" style="margin-left: 120px; margin-right: 120px;">
+        <h3 class="mb-0">Carrito de compra</h3>
+        <a href="{% url 'clean' %}" style="font-size: 15px; color: black; padding-left: 580px;">Limpiar Carrito</a>
+    </div>
+    
+
     <div class="row">
         <div class="col-md-7">
             <div class="card" style="width: 1000px; margin-left: 50px;">
@@ -94,6 +99,7 @@
         </div>
 
         <div class="col-md-5">
+            
             <div class="card mb-3" style="width: 500px;">
                 <div class="card-body">
                     <h2 class="card-title">Resumen del pedido</h2>
