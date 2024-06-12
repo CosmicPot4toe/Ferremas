@@ -28,7 +28,7 @@
     }
 
     .card-body .card-title {
-        font-size: 1.2rem;
+        font-size: 1rem;
         font-weight: bold;
     }
 
@@ -47,7 +47,7 @@
 
     /* Ajusta el margen entre las cartas de productos */
     .card-product {
-        margin-bottom: 20px;
+        margin-bottom: 10px;
     }
 
     /* Centra el título */
@@ -56,12 +56,25 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
+
+    /* Separador vertical */
+    .separator {
+        border-right: 1px solid #ddd;
+        height: 100%;
+    }
+
+    /* Alinea el filtro y los productos */
+    .filters-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+    }
 </style>
 <br><br><br><br><br>
 <div class="container-fluid">
     <div class="row">
         <!-- Filtro Sidebar -->
-        <div class="col-md-2">
+        <div class="col-md-2" style="margin-top: 5%; margin-left: 6%;">
             <div class="card">
                 <div class="card-header">
                     <h4>Filtros</h4>
@@ -103,19 +116,21 @@
             </div>
         </div>
 
+
         <!-- Resultados de búsqueda -->
-        <div class="col-md-10">
-            <h1 class="result-title" style="margin-right: 10%;">Resultados de búsqueda para "{{ query }}"</h1>
+        <div class="col-md-9" style=" padding-left: 180px; margin-left: -50px;">
+            <h1 class="result-title" style="margin-right: 32%;">Resultados de búsqueda para "{{ query }}"</h1>
+            <br>
             <div class="row">
                 {% load humanize %}
                 {% if resultados %}
                     {% for producto in resultados %}
                         <div class="col-md-3 card-product">
-                            <div class="card mb-3">
-                                <div class="card-body" style="height: 400px;">
+                            <div class="card mb-3" >
+                                <div class="card-body" style="height: 380px;">
                                     <h5 class="card-title">{{ producto.marca }}</h5>
                                     <h6 class="card-subtitle mb-2 text-muted">{{ producto.nombre }}</h6>
-                                    <center><img src="{{ producto.imagen_url }}" class="card-img-top" alt="Imagen del Producto" style="width: 150px;"></center>
+                                    <center><img src="{{ producto.imagen_url }}" class="card-img-top" alt="Imagen del Producto" style="width: 100px;"></center>
                                     <p class="card-text">Precio: <strong>
                                         {% if currency == 'USD' %}
                                             ${{ producto.precio|floatformat:2 }} USD
