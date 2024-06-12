@@ -214,7 +214,7 @@ def restar_producto(request, Producto_id_producto):
 def limpiar_carrito(request):
     carrito = Carrito(request)
     carrito.limpiar()
-    return redirect("carrito.html")
+    return redirect("carrito")
 
 def carrito(request):
     carrito_dict = request.session.get("carrito", {})
