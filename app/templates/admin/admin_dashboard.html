@@ -95,17 +95,40 @@
         text-decoration: none;
         cursor: pointer;
     }
+    .nav-list {
+        list-style: none;
+        padding: 0;
+    }
+    .nav-list li {
+        margin-bottom: 10px;
+    }
+    .nav-list a {
+        text-decoration: none;
+        color: rgb(0, 0, 0);
+        display: block;
+        padding: 10px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+    .nav-list a:hover {
+        background-color: #f0f0f0;
+        color: #380e53;
+    }
+    .nav-list a.active {
+        background-color: #380e53;
+        color: white;
+    }
 </style>
 
 <div class="dashboard">
     <div class="sidebar" style="border-radius: 5%;">
         <h2>Admin Dashboard</h2>
-        <ul>
-            <li><a href="#" onclick="showSection('usuarios')">Usuarios</a></li>
-            <li><a href="#" onclick="showSection('productos')">Productos</a></li>
-            <li><a href="#" onclick="showSection('tiendas')">Tiendas</a></li>
-            <li><a href="#" onclick="showSection('categorias')">Categorías</a></li>
-            <li><a href="#" onclick="showSection('stock')">Stock</a></li>
+        <hr>
+        <ul class="nav-list">
+            <li><a href="#" onclick="showSection('usuarios')" id="usuarios-link">Usuarios</a></li>
+            <li><a href="#" onclick="showSection('productos')" id="productos-link">Productos</a></li>
+            <li><a href="#" onclick="showSection('tiendas')" id="tiendas-link">Tiendas</a></li>
+            <li><a href="#" onclick="showSection('categorias')" id="categorias-link">Categorías</a></li>
+            <li><a href="#" onclick="showSection('stock')" id="stock-link">Stock</a></li>
         </ul>
     </div>
     <div class="content">
@@ -472,6 +495,29 @@
 function closeModal(modalId) {
     document.getElementById(modalId).style.display = 'none';
 }
+
+function showSection(sectionId) {
+        // Ocultar todas las secciones
+        document.querySelectorAll('.table-container').forEach(function(section) {
+            section.style.display = 'none';
+        });
+
+        // Mostrar la sección seleccionada
+        document.getElementById(sectionId).style.display = 'block';
+
+        // Quitar la clase 'active' de todos los enlaces
+        document.querySelectorAll('.nav-list a').forEach(function(link) {
+            link.classList.remove('active');
+        });
+
+        // Añadir la clase 'active' al enlace seleccionado
+        document.getElementById(sectionId + '-link').classList.add('active');
+    }
+
+    // Mostrar la sección de usuarios por defecto
+    document.addEventListener('DOMContentLoaded', function() {
+        showSection('usuarios');
+    });
 
 
 </script>
