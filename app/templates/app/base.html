@@ -285,6 +285,14 @@ https://cdn.jsdelivr.net/npm/country-region-selector@1.0.0/dist/crs.min.js
                 "icon": "info"
                 });
         </script>
+        {% elif m.tags == 'error' %}
+        <script>
+            Swal.fire({
+                "title": "Error",
+                "text": "{{ m }}",
+                "icon": "error"
+                });
+        </script>
         {% endif %}
     {% endfor %}
 {% endif %}

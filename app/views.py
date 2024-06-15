@@ -667,8 +667,9 @@ def admin_dashboard(request):
     users = User.objects.all()
     productos = Producto.objects.all()
     tiendas = Tienda.objects.all()
-    categorias = CategoriaProducto.objects.all()
+    categorias = Categoria.objects.all()
     stock = Stock.objects.all()
+
     user_form = UserForm()
     producto_form = ProductoForm()
     tienda_form = TiendaForm()
@@ -822,23 +823,39 @@ def create_categoria(request):
         form = CategoriaForm(request.POST)
         if form.is_valid():
             form.save()
-            return JsonResponse({'success': True})
-    return JsonResponse({'success': False})
+            nombre_categoria = form.cleaned_data.get('nombre')
+            msgs.success(request, f'La tienda {nombre_categoria} fue creada correctamente. ')
+        return redirect('admin_dashboard')
+    else:
+        msgs.error(request, f'La operación no se pudo realizar.')
+        return redirect('admin_dashboard')
+        
 
 def update_categoria(request, categoria_id):
-    categoria = get_object_or_404(CategoriaProducto, id=categoria_id)
+    categoria = get_object_or_404(Categoria, id_categoria=categoria_id)
     if request.method == 'POST':
         form = CategoriaForm(request.POST, instance=categoria)
         if form.is_valid():
             form.save()
-            return JsonResponse({'success': True})
+            nombre_categoria = form.cleaned_data.get('nombre')
+            msgs.info(request, f'La categoria {nombre_categoria} fue actualizada.')
+        return redirect('admin_dashboard')
     else:
         form = CategoriaForm(instance=categoria)
     return JsonResponse({'success': False, 'form': form.as_p()})
 
+def get_categoria(request, categoria_id):
+    categoria = get_object_or_404(Categoria, id_categoria=categoria_id)
+    data = {
+        'success': True,
+        'nombre': categoria.nombre
+    }
+    return JsonResponse(data)
+
 def delete_categoria(request, categoria_id):
-    categoria = get_object_or_404(CategoriaProducto, id=categoria_id)
+    categoria = get_object_or_404(Categoria, id_categoria=categoria_id)
     categoria.delete()
+    msgs.warning(request, f'La categoria {categoria.nombre} fue eliminada. ')
     return redirect('admin_dashboard')
 
 def create_stock(request):

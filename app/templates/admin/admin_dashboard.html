@@ -224,7 +224,7 @@
             </table>
         </div>
 
-        <div id="categorias" class="table-container " style="display:none;">
+        <div id="categorias" class="table-container " style="display:none; width: 1000px; margin: 0 auto;">
             <h2>Categorías <button onclick="openModal('modal-add-categoria')" class="btn btn-primary btn-lg">Agregar Categoría</button></h2>
             <table class="table  table-striped table-hover text-center">
                 <thead>
@@ -236,10 +236,10 @@
                 <tbody>
                     {% for categoria in categorias %}
                     <tr>
-                        <td>{{ categoria.nombre_categoria }}</td>
+                        <td>{{ categoria.nombre }}</td>
                         <td>
-                            <button onclick="openEditModal('modal-edit-categoria', {{ categoria.id }})">Editar</button>
-                            <button onclick="deleteItem('delete_categoria', {{ categoria.id }})">Eliminar</button>
+                            <button onclick="openEditCategoriaModal('modal-edit-categoria', {{ categoria.id_categoria }})" class="btn btn-warning">Editar</button>
+                            <button onclick="deleteItem('delete_categoria', {{ categoria.id_categoria }})" class="btn btn-danger">Eliminar</button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -458,7 +458,7 @@
     <div class="modal-content">
         <span class="close" onclick="closeModal('modal-add-categoria')">&times;</span>
         <h2>Agregar Categoría</h2>
-        <form method="post" action="{% url 'create_categoria' %}">
+        <form  method="post" action="{% url 'create_categoria' %}">
             {% csrf_token %}
             {{ categoria_form.as_p }}
             <br>
@@ -471,9 +471,13 @@
     <div class="modal-content">
         <span class="close" onclick="closeModal('modal-edit-categoria')">&times;</span>
         <h2>Editar Categoría</h2>
-        <form method="post" action="">
+        <form id="editCategoriaForm" method="post" action="">
             {% csrf_token %}
-            {{ categoria_form.as_p }}
+            <div class="form-group">
+                <label for="editNombre">Nombre</label>
+                <input type="text" class="form-control" id="editNombreCategoria" name="nombre" required>
+            </div>
+            <br>
             <button type="submit" class="btn btn-primary">Actualizar</button>
         </form>
     </div>
@@ -548,6 +552,20 @@
                 document.getElementById('editImagenUrl').value = data.imagen_url;
                 const form = document.getElementById('editProductForm');
                 form.action = `/admin/update_producto/${productoId}/`;
+                document.getElementById(modalId).style.display = 'block';
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function openEditCategoriaModal(modalId, categoriaId) {
+    fetch(`/admin/get_categoria/${categoriaId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('editNombreCategoria').value = data.nombre;
+                const form = document.getElementById('editCategoriaForm');
+                form.action = `/admin/update_categoria/${categoriaId}/`;
                 document.getElementById(modalId).style.display = 'block';
             }
         })
