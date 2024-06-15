@@ -26,4 +26,24 @@ urlpatterns = [
     path('pedidos_pendientes/', pedidos_pendientes, name='pedidos_pendientes'),
     path('actualizar_estado_envio/<int:detalle_pedido_id>/', actualizar_estado_envio, name='actualizar_estado_envio'),
 
+    path('admin/dashboard/', admin_dashboard, name='admin_dashboard'),
+    path('admin/create_user/', create_user, name='create_user'),
+    path('update_user/<int:user_id>/', update_user, name='update_user'),
+    path('admin/delete_user/<int:user_id>/', delete_user, name='delete_user'),
+    
+    path('admin/create_producto/', create_producto, name='create_producto'),
+    path('admin/update_producto/<int:producto_id>/', update_producto, name='update_producto'),
+    path('admin/delete_producto/<int:producto_id>/', delete_producto, name='delete_producto'),
+
+    path('admin/create_tienda/', create_tienda, name='create_tienda'),
+    path('admin/update_tienda/<int:tienda_id>/', update_tienda, name='update_tienda'),
+    path('admin/delete_tienda/<int:tienda_id>/', delete_tienda, name='delete_tienda'),
+
+    path('admin/create_categoria/', create_categoria, name='create_categoria'),
+    path('admin/update_categoria/<int:categoria_id>/', update_categoria, name='update_categoria'),
+    path('admin/delete_categoria/<int:categoria_id>/', delete_categoria, name='delete_categoria'),
+
+    path('admin/create_stock/', create_stock, name='create_stock'),
+    path('admin/update_stock/<int:stock_id>/', update_stock, name='update_stock'),
+    path('admin/delete_stock/<int:stock_id>/', delete_stock, name='delete_stock'),
 ]

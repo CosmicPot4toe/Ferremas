@@ -10,6 +10,8 @@ class User(AbstractUser):
         ('Con', 'Contador (Interno)'),
         ('Ven', 'Vendedor (Interno)'),
         ('Cli', 'Cliente (Externo)'),
+        ('Adm', 'Admin (Interno)'),
+        ('Des', 'Desarrollador')
     )
     type = models.CharField(max_length=20, choices=TIPOS_CHOICES, default='Cli')
 
@@ -22,6 +24,9 @@ class Tienda(TrackingModelMixin,models.Model):
     telefono = models.CharField(max_length=20)
     email = models.EmailField()
 
+    def __str__(self):
+        return self.nombre
+
 class Producto(TrackingModelMixin,models.Model):
     id_producto = models.AutoField(primary_key=True)
     marca = models.CharField(max_length=100)
@@ -31,6 +36,9 @@ class Producto(TrackingModelMixin,models.Model):
     precio = models.IntegerField(default=0)
     categoria = models.ForeignKey('CategoriaProducto', on_delete=models.CASCADE)
     imagen_url = models.CharField(max_length=200) #url de la imagen
+
+    def __str__(self):
+        return self.nombre
 
 class Categoria(TrackingModelMixin,models.Model):
     id_categoria = models.AutoField(primary_key=True)
@@ -62,6 +70,9 @@ class Stock(TrackingModelMixin,models.Model):
     sucursal = models.ForeignKey(Tienda, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='stocks')
     cantidad = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"stock de {self.producto} en sucursal {self.sucursal}"
 
 class Pedido(models.Model):
     numero_pedido = models.IntegerField()

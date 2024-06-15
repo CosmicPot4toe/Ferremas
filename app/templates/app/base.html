@@ -98,6 +98,9 @@
                     {% if user.type == 'Bod' %}
                         <li><a class="nav-link" href="{% url 'pedidos_pendientes' %}" style="color: black;">Pedidos Pendientes</a></li>
                     {% endif %}
+                    {% if user.type == 'Adm' %}
+                        <li><a class="nav-link" href="{% url 'admin_dashboard' %}" style="color: black;">Opciones</a></li>
+                    {% endif %}
                       <li><a class="nav-link" href="{% url 'logout' %}" style="color: black;">Cerrar Sesión</a></li>
                   </ul>
               </li>
@@ -266,6 +269,22 @@ https://cdn.jsdelivr.net/npm/country-region-selector@1.0.0/dist/crs.min.js
                     "icon": "success",
                 });
             </script>
+        {% elif m.tags == 'warning' %}
+        <script>
+            Swal.fire({
+                "title": "Advertencia",
+                "text": "{{ m }}",
+                "icon": "warning",
+            });
+        </script>
+        {% elif m.tags == 'info' %}
+        <script>
+            Swal.fire({
+                "title": "Actualizado",
+                "text": "{{ m }}",
+                "icon": "info"
+                });
+        </script>
         {% endif %}
     {% endfor %}
 {% endif %}

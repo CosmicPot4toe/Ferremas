@@ -659,3 +659,170 @@ def actualizar_estado_envio(request, detalle_pedido_id):
         'detalle_pedido': detalle_pedido,
     }
     return render(request, 'bodeguero/actualizar_estado_envio.html', context)
+
+@login_required
+def admin_dashboard(request):
+    if request.user.type != 'Adm':
+        return redirect('login')
+    users = User.objects.all()
+    productos = Producto.objects.all()
+    tiendas = Tienda.objects.all()
+    categorias = CategoriaProducto.objects.all()
+    stock = Stock.objects.all()
+    user_form = UserForm()
+    producto_form = ProductoForm()
+    tienda_form = TiendaForm()
+    categoria_form = CategoriaForm()
+    stock_form = StockForm()
+    
+    context = {
+        'users': users,
+        'productos': productos,
+        'tiendas': tiendas,
+        'categorias': categorias,
+        'stock': stock,
+        'user_form': user_form,
+        'producto_form': producto_form,
+        'tienda_form': tienda_form,
+        'categoria_form': categoria_form,
+        'stock_form': stock_form
+    }
+    return render(request, 'admin/admin_dashboard.html', context)
+
+def create_user(request):
+    if request.method == 'POST':
+        form = RegUserForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.type = 'Cli'  # Asignar el valor predeterminado para type
+            user.save()
+            username = form.cleaned_data.get('username')
+            msgs.success(request, f'Cuenta creada exitosamente para {username}. ¡Ahora puedes iniciar sesión!')
+            return redirect('admin_dashboard')
+
+        else:
+            form = RegUserForm()
+    return JsonResponse({'success': False})
+
+def update_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        form = UserForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            username = user.username
+            msgs.info(request, f'¡La cuenta de {username} ha sido modificada correctamente!')
+            return redirect('admin_dashboard')
+    else:
+        data = {
+            'success': True,
+            'username': user.username,
+            'email': user.email,
+            'type': user.type
+        }
+        return JsonResponse(data)
+    return redirect('admin_dashboard')
+
+
+def delete_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    username=user.username
+    user.delete()
+    msgs.warning(request, f'La cuenta {username} fue eliminada.')
+    return redirect('admin_dashboard')
+
+def create_producto(request):
+    if request.method == 'POST':
+        form = ProductoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        return redirect('admin_dashboard')
+    return JsonResponse({'success': False})
+
+def update_producto(request, producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, instance=producto)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        return redirect('admin_dashboard')
+    return JsonResponse({'success': False})
+
+def delete_producto(request, producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)
+    producto.delete()
+    return redirect('admin_dashboard')
+
+def create_tienda(request):
+    if request.method == 'POST':
+        form = TiendaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        return redirect('admin_dashboard')
+    return JsonResponse({'success': False})
+
+def update_tienda(request, tienda_id):
+    tienda = get_object_or_404(Tienda, id=tienda_id)
+    if request.method == 'POST':
+        form = TiendaForm(request.POST, instance=tienda)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        return redirect('admin_dashboard')
+    return JsonResponse({'success': False})
+
+def delete_tienda(request, tienda_id):
+    tienda = get_object_or_404(Tienda, id=tienda_id)
+    tienda.delete()
+    return redirect('admin_dashboard')
+
+def create_categoria(request):
+    if request.method == 'POST':
+        form = CategoriaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
+
+def update_categoria(request, categoria_id):
+    categoria = get_object_or_404(CategoriaProducto, id=categoria_id)
+    if request.method == 'POST':
+        form = CategoriaForm(request.POST, instance=categoria)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+    else:
+        form = CategoriaForm(instance=categoria)
+    return JsonResponse({'success': False, 'form': form.as_p()})
+
+def delete_categoria(request, categoria_id):
+    categoria = get_object_or_404(CategoriaProducto, id=categoria_id)
+    categoria.delete()
+    return redirect('admin_dashboard')
+
+def create_stock(request):
+    if request.method == 'POST':
+        form = StockForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        return redirect('admin_dashboard')
+    return JsonResponse({'success': False})
+
+def update_stock(request, stock_id):
+    stock = get_object_or_404(Stock, id=stock_id)
+    if request.method == 'POST':
+        form = StockForm(request.POST, instance=stock)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        return redirect('admin_dashboard')
+    return JsonResponse({'success': False})
+
+def delete_stock(request, stock_id):
+    stock = get_object_or_404(Stock, id=stock_id)
+    stock.delete()
+    return redirect('admin_dashboard')

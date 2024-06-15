@@ -44,3 +44,28 @@ class ActualizarEstadoEnvioForm(forms.ModelForm):
                 ('Completado', 'Completado'),
             ])
         }
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'type']
+
+class ProductoForm(forms.ModelForm):
+    class Meta:
+        model = Producto
+        fields = '__all__'
+
+class TiendaForm(forms.ModelForm):
+    class Meta:
+        model = Tienda
+        fields = '__all__'
+
+class CategoriaForm(forms.ModelForm):
+    class Meta:
+        model = Categoria
+        fields = '__all__'
+
+class StockForm(forms.ModelForm):
+    class Meta:
+        model = Stock
+        fields = '__all__'
