@@ -736,23 +736,41 @@ def create_producto(request):
         form = ProductoForm(request.POST)
         if form.is_valid():
             form.save()
-            return JsonResponse({'success': True})
+            msgs.success(request, f'Producto creado exitosamente!')
         return redirect('admin_dashboard')
     return JsonResponse({'success': False})
 
 def update_producto(request, producto_id):
-    producto = get_object_or_404(Producto, id=producto_id)
+    producto = get_object_or_404(Producto, id_producto=producto_id)
     if request.method == 'POST':
         form = ProductoForm(request.POST, instance=producto)
         if form.is_valid():
             form.save()
-            return JsonResponse({'success': True})
-        return redirect('admin_dashboard')
-    return JsonResponse({'success': False})
+            msgs.info(request, f'¡Producto modiciado correctamente!')
+            return redirect('admin_dashboard')
+    else:
+        form = ProductoForm(instance=producto)
+    return JsonResponse({'success': False, 'form': form.as_p()})
+
+def get_producto(request, producto_id):
+    producto = get_object_or_404(Producto, id_producto=producto_id)
+    data = {
+        'success': True,
+        'marca': producto.marca,
+        'nombre': producto.nombre,
+        'codigo_producto': producto.codigo_producto,
+        'descripcion': producto.descripcion,
+        'precio': producto.precio,
+        'categoria': producto.categoria.id if producto.categoria else None,
+        'imagen_url': producto.imagen_url,
+    }
+    return JsonResponse(data)
 
 def delete_producto(request, producto_id):
-    producto = get_object_or_404(Producto, id=producto_id)
+    producto = get_object_or_404(Producto, id_producto=producto_id)
+    product_name=producto.nombre
     producto.delete()
+    msgs.warning(request, f'El producto {product_name} fue eliminado')
     return redirect('admin_dashboard')
 
 def create_tienda(request):

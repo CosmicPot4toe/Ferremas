@@ -32,6 +32,7 @@ urlpatterns = [
     path('admin/delete_user/<int:user_id>/', delete_user, name='delete_user'),
     
     path('admin/create_producto/', create_producto, name='create_producto'),
+    path('admin/get_producto/<int:producto_id>/', get_producto, name='get_producto'),
     path('admin/update_producto/<int:producto_id>/', update_producto, name='update_producto'),
     path('admin/delete_producto/<int:producto_id>/', delete_producto, name='delete_producto'),
 
