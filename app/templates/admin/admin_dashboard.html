@@ -35,7 +35,7 @@
 
     .sidebar ul li a {
         text-decoration: none;
-        color: #007bff;
+        color: #000000;
     }
 
     .content {
@@ -54,7 +54,7 @@
     }
 
     .table-container h2 button {
-        background-color: #007bff;
+        background-color: #380e53;
         color: white;
         border: none;
         padding: 5px 10px;
@@ -134,8 +134,9 @@
     <div class="content">
         <div id="usuarios" class="table-container" style="width: 1000px; margin: 0 auto;">
             <h2 class="text-center">Usuarios 
-                <button onclick="openModal('modal-add-user')" class="btn btn-lg" style="background-color:  #380e53; color: #ffffff;">Agregar Usuario</button>
+                <button onclick="openModal('modal-add-user')" class="btn btn-primary btn-lg">Agregar Usuario</button>
             </h2>
+            <br>
             <div class="table-responsive">
                 <table class="table table-striped table-hover text-center">
                     <thead>
@@ -165,8 +166,9 @@
         
 
         <div id="productos" class="table-container" style="display:none; width: 1000px; margin: 0 auto;">
-            <h2>Productos <button onclick="openModal('modal-add-producto')" class="btn btn-lg" style="background-color:  #380e53; color: #ffffff;">Agregar Producto</button></h2>
-            <table class="table">
+            <h2>Productos <button onclick="openModal('modal-add-producto')" class="btn btn-primary btn-lg">Agregar Producto</button></h2>
+            <br>
+            <table class="table table-striped table-hover text-center">
                 <thead>
                     <tr>
                         <th>Nombre</th>
@@ -196,9 +198,10 @@
             </table>
         </div>
 
-        <div id="tiendas" class="table-container" style="display:none;">
-            <h2>Tiendas <button onclick="openModal('modal-add-tienda')" class="btn btn-primary">Agregar Tienda</button></h2>
-            <table class="table">
+        <div id="tiendas" class="table-container" style="display:none; width: 1000px; margin: 0 auto;">
+            <h2>Tiendas <button onclick="openModal('modal-add-tienda')" class="btn btn-primary btn-lg" >Agregar Tienda</button></h2>
+            <br>
+            <table class="table table-striped table-hover text-center" >
                 <thead>
                     <tr>
                         <th>Nombre</th>
@@ -212,8 +215,8 @@
                         <td>{{ tienda.nombre }}</td>
                         <td>{{ tienda.direccion }}</td>
                         <td>
-                            <button onclick="openEditModal('modal-edit-tienda', {{ tienda.id }})">Editar</button>
-                            <button onclick="deleteItem('delete_tienda', {{ tienda.id }})">Eliminar</button>
+                            <button onclick="openEditTiendaModal('modal-edit-tienda', {{ tienda.id_tienda }})" class="btn btn-warning">Editar</button>
+                            <button onclick="deleteItem('delete_tienda', {{ tienda.id_tienda }})" class="btn btn-danger">Eliminar</button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -221,9 +224,9 @@
             </table>
         </div>
 
-        <div id="categorias" class="table-container" style="display:none;">
-            <h2>Categorías <button onclick="openModal('modal-add-categoria')" class="btn btn-primary">Agregar Categoría</button></h2>
-            <table class="table">
+        <div id="categorias" class="table-container " style="display:none;">
+            <h2>Categorías <button onclick="openModal('modal-add-categoria')" class="btn btn-primary btn-lg">Agregar Categoría</button></h2>
+            <table class="table  table-striped table-hover text-center">
                 <thead>
                     <tr>
                         <th>Nombre</th>
@@ -245,8 +248,8 @@
         </div>
 
         <div id="stock" class="table-container" style="display:none;">
-            <h2>Stock <button onclick="openModal('modal-add-stock')" class="btn btn-primary">Agregar Stock</button></h2>
-            <table class="table">
+            <h2>Stock <button onclick="openModal('modal-add-stock')" class="btn btn-primary btn-lg">Agregar Stock</button></h2>
+            <table class="table  table-striped table-hover text-center">
                 <thead>
                     <tr>
                         <th>Producto</th>
@@ -400,6 +403,7 @@
     <div class="modal-content">
         <span class="close" onclick="closeModal('modal-add-tienda')">&times;</span>
         <h2>Agregar Tienda</h2>
+        <br>
         <form method="post" action="{% url 'create_tienda' %}">
             {% csrf_token %}
             {{ tienda_form.as_p }}
@@ -412,13 +416,42 @@
     <div class="modal-content">
         <span class="close" onclick="closeModal('modal-edit-tienda')">&times;</span>
         <h2>Editar Tienda</h2>
-        <form method="post" action="">
+        <form id="editTiendaForm" method="post" action="">
             {% csrf_token %}
-            {{ tienda_form.as_p }}
+            <div class="form-group">
+                <label for="editNombre">Nombre</label>
+                <input type="text" class="form-control" id="editNombreTienda" name="nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="editDireccion">Dirección</label>
+                <input type="text" class="form-control" id="editDireccion" name="direccion" required>
+            </div>
+            <div class="form-group">
+                <label for="editComuna">Comuna</label>
+                <input type="text" class="form-control" id="editComuna" name="comuna" required>
+            </div>
+            <div class="form-group">
+                <label for="editRegion">Región</label>
+                <input type="text" class="form-control" id="editRegion" name="region" required>
+            </div>
+            <div class="form-group">
+                <label for="editTelefono">Teléfono</label>
+                <input type="text" class="form-control" id="editTelefono" name="telefono" required>
+            </div>
+            <div class="form-group">
+                <label for="editEmail">Email</label>
+                <input type="email" class="form-control" id="editEmailTienda" name="email" required>
+            </div>
+            <br>
             <button type="submit" class="btn btn-primary">Actualizar</button>
         </form>
     </div>
 </div>
+
+
+
+
+
 
 <!-- Modales para agregar/editar categorías -->
 <div id="modal-add-categoria" class="modal">
@@ -428,6 +461,7 @@
         <form method="post" action="{% url 'create_categoria' %}">
             {% csrf_token %}
             {{ categoria_form.as_p }}
+            <br>
             <button type="submit" class="btn btn-primary">Agregar</button>
         </form>
     </div>
@@ -547,6 +581,28 @@
         .catch(error => console.error('Fetch error:', error));
     }
 
+    function openEditTiendaModal(modalId, tiendaId) {
+    fetch(`/admin/get_tienda/${tiendaId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log(data); // Para verificar los datos recibidos
+                $('#editNombreTienda').val(data.nombre);
+                $('#editDireccion').val(data.direccion);
+                $('#editComuna').val(data.comuna);
+                $('#editRegion').val(data.region);
+                $('#editTelefono').val(data.telefono);
+                $('#editEmailTienda').val(data.email);
+                const form = document.getElementById('editTiendaForm');
+                form.action = `/admin/update_tienda/${tiendaId}/`;
+                document.getElementById(modalId).style.display = 'block';
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+
+
 
 function closeModal(modalId) {
     document.getElementById(modalId).style.display = 'none';
@@ -578,4 +634,6 @@ function showSection(sectionId) {
 
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 {% endblock %}

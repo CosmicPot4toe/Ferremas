@@ -99,7 +99,7 @@
                         <li><a class="nav-link" href="{% url 'pedidos_pendientes' %}" style="color: black;">Pedidos Pendientes</a></li>
                     {% endif %}
                     {% if user.type == 'Adm' %}
-                        <li><a class="nav-link" href="{% url 'admin_dashboard' %}" style="color: black;">Opciones</a></li>
+                        <li><a class="nav-link" href="{% url 'admin_dashboard' %}" style="color: black;">Dashboard</a></li>
                     {% endif %}
                       <li><a class="nav-link" href="{% url 'logout' %}" style="color: black;">Cerrar Sesión</a></li>
                   </ul>

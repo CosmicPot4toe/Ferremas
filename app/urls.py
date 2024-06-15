@@ -37,6 +37,7 @@ urlpatterns = [
     path('admin/delete_producto/<int:producto_id>/', delete_producto, name='delete_producto'),
 
     path('admin/create_tienda/', create_tienda, name='create_tienda'),
+    path('admin/get_tienda/<int:tienda_id>/', get_tienda, name='get_tienda'),
     path('admin/update_tienda/<int:tienda_id>/', update_tienda, name='update_tienda'),
     path('admin/delete_tienda/<int:tienda_id>/', delete_tienda, name='delete_tienda'),
 

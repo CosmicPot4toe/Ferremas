@@ -778,23 +778,43 @@ def create_tienda(request):
         form = TiendaForm(request.POST)
         if form.is_valid():
             form.save()
-            return JsonResponse({'success': True})
+            nombre_tienda = form.cleaned_data.get('nombre')
+            msgs.success(request, f'La tienda {nombre_tienda} fue creada correctamente. ')
         return redirect('admin_dashboard')
     return JsonResponse({'success': False})
 
+
+def get_tienda(request, tienda_id):
+    tienda = get_object_or_404(Tienda, id_tienda=tienda_id)
+    data = {
+        'success': True,
+        'nombre': tienda.nombre,
+        'direccion': tienda.direccion,
+        'comuna': tienda.comuna,
+        'region': tienda.region,
+        'telefono': tienda.telefono,
+        'email': tienda.email,
+    }
+    return JsonResponse(data)
+
 def update_tienda(request, tienda_id):
-    tienda = get_object_or_404(Tienda, id=tienda_id)
+    tienda = get_object_or_404(Tienda, id_tienda=tienda_id)
     if request.method == 'POST':
         form = TiendaForm(request.POST, instance=tienda)
         if form.is_valid():
             form.save()
-            return JsonResponse({'success': True})
+            nombre_tienda = form.cleaned_data.get('nombre')
+            msgs.info(request, f'La tienda {nombre_tienda} fue actualizada conrrectamente.')
         return redirect('admin_dashboard')
-    return JsonResponse({'success': False})
+    else:
+        form = TiendaForm(instance=tienda)
+    return JsonResponse({'success': False, 'form': form.as_p()})
 
 def delete_tienda(request, tienda_id):
-    tienda = get_object_or_404(Tienda, id=tienda_id)
+    tienda = get_object_or_404(Tienda, id_tienda=tienda_id)
+    nombre_tienda = tienda.nombre
     tienda.delete()
+    msgs.warning(request, f'La tienda {nombre_tienda} fue eliminada correctamente. ')
     return redirect('admin_dashboard')
 
 def create_categoria(request):
