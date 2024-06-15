@@ -26,7 +26,7 @@ urlpatterns = [
     path('pedidos_pendientes/', pedidos_pendientes, name='pedidos_pendientes'),
     path('actualizar_estado_envio/<int:detalle_pedido_id>/', actualizar_estado_envio, name='actualizar_estado_envio'),
 
-    path('admin/dashboard/', admin_dashboard, name='admin_dashboard'),
+    path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),
     path('admin/create_user/', create_user, name='create_user'),
     path('update_user/<int:user_id>/', update_user, name='update_user'),
     path('admin/delete_user/<int:user_id>/', delete_user, name='delete_user'),
