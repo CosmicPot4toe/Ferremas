@@ -660,15 +660,32 @@ def actualizar_estado_envio(request, detalle_pedido_id):
     }
     return render(request, 'bodeguero/actualizar_estado_envio.html', context)
 
+
+
 @login_required
 def admin_dashboard(request):
     if request.user.type != 'Adm':
         return redirect('login')
+    
+    query = request.GET.get('q')
+    if query:
+        productos = Producto.objects.filter(
+            Q(marca__icontains=query) | 
+            Q(nombre__icontains=query) | 
+            Q(categoria__nombre_categoria__icontains=query)
+        )
+    else:
+        productos = Producto.objects.all()
+
+    paginator = Paginator(productos, 5)  # Muestra 10 productos por página
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     users = User.objects.all()
-    productos = Producto.objects.all()
     tiendas = Tienda.objects.all()
     categorias = Categoria.objects.all()
     stock = Stock.objects.all()
+    categoria_producto= CategoriaProducto.objects.all()
 
     user_form = UserForm()
     producto_form = ProductoForm()
@@ -677,16 +694,19 @@ def admin_dashboard(request):
     stock_form = StockForm()
 
     context = {
-        'users': users,
         'productos': productos,
+        'users': users,
+        'page_obj': page_obj,
         'tiendas': tiendas,
         'categorias': categorias,
+        'categoria_producto': categoria_producto,
         'stocks': stock,
         'user_form': user_form,
         'producto_form': producto_form,
         'tienda_form': tienda_form,
         'categoria_form': categoria_form,
-        'stock_form': stock_form
+        'stock_form': stock_form,
+        'query': query
     }
     return render(request, 'admin/admin_dashboard.html', context)
 

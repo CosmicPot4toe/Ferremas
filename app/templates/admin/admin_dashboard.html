@@ -166,7 +166,17 @@
         
 
         <div id="productos" class="table-container" style="display:none; width: 1000px; margin: 0 auto;">
+            <!-- Buscador -->
+            <form method="get" action="{% url 'admin_dashboard' %}" onsubmit="redirectToProducts(event)">
+                <input type="text" name="q" placeholder="Buscar por marca, nombre o categoría" value="{{ query }}">
+                <button type="submit">Buscar</button>
+            </form>
+            
+            
             <h2>Productos <button onclick="openModal('modal-add-producto')" class="btn btn-primary btn-lg">Agregar Producto</button></h2>
+            <br>
+            
+            
             <br>
             <table class="table table-striped table-hover text-center">
                 <thead>
@@ -196,6 +206,7 @@
                     {% endfor %}
                 </tbody>
             </table>
+            {% include 'app/paginator.html' with entity=page_obj %}
         </div>
 
         <div id="tiendas" class="table-container" style="display:none; width: 1000px; margin: 0 auto;">
@@ -384,8 +395,8 @@
             <div class="form-group">
                 <label for="editCategoria">Categoría</label>
                 <select class="form-control" id="editCategoria" name="categoria" required>
-                    {% for categoria in categorias %}
-                    <option value="{{ categoria.id }}">{{ categoria.nombre_categoria }}</option>
+                    {% for categoria in categoria_producto %}
+                    <option value="{{ categoria.categoria.id_categoria }}">{{ categoria.nombre_categoria }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -557,14 +568,40 @@
 </div>
 
 <script>
-    function showSection(sectionId) {
-        const sections = document.querySelectorAll('.table-container');
-        sections.forEach(section => {
-            section.style.display = 'none';
-        });
-        document.getElementById(sectionId).style.display = 'block';
-    }
+    function redirectToProducts(event) {
+    event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+    const form = event.target;
+    const query = form.querySelector('input[name="q"]').value;
+    const url = new URL(form.action, window.location.origin);
+    url.searchParams.set('q', query);
+    url.hash = 'productos'; // Añadir el hash para redirigir a la sección de productos
+    window.location.href = url.toString();
+    localStorage.setItem('selectedSection', 'productos');
+}
 
+function showSection(sectionId) {
+    const sections = document.querySelectorAll('.table-container');
+    sections.forEach(section => {
+        section.style.display = 'none';
+    });
+    document.getElementById(sectionId).style.display = 'block';
+    localStorage.setItem('selectedSection', sectionId);
+}
+
+window.addEventListener('load', function() {
+    const queryParams = new URLSearchParams(window.location.search);
+    const query = queryParams.get('q');
+    const selectedSection = localStorage.getItem('selectedSection');
+
+    if (query && window.location.hash === '#productos') {
+        showSection('productos');
+    } else if (selectedSection) {
+        showSection(selectedSection);
+    } else {
+        // Mostrar una sección por defecto si no hay ninguna seleccionada
+        showSection('usuarios'); // Ajusta según tu sección por defecto
+    }
+});
     function openModal(modalId) {
         document.getElementById(modalId).style.display = 'block';
     }
