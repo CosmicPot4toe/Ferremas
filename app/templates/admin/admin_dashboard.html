@@ -247,32 +247,34 @@
             </table>
         </div>
 
-        <div id="stock" class="table-container" style="display:none;">
-            <h2>Stock <button onclick="openModal('modal-add-stock')" class="btn btn-primary btn-lg">Agregar Stock</button></h2>
-            <table class="table  table-striped table-hover text-center">
+        <div id="stock" class="table-container" style="display:none; width: 1000px; margin: 0 auto;">
+            <h2>Stock <button onclick="openModal('modal-add-stock')" class="btn btn-primary btn-lg" >Agregar Stock</button></h2>
+            <br>
+            <table class="table table-striped table-hover text-center" >
                 <thead>
                     <tr>
+                        <th>Sucursal</th>
                         <th>Producto</th>
-                        <th>Tienda</th>
                         <th>Cantidad</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for item in stock %}
+                    {% for stock in stocks %}
                     <tr>
-                        <td>{{ item.producto.nombre }}</td>
-                        <td>{{ item.sucursal.nombre }}</td>
-                        <td>{{ item.cantidad }}</td>
+                        <td>{{ stock.sucursal.nombre }}</td>
+                        <td>{{ stock.producto.nombre }}</td>
+                        <td>{{ stock.cantidad }}</td>
                         <td>
-                            <button onclick="openEditModal('modal-edit-stock', {{ item.id }})">Editar</button>
-                            <button onclick="deleteItem('delete_stock', {{ item.id }})">Eliminar</button>
+                            <button onclick="openEditStockModal('modal-edit-stock', {{ stock.id }})" class="btn btn-warning">Editar</button>
+                            <button onclick="deleteItem('delete_stock', {{ stock.id }})" class="btn btn-danger">Eliminar</button>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+        
     </div>
 </div>
 
@@ -448,11 +450,6 @@
     </div>
 </div>
 
-
-
-
-
-
 <!-- Modales para agregar/editar categorías -->
 <div id="modal-add-categoria" class="modal">
     <div class="modal-content">
@@ -490,19 +487,70 @@
         <h2>Agregar Stock</h2>
         <form method="post" action="{% url 'create_stock' %}">
             {% csrf_token %}
-            {{ stock_form.as_p }}
+            <div class="form-group">
+                <label for="sucursal">Sucursal</label>
+                <select class="form-control" id="sucursal" name="sucursal" required>
+                    <option value="" disabled selected>Seleccione una sucursal</option>
+                    {% for tienda in tiendas %}
+                        <option value="{{ tienda.id_tienda }}">{{ tienda.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="producto">Producto</label>
+                <select class="form-control" id="producto" name="producto" required>
+                    <option value="" disabled selected>Seleccione un producto</option>
+                    {% for categoria in categorias %}
+                        <optgroup label="{{ categoria.nombre }}">
+                            {% for producto in productos %}
+                                {% if producto.categoria.categoria.id_categoria == categoria.id_categoria %}
+                                    <option value="{{ producto.id_producto }}">{{ producto.nombre }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </optgroup>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="cantidad">Cantidad</label>
+                <input type="number" class="form-control" id="cantidad" name="cantidad" required>
+            </div>
+            <br>
             <button type="submit" class="btn btn-primary">Agregar</button>
         </form>
     </div>
 </div>
 
+
+
+
 <div id="modal-edit-stock" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('modal-edit-stock')">&times;</span>
         <h2>Editar Stock</h2>
-        <form method="post" action="">
+        <form id="editStockForm" method="post" action="">
             {% csrf_token %}
-            {{ stock_form.as_p }}
+            <div class="form-group">
+                <label for="editStockSucursal">Sucursal</label>
+                <select class="form-control" id="editStockSucursal" name="sucursal" required>
+                    {% for tienda in tiendas %}
+                        <option value="{{ tienda.id_tienda }}">{{ tienda.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="editStockProducto">Producto</label>
+                <select class="form-control" id="editStockProducto" name="producto" required>
+                    {% for producto in productos %}
+                        <option value="{{ producto.id_producto }}">{{ producto.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="editStockCantidad">Cantidad</label>
+                <input type="number" class="form-control" id="editStockCantidad" name="cantidad" required>
+            </div>
+            <br>
             <button type="submit" class="btn btn-primary">Actualizar</button>
         </form>
     </div>
@@ -618,6 +666,24 @@
         })
         .catch(error => console.error('Error:', error));
 }
+
+function openEditStockModal(modalId, stockId) {
+    fetch(`/admin/get_stock/${stockId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log(data);
+                document.getElementById('editStockSucursal').value = data.sucursal;
+                document.getElementById('editStockProducto').value = data.producto_id;  // Asegúrate de que data.producto_id sea el ID del producto
+                document.getElementById('editStockCantidad').value = data.cantidad;
+                const form = document.getElementById('editStockForm');
+                form.action = `/admin/update_stock/${stockId}/`;
+                document.getElementById(modalId).style.display = 'block';
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
 
 
 

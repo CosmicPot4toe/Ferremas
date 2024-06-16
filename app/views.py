@@ -675,13 +675,13 @@ def admin_dashboard(request):
     tienda_form = TiendaForm()
     categoria_form = CategoriaForm()
     stock_form = StockForm()
-    
+
     context = {
         'users': users,
         'productos': productos,
         'tiendas': tiendas,
         'categorias': categorias,
-        'stock': stock,
+        'stocks': stock,
         'user_form': user_form,
         'producto_form': producto_form,
         'tienda_form': tienda_form,
@@ -863,9 +863,23 @@ def create_stock(request):
         form = StockForm(request.POST)
         if form.is_valid():
             form.save()
-            return JsonResponse({'success': True})
+            nombre_producto = form.cleaned_data.get('producto')
+            cantidad = form.cleaned_data.get('cantidad')
+            sucursal = form.cleaned_data.get('sucursal')
+            msgs.success(request, f'Stock de {cantidad} de producto {nombre_producto} en sucursal {sucursal} añadido. ')
         return redirect('admin_dashboard')
     return JsonResponse({'success': False})
+
+def get_stock(request, stock_id):
+    stock = get_object_or_404(Stock, id=stock_id)
+    data = {
+        'success': True,
+        'sucursal': stock.sucursal.id_tienda,
+        'producto_id': stock.producto.id_producto,  # Asegúrate de devolver el ID del producto
+        'cantidad': stock.cantidad,
+    }
+    return JsonResponse(data)
+
 
 def update_stock(request, stock_id):
     stock = get_object_or_404(Stock, id=stock_id)
@@ -873,9 +887,11 @@ def update_stock(request, stock_id):
         form = StockForm(request.POST, instance=stock)
         if form.is_valid():
             form.save()
-            return JsonResponse({'success': True})
+            msgs.info(request, 'El stock fue actualizado correctamente.')
         return redirect('admin_dashboard')
-    return JsonResponse({'success': False})
+    else:
+        form = StockForm(instance=stock)
+    return JsonResponse({'success': False, 'form': form.as_p()})
 
 def delete_stock(request, stock_id):
     stock = get_object_or_404(Stock, id=stock_id)

@@ -68,4 +68,4 @@ class CategoriaForm(forms.ModelForm):
 class StockForm(forms.ModelForm):
     class Meta:
         model = Stock
-        fields = '__all__'
+        fields = ['sucursal', 'producto', 'cantidad']
