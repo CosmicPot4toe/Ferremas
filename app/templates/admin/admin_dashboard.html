@@ -1,6 +1,8 @@
 {% extends 'app/base.html' %}
 {% load static %}
+
 {% load extras %}
+
 {% load crispy_forms_tags %}
 {% block contenido %}
 <title>Dashboard</title>
@@ -197,7 +199,7 @@
                         <td style="width: 150px;">{{ producto.nombre }}</td>
                         <td>{{ producto.marca }}</td>
                         <td><img src="{{ producto.imagen_url }}" alt="" style="height: 100px;"></td>
-                        <td style="width: 300px;">{{ producto.descripcion|truncate_chars:100 }}</td> <!-- Truncar descripción -->
+                        <td style="width: 300px;">{{ producto.descripcion|truncatechars:100 }}</td> <!-- Truncar descripción -->
                         <td>{{ producto.precio }}</td>
                         <td>
                             <button onclick="openEditProductModal('modal-edit-producto', {{ producto.id_producto }})" class="btn btn-warning">Editar</button>
@@ -630,39 +632,52 @@
 
 <script>
     function redirectToProducts(event) {
-    event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
-    const form = event.target;
-    const query = form.querySelector('input[name="q"]').value;
-    const url = new URL(form.action, window.location.origin);
-    url.searchParams.set('q', query);
-    url.hash = 'productos'; // Añadir el hash para redirigir a la sección de productos
-    window.location.href = url.toString();
-    localStorage.setItem('selectedSection', 'productos');
-}
-
-function showSection(sectionId) {
-    const sections = document.querySelectorAll('.table-container');
-    sections.forEach(section => {
-        section.style.display = 'none';
-    });
-    document.getElementById(sectionId).style.display = 'block';
-    localStorage.setItem('selectedSection', sectionId);
-}
-
-window.addEventListener('load', function() {
-    const queryParams = new URLSearchParams(window.location.search);
-    const query = queryParams.get('q');
-    const selectedSection = localStorage.getItem('selectedSection');
-
-    if (query && window.location.hash === '#productos') {
-        showSection('productos');
-    } else if (selectedSection) {
-        showSection(selectedSection);
-    } else {
-        // Mostrar una sección por defecto si no hay ninguna seleccionada
-        showSection('usuarios'); // Ajusta según tu sección por defecto
+        event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+        const form = event.target;
+        const query = form.querySelector('input[name="q"]').value;
+        const url = new URL(form.action, window.location.origin);
+        url.searchParams.set('q', query);
+        url.hash = 'productos'; // Añadir el hash para redirigir a la sección de productos
+        window.location.href = url.toString();
+        localStorage.setItem('selectedSection', 'productos');
     }
-});
+
+    function showSection(sectionId) {
+        // Ocultar todas las secciones
+        document.querySelectorAll('.table-container').forEach(function(section) {
+            section.style.display = 'none';
+        });
+
+        // Mostrar la sección seleccionada
+        document.getElementById(sectionId).style.display = 'block';
+
+        // Quitar la clase 'active' de todos los enlaces
+        document.querySelectorAll('.nav-list a').forEach(function(link) {
+            link.classList.remove('active');
+        });
+
+        // Añadir la clase 'active' al enlace seleccionado
+        document.getElementById(sectionId + '-link').classList.add('active');
+
+        // Guardar la sección seleccionada en localStorage
+        localStorage.setItem('selectedSection', sectionId);
+    }
+
+    window.addEventListener('load', function() {
+        const queryParams = new URLSearchParams(window.location.search);
+        const query = queryParams.get('q');
+        const selectedSection = localStorage.getItem('selectedSection');
+
+        if (query && window.location.hash === '#productos') {
+            showSection('productos');
+        } else if (selectedSection) {
+            showSection(selectedSection);
+        } else {
+            // Mostrar la sección de usuarios por defecto si no hay ninguna seleccionada
+            showSection('usuarios');
+        }
+    });
+
     function openModal(modalId) {
         document.getElementById(modalId).style.display = 'block';
     }
@@ -681,130 +696,125 @@ window.addEventListener('load', function() {
         const form = document.querySelector(`#${modalId} form`);
         form.action = form.action.replace('itemId', itemId);
         document.getElementById(modalId).style.display = 'block';
-        
     }
 
     function openEditProductModal(modalId, productoId) {
-    fetch(`/admin/get_producto/${productoId}/`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('editMarca').value = data.marca;
-                document.getElementById('editNombre').value = data.nombre;
-                document.getElementById('editCodigoProducto').value = data.codigo_producto;
-                document.getElementById('editDescripcion').value = data.descripcion;
-                document.getElementById('editPrecio').value = data.precio;
-                document.getElementById('editCategoria').value = data.categoria;
-                document.getElementById('editImagenUrl').value = data.imagen_url;
-                const form = document.getElementById('editProductForm');
-                form.action = `/admin/update_producto/${productoId}/`;
-                document.getElementById(modalId).style.display = 'block';
-            }
-        })
-        .catch(error => console.error('Error:', error));
+        fetch(`/admin/get_producto/${productoId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('editMarca').value = data.marca;
+                    document.getElementById('editNombre').value = data.nombre;
+                    document.getElementById('editCodigoProducto').value = data.codigo_producto;
+                    document.getElementById('editDescripcion').value = data.descripcion;
+                    document.getElementById('editPrecio').value = data.precio;
+                    document.getElementById('editCategoria').value = data.categoria;
+                    document.getElementById('editImagenUrl').value = data.imagen_url;
+                    const form = document.getElementById('editProductForm');
+                    form.action = `/admin/update_producto/${productoId}/`;
+                    document.getElementById(modalId).style.display = 'block';
+                }
+            })
+            .catch(error => console.error('Error:', error));
     }
 
     function openEditCategoriaModal(modalId, categoriaId) {
-    fetch(`/admin/get_categoria/${categoriaId}/`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('editNombreCategoria').value = data.nombre;
-                const form = document.getElementById('editCategoriaForm');
-                form.action = `/admin/update_categoria/${categoriaId}/`;
-                document.getElementById(modalId).style.display = 'block';
-            }
-        })
-        .catch(error => console.error('Error:', error));
+        fetch(`/admin/get_categoria/${categoriaId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('editNombreCategoria').value = data.nombre;
+                    const form = document.getElementById('editCategoriaForm');
+                    form.action = `/admin/update_categoria/${categoriaId}/`;
+                    document.getElementById(modalId).style.display = 'block';
+                }
+            })
+            .catch(error => console.error('Error:', error));
     }
-    
-		function openEditCategoriaProdModal(modalId, categoriaId) {
-    fetch(`/admin/get_categoriaproducto/${categoriaId}/`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('editNombreCat').value = data.nombre;
-                document.getElementById('editSubCat').value = data.subcat;
-                document.getElementById('editSub-tipo').value = data.subtipo;
-                const form = document.getElementById('editCatForm');
-                form.action = `/admin/update_categoriaproducto/${categoriaId}/`;
-                document.getElementById(modalId).style.display = 'block';
-            }
-        })
-        .catch(error => console.error('Error:', error));
+
+    function openEditCategoriaProdModal(modalId, categoriaId) {
+        fetch(`/admin/get_categoriaproducto/${categoriaId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('editNombreCat').value = data.nombre;
+                    document.getElementById('editSubCat').value = data.subcat;
+                    document.getElementById('editSub-tipo').value = data.subtipo;
+                    const form = document.getElementById('editCatForm');
+                    form.action = `/admin/update_categoriaproducto/${categoriaId}/`;
+                    document.getElementById(modalId).style.display = 'block';
+                }
+            })
+            .catch(error => console.error('Error:', error));
     }
 
     function openEditUserModal(modalId, userId) {
-    console.log(`Opening modal for user ID: ${userId}`);
-    fetch(`/update_user/${userId}/`)
-        .then(response => {
-            console.log('Fetch response:', response);
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('Network response was not ok');
-            }
-        })
-        .then(data => {
-            console.log('Fetch data:', data);
-            if (data.success) {
-                document.getElementById('editUsername').value = data.username;
-                document.getElementById('editEmail').value = data.email;
-                document.getElementById('editType').value = data.type;
-                const form = document.getElementById('editUserForm');
-                form.action = `/update_user/${userId}/`;
-                document.getElementById(modalId).style.display = 'block';
-            } else {
-                console.error('Fetch data success false:', data);
-            }
-        })
-        .catch(error => console.error('Fetch error:', error));
+        console.log(`Opening modal for user ID: ${userId}`);
+        fetch(`/update_user/${userId}/`)
+            .then(response => {
+                console.log('Fetch response:', response);
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Network response was not ok');
+                }
+            })
+            .then(data => {
+                console.log('Fetch data:', data);
+                if (data.success) {
+                    document.getElementById('editUsername').value = data.username;
+                    document.getElementById('editEmail').value = data.email;
+                    document.getElementById('editType').value = data.type;
+                    const form = document.getElementById('editUserForm');
+                    form.action = `/update_user/${userId}/`;
+                    document.getElementById(modalId).style.display = 'block';
+                } else {
+                    console.error('Fetch data success false:', data);
+                }
+            })
+            .catch(error => console.error('Fetch error:', error));
     }
 
     function openEditTiendaModal(modalId, tiendaId) {
-    fetch(`/admin/get_tienda/${tiendaId}/`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                console.log(data); // Para verificar los datos recibidos
-                $('#editNombreTienda').val(data.nombre);
-                $('#editDireccion').val(data.direccion);
-                $('#editComuna').val(data.comuna);
-                $('#editRegion').val(data.region);
-                $('#editTelefono').val(data.telefono);
-                $('#editEmailTienda').val(data.email);
-                const form = document.getElementById('editTiendaForm');
-                form.action = `/admin/update_tienda/${tiendaId}/`;
-                document.getElementById(modalId).style.display = 'block';
-            }
-        })
-        .catch(error => console.error('Error:', error));
-}
+        fetch(`/admin/get_tienda/${tiendaId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log(data); // Para verificar los datos recibidos
+                    $('#editNombreTienda').val(data.nombre);
+                    $('#editDireccion').val(data.direccion);
+                    $('#editComuna').val(data.comuna);
+                    $('#editRegion').val(data.region);
+                    $('#editTelefono').val(data.telefono);
+                    $('#editEmailTienda').val(data.email);
+                    const form = document.getElementById('editTiendaForm');
+                    form.action = `/admin/update_tienda/${tiendaId}/`;
+                    document.getElementById(modalId).style.display = 'block';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
 
-function openEditStockModal(modalId, stockId) {
-    fetch(`/admin/get_stock/${stockId}/`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                console.log(data);
-                document.getElementById('editStockSucursal').value = data.sucursal;
-                document.getElementById('editStockProducto').value = data.producto_id;  // Asegúrate de que data.producto_id sea el ID del producto
-                document.getElementById('editStockCantidad').value = data.cantidad;
-                const form = document.getElementById('editStockForm');
-                form.action = `/admin/update_stock/${stockId}/`;
-                document.getElementById(modalId).style.display = 'block';
-            }
-        })
-        .catch(error => console.error('Error:', error));
-}
+    function openEditStockModal(modalId, stockId) {
+        fetch(`/admin/get_stock/${stockId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log(data);
+                    document.getElementById('editStockSucursal').value = data.sucursal;
+                    document.getElementById('editStockProducto').value = data.producto_id;  // Asegúrate de que data.producto_id sea el ID del producto
+                    document.getElementById('editStockCantidad').value = data.cantidad;
+                    const form = document.getElementById('editStockForm');
+                    form.action = `/admin/update_stock/${stockId}/`;
+                    document.getElementById(modalId).style.display = 'block';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
 
-
-
-
-
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-}
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
 
 function showSection(sectionId) {
         // Ocultar todas las secciones

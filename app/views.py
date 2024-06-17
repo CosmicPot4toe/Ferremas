@@ -664,7 +664,7 @@ def actualizar_estado_envio(request, detalle_pedido_id):
 
 @login_required
 def admin_dashboard(request):
-    if request.user.type != 'Des':
+    if request.user.type != 'Adm':
         return redirect('login')
     
     query = request.GET.get('q')
