@@ -403,10 +403,10 @@ def envio(request: HttpRequest):
 
             if metodo_envio == 'retiro-tienda' and tienda_seleccionada_id:
                 tienda_seleccionada = Tienda.objects.get(id_tienda=tienda_seleccionada_id).nombre
-                estado_envio = 'Por Retirar'
+                estado_envio = 'Por Confirmar'
             else:
                 tienda_seleccionada = ''
-                estado_envio = 'Por Enviar'
+                estado_envio = 'Por Confirmar'
 
             buy_order = str(random.randrange(1000000, 99999999))
             session_id = str(random.randrange(1000000, 99999999))
