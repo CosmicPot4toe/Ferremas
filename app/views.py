@@ -664,7 +664,7 @@ def actualizar_estado_envio(request, detalle_pedido_id):
 
 @login_required
 def admin_dashboard(request):
-    if request.user.type != 'Adm':
+    if request.user.type != 'Des':
         return redirect('login')
     
     query = request.GET.get('q')
@@ -691,6 +691,7 @@ def admin_dashboard(request):
     producto_form = ProductoForm()
     tienda_form = TiendaForm()
     categoria_form = CategoriaForm()
+    cat_form = CategoriaProdForm()
     stock_form = StockForm()
 
     context = {
@@ -705,6 +706,7 @@ def admin_dashboard(request):
         'producto_form': producto_form,
         'tienda_form': tienda_form,
         'categoria_form': categoria_form,
+        'cat_form':cat_form,
         'stock_form': stock_form,
         'query': query
     }
@@ -804,7 +806,6 @@ def create_tienda(request):
         return redirect('admin_dashboard')
     return JsonResponse({'success': False})
 
-
 def get_tienda(request, tienda_id):
     tienda = get_object_or_404(Tienda, id_tienda=tienda_id)
     data = {
@@ -849,7 +850,6 @@ def create_categoria(request):
     else:
         msgs.error(request, f'La operación no se pudo realizar.')
         return redirect('admin_dashboard')
-        
 
 def update_categoria(request, categoria_id):
     categoria = get_object_or_404(Categoria, id_categoria=categoria_id)
@@ -878,6 +878,47 @@ def delete_categoria(request, categoria_id):
     msgs.warning(request, f'La categoria {categoria.nombre} fue eliminada. ')
     return redirect('admin_dashboard')
 
+def create_catprod(request):
+    if request.method == 'POST':
+        form = CategoriaProdForm(request.POST)
+        if form.is_valid():
+            form.save()
+            nombre_categoria = form.cleaned_data.get('nombre')
+            msgs.success(request, f'La tienda {nombre_categoria} fue creada correctamente. ')
+        return redirect('admin_dashboard')
+    else:
+        msgs.error(request, f'La operación no se pudo realizar.')
+        return redirect('admin_dashboard')
+
+def update_catprod(request, categoria_id):
+    categoria = get_object_or_404(CategoriaProducto, id=categoria_id)
+    if request.method == 'POST':
+        form = CategoriaProdForm(request.POST, instance=categoria)
+        if form.is_valid():
+            form.save()
+            nombre_categoria = form.cleaned_data.get('nombre_categoria')
+            msgs.info(request, f'La categoria {nombre_categoria} fue actualizada.')
+        return redirect('admin_dashboard')
+    else:
+        form = CategoriaProdForm(instance=categoria)
+    return JsonResponse({'success': False, 'form': form.as_p()})
+
+def get_catprod(request, categoria_id):
+    categoria = get_object_or_404(CategoriaProducto, id=categoria_id)
+    data = {
+        'success': True,
+        'nombre': categoria.nombre_categoria,
+        'subcat': categoria.subcategoria,
+				'subtipo':categoria.sub_tipo_producto
+    }
+    return JsonResponse(data)
+
+def delete_catprod(request, categoria_id):
+    categoria = get_object_or_404(CategoriaProducto, id=categoria_id)
+    categoria.delete()
+    msgs.warning(request, f'La categoria {categoria.nombre_categoria} fue eliminada. ')
+    return redirect('admin_dashboard')
+
 def create_stock(request):
     if request.method == 'POST':
         form = StockForm(request.POST)
@@ -899,7 +940,6 @@ def get_stock(request, stock_id):
         'cantidad': stock.cantidad,
     }
     return JsonResponse(data)
-
 
 def update_stock(request, stock_id):
     stock = get_object_or_404(Stock, id=stock_id)

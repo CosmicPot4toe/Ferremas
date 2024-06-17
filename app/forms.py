@@ -23,10 +23,7 @@ class DetalleEnvioForm(forms.Form):
     tienda_seleccionada = forms.CharField(max_length=100, required=False, label='Tienda Seleccionada')
 
 class ContactosFrom (forms.ModelForm):
-
     #nombre = forms.CharField(widget=forms.TextInput(attrs={"class":"form-control"}))
-    
-
     class Meta:
         model = Contactos
         #fields = ["nombre","correo","tipo_consulta","mensaje","avisos"] para dar el orden que uno quiera
@@ -63,6 +60,11 @@ class TiendaForm(forms.ModelForm):
 class CategoriaForm(forms.ModelForm):
     class Meta:
         model = Categoria
+        fields = '__all__'
+
+class CategoriaProdForm(forms.ModelForm):
+    class Meta:
+        model = CategoriaProducto
         fields = '__all__'
 
 class StockForm(forms.ModelForm):

@@ -1,7 +1,7 @@
-django
-django_colorfield
-django_crispy_forms
-django_tracking_model
+django>=4.2
+django_colorfield>=0.11.0
+django_crispy_forms>=2.2
+django_tracking_model>=0.1.7
 requests
 crispy_bootstrap5
 transbank-sdk
