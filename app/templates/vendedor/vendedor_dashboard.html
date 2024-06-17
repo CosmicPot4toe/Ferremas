@@ -244,18 +244,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function aprobarPedido(pedidoId) {
-    fetch(`/vendedor/aprobar_pedido/${pedidoId}/`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(data.message);
-                location.reload(); // Recargar la página para ver los cambios
-            } else {
-                alert(data.message);
-            }
-        })
-        .catch(error => console.error('Error:', error));
-}
+        fetch(`/vendedor/aprobar_pedido/${pedidoId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
 
 function rechazarPedido(pedidoId) {
     fetch(`/vendedor/rechazar_pedido/${pedidoId}/`)

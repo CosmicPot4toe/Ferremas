@@ -977,23 +977,47 @@ def vendedor_dashboard(request):
     return render(request, 'vendedor/vendedor_dashboard.html', context)
 
 def aprobar_pedido(request, pedido_id):
+    print(f"Attempting to approve pedido_id: {pedido_id}")
     detalle_pedido = get_object_or_404(DetallePedido, id=pedido_id)
     producto_nombre = detalle_pedido.producto_nombre
     pedido = detalle_pedido.pedido
     sucursal = pedido.tienda_seleccionada
 
-    # Ajustar aquí para usar el campo correcto
-    stock = get_object_or_404(Stock, producto__nombre=producto_nombre, sucursal__nombre=sucursal)
+    print(f"DetallePedido: {detalle_pedido}")
+    print(f"Producto Nombre: {producto_nombre}")
+    print(f"Pedido: {pedido}")
+    print(f"Sucursal: {sucursal}")
 
-    if stock.cantidad >= detalle_pedido.cantidad:
-        stock.cantidad -= detalle_pedido.cantidad
-        stock.save()
+    # Si la sucursal está vacía, asigna a la tienda de "Stock Online"
+    if not sucursal:
+        sucursal = "Stock Online"  # Nombre exacto de la tienda de stock online en tu base de datos
+
+    try:
+        # Ajustar aquí para usar el campo correcto
+        stock = get_object_or_404(Stock, producto__nombre=producto_nombre, sucursal__nombre=sucursal)
+        print(f"Stock found: {stock}")
+    except Stock.DoesNotExist:
+        stock = None
+        print("No stock found for this producto and sucursal")
+
+    if stock:
+        if stock.cantidad >= detalle_pedido.cantidad:
+            stock.cantidad -= detalle_pedido.cantidad
+            stock.save()
+            detalle_pedido.estado_envio = 'Por Enviar' if pedido.metodo_envio in ['envio-internacional', 'envio-domicilio'] else 'Por Retirar'
+            detalle_pedido.save()
+            msgs.info(request, 'El pedido fue aprobado y el stock fue actualizado correctamente.')
+            print("Pedido approved and stock updated")
+            return JsonResponse({'success': True, 'message': 'Pedido aprobado y stock actualizado.'})
+        else:
+            print("Not enough stock available")
+            return JsonResponse({'success': False, 'message': 'No hay suficiente stock disponible.'})
+    else:
         detalle_pedido.estado_envio = 'Por Enviar' if pedido.metodo_envio in ['envio-internacional', 'envio-domicilio'] else 'Por Retirar'
         detalle_pedido.save()
-        msgs.info(request, 'El pedido fue aprobado y el stock fue actualizado correctamente.')
-        return JsonResponse({'success': True, 'message': 'Pedido aprobado y stock actualizado.'})
-    else:
-        return JsonResponse({'success': False, 'message': 'No hay suficiente stock disponible.'})
+        msgs.info(request, 'El pedido fue aprobado. Nota: No se encontró un stock asociado.')
+        print("Pedido approved. No stock associated")
+        return JsonResponse({'success': True, 'message': 'Pedido aprobado. Nota: No se encontró un stock asociado.'})
 
 def rechazar_pedido(request, pedido_id):
     detalle_pedido = get_object_or_404(DetallePedido, id=pedido_id)
