@@ -55,4 +55,8 @@ urlpatterns = [
     path('admin/get_stock/<int:stock_id>/', get_stock, name='get_stock'),
     path('admin/update_stock/<int:stock_id>/', update_stock, name='update_stock'),
     path('admin/delete_stock/<int:stock_id>/', delete_stock, name='delete_stock'),
+
+    path('vendedor/', vendedor_dashboard, name='vendedor_dashboard'),
+    path('vendedor/aprobar_pedido/<int:pedido_id>/', aprobar_pedido, name='aprobar_pedido'),
+    path('vendedor/rechazar_pedido/<int:pedido_id>/', rechazar_pedido, name='rechazar_pedido'),
 ]

@@ -957,3 +957,47 @@ def delete_stock(request, stock_id):
     stock = get_object_or_404(Stock, id=stock_id)
     stock.delete()
     return redirect('admin_dashboard')
+
+def vendedor_dashboard(request):
+    if request.user.type != 'Ven':
+        return redirect('login')
+
+    tiendas = Tienda.objects.all()
+    sucursal_id = request.GET.get('sucursal')
+    stocks = Stock.objects.filter(sucursal_id=sucursal_id) if sucursal_id else []
+    sucursal_seleccionada = Tienda.objects.get(id_tienda=sucursal_id).nombre if sucursal_id else ""
+
+    context = {
+        'tiendas': tiendas,
+        'sucursal_id': sucursal_id,
+        'sucursal_seleccionada': sucursal_seleccionada,
+        'stocks': stocks,
+        'pedidos': DetallePedido.objects.filter(estado_envio='Por Confirmar'),
+    }
+    return render(request, 'vendedor/vendedor_dashboard.html', context)
+
+def aprobar_pedido(request, pedido_id):
+    detalle_pedido = get_object_or_404(DetallePedido, id=pedido_id)
+    producto_nombre = detalle_pedido.producto_nombre
+    pedido = detalle_pedido.pedido
+    sucursal = pedido.tienda_seleccionada
+
+    # Ajustar aquí para usar el campo correcto
+    stock = get_object_or_404(Stock, producto__nombre=producto_nombre, sucursal__nombre=sucursal)
+
+    if stock.cantidad >= detalle_pedido.cantidad:
+        stock.cantidad -= detalle_pedido.cantidad
+        stock.save()
+        detalle_pedido.estado_envio = 'Por Enviar' if pedido.metodo_envio in ['envio-internacional', 'envio-domicilio'] else 'Por Retirar'
+        detalle_pedido.save()
+        msgs.info(request, 'El pedido fue aprobado y el stock fue actualizado correctamente.')
+        return JsonResponse({'success': True, 'message': 'Pedido aprobado y stock actualizado.'})
+    else:
+        return JsonResponse({'success': False, 'message': 'No hay suficiente stock disponible.'})
+
+def rechazar_pedido(request, pedido_id):
+    detalle_pedido = get_object_or_404(DetallePedido, id=pedido_id)
+    detalle_pedido.estado_envio = 'Rechazado'
+    detalle_pedido.save()
+    msgs.info(request, 'El pedido fue rechazado.')
+    return JsonResponse({'success': True, 'message': 'Pedido rechazado.'})

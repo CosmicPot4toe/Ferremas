@@ -1,14 +1,4 @@
 from django import template
-
-register = template.Library()
-
-@register.filter
-def truncate_chars(value, max_length):
-    if len(value) > max_length:
-        return value[:max_length] + '...'
-    return value
-
-from django import template
 from ..models import Tienda
 
 register = template.Library()
