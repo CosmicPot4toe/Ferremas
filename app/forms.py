@@ -35,10 +35,8 @@ class ActualizarEstadoEnvioForm(forms.ModelForm):
         fields = ['estado_envio']
         widgets = {
             'estado_envio': forms.Select(choices=[
-                ('Por Enviar', 'Por Enviar'),
-                ('Por Retirar', 'Por Retirar'),
                 ('Enviado', 'Enviado'),
-                ('Completado', 'Completado'),
+                ('Retirado', 'Retirado'),
             ])
         }
 

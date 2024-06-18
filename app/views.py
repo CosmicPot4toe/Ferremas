@@ -631,7 +631,9 @@ def pedidos_pendientes(request):
         
         if form.is_valid():
             form.save()
+            msgs.success = (request, f"Pedido actualizado correctamente")
             return redirect('pedidos_pendientes')
+            
     else:
         form = ActualizarEstadoEnvioForm()
     
