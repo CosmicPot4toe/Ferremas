@@ -14,6 +14,20 @@ class UserAdmin(BUA):
                 ),
             },
         ),
+        (
+            'Info',
+            {
+                'fields':(
+                    'rut',
+                    'telefono',
+                    'direccion',
+                    'ciudad',
+                    'pais',
+                    'region',
+                    'codigo_postal'
+                ),
+            },
+        ),
     )
 
 admin.site.register(User,UserAdmin)

@@ -14,6 +14,13 @@ class User(AbstractUser):
         ('Des', 'Desarrollador')
     )
     type = models.CharField(max_length=20, choices=TIPOS_CHOICES, default='Cli')
+    rut = models.CharField(max_length=12,null=True)
+    telefono = models.CharField(max_length=12,null=True)
+    direccion = models.CharField(max_length=200,null=True)
+    ciudad = models.CharField(max_length=200,null=True)
+    pais = models.CharField(max_length=200,null=True)
+    region = models.CharField(max_length=200,null=True)
+    codigo_postal = models.IntegerField(null=True)
 
 class Tienda(TrackingModelMixin,models.Model):
     id_tienda = models.AutoField(primary_key=True)
