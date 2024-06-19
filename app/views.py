@@ -20,6 +20,7 @@ from django.http import HttpRequest
 from transbank.webpay.webpay_plus.transaction import Transaction
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.template.loader import render_to_string
 
 
 def buscar(request):
@@ -575,11 +576,11 @@ def set_currency(request, currency):
 
 def contacto (request):
     data = {
-        'form': ContactosFrom()
+        'form': ContactoFrom()
     }
 
     if request.method == 'POST':
-        formulario = ContactosFrom (data=request.POST)
+        formulario = ContactoFrom (data=request.POST)
         if formulario.is_valid():
             formulario.save()
             msgs.success(request,"¡Enviado correctamente! Recibira su respuesta a su correo electronico en breve!")
@@ -1027,3 +1028,120 @@ def rechazar_pedido(request, pedido_id):
     detalle_pedido.save()
     msgs.info(request, 'El pedido fue rechazado.')
     return JsonResponse({'success': True, 'message': 'Pedido rechazado.'})
+
+@login_required
+def perfil(request):
+    pedidos = Pedido.objects.filter(email=request.user.email)
+    
+    currency = request.session.get('currency', 'CLP')
+    mindicador = Mindicador('dolar')
+    dollar_value = mindicador.get_dollar_value_today()
+
+    pedidos_detalles = []
+
+    for pedido in pedidos:
+        total_pedido = pedido.detallepedido_set.aggregate(total=Sum('precio_total'))['total']
+        pedido.total_pedido = total_pedido if total_pedido else 0
+
+        detalles = []
+        for detalle in pedido.detallepedido_set.all():
+            if currency == 'USD' and dollar_value:
+                detalle_precio_unitario = detalle.precio_unitario / dollar_value
+                detalle_precio_total = detalle.precio_total / dollar_value
+                detalle_precio_unitario_formatted = f"${detalle_precio_unitario:,.2f} USD"
+                detalle_precio_total_formatted = f"${detalle_precio_total:,.2f} USD"
+            else:
+                detalle_precio_unitario_formatted = f"${detalle.precio_unitario:,} CLP"
+                detalle_precio_total_formatted = f"${detalle.precio_total:,} CLP"
+            
+            detalles.append({
+                'producto_nombre': detalle.producto_nombre,
+                'cantidad': detalle.cantidad,
+                'precio_unitario_formatted': detalle_precio_unitario_formatted,
+                'precio_total_formatted': detalle_precio_total_formatted,
+                'imagen_url': detalle.imagen_url,
+                'estado_envio': detalle.estado_envio
+            })
+        
+        if currency == 'USD' and dollar_value:
+            pedido_total_pedido_formatted = f"${pedido.total_pedido / dollar_value:,.2f} USD"
+        else:
+            pedido_total_pedido_formatted = f"${pedido.total_pedido:,} CLP"
+
+        pedidos_detalles.append({
+            'numero_pedido': pedido.numero_pedido,
+            'fecha': pedido.fecha,
+            'total_pedido_formatted': pedido_total_pedido_formatted,
+            'detalles': detalles,
+            'nombre': pedido.nombre,
+            'direccion': pedido.direccion,
+            'ciudad': pedido.ciudad,
+            'region': pedido.region,
+            'codigo_postal': pedido.codigo_postal,
+            'pais': pedido.pais,
+            'telefono': pedido.telefono,
+            'metodo_envio': pedido.metodo_envio
+        })
+
+    # Obtener productos recomendados
+    productos_recomendados = list(Producto.objects.all())
+    random.shuffle(productos_recomendados)
+    productos_recomendados = productos_recomendados[:3]  # Mostrar 4 productos recomendados  # Ejemplo: seleccionar los primeros 3 productos
+
+    productos_recomendados_data = []
+    for producto in productos_recomendados:
+        if currency == 'USD' and dollar_value:
+            producto_precio_formatted = f"${producto.precio / dollar_value:,.2f} USD"
+        else:
+            producto_precio_formatted = f"${producto.precio:,} CLP"
+
+        productos_recomendados_data.append({
+            'id': producto.id_producto,
+            'nombre': producto.nombre,
+            'descripcion': producto.descripcion,
+            'imagen_url': producto.imagen_url,
+            'precio_formatted': producto_precio_formatted,
+        })
+
+    context = {
+        'user': request.user,
+        'pedidos_detalles': pedidos_detalles,
+        'currency': currency,
+        'dollar_value': dollar_value,
+        'productos_recomendados': productos_recomendados_data,
+    }
+    return render(request, 'app/perfil.html', context)
+
+@login_required
+def update_cliente_info(request):
+    if request.method == 'POST':
+        user = request.user
+        user.email = request.POST.get('email')
+        user.first_name = request.POST.get('nombre')
+        user.rut = request.POST.get('rut')
+        user.save()
+        msgs.success(request, 'Información actualizada exitosamente.')
+        return redirect('perfil')
+
+def update_cliente_direccion(request):
+    if request.method == 'POST':
+        user = request.user
+        user.direccion = request.POST.get('direccion')
+        user.ciudad = request.POST.get('ciudad')
+        user.region = request.POST.get('region')
+        user.pais = request.POST.get('pais')
+        user.codigo_postal = request.POST.get('codigo_postal')
+        user.telefono = request.POST.get('telefono')
+        user.pais_abreviado = request.POST.get('pais_abreviado')  # Añadido para manejar el campo pais_abreviado
+        user.save()
+        msgs.success(request, 'Dirección actualizada exitosamente.')
+        return redirect('perfil')
+
+
+@login_required
+def get_pedido_detalles(request, pedido_id):
+    pedido = get_object_or_404(Pedido, id=pedido_id)
+    detalles = pedido.detallepedido_set.all()
+
+    detalles_html = render_to_string('app/revisar_pedidos.html', {'detalles': detalles})
+    return JsonResponse({'success': True, 'detalles_html': detalles_html})

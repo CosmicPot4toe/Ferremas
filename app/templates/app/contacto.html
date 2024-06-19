@@ -2,7 +2,7 @@
 
 {% block contenido %}
 {% load crispy_forms_tags %}
-<br><br><br><br><br>
+<br><br><br><br>
 <div class="container-contacto d-flex justify-content-center align-items-center" style="min-height: 80vh;">
     <div class="card shadow-lg p-3 mb-5 bg-white rounded w-100" style="max-width: 600px;">
         <div class="card-body">
@@ -24,17 +24,23 @@
         </div>
     </div>
 </div>
-<br><br><br>
+
 <style>
     .container-contacto {
-        max-width: 800px;
-        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
     }
 
     .card {
+        background-color: #fff;
+        padding: 2rem;
         border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 400px;
     }
 
     .card h2 {

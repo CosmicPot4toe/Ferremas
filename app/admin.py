@@ -23,6 +23,7 @@ class UserAdmin(BUA):
                     'direccion',
                     'ciudad',
                     'pais',
+                    'pais_abreviado',
                     'region',
                     'codigo_postal'
                 ),

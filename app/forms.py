@@ -22,12 +22,14 @@ class DetalleEnvioForm(forms.Form):
     metodo_envio = forms.CharField(max_length=100, label='Método de Envío')
     tienda_seleccionada = forms.CharField(max_length=100, required=False, label='Tienda Seleccionada')
 
-class ContactosFrom (forms.ModelForm):
+
+class ContactoFrom (forms.ModelForm):
     #nombre = forms.CharField(widget=forms.TextInput(attrs={"class":"form-control"}))
     class Meta:
-        model = Contactos
+        model = Contacto
         #fields = ["nombre","correo","tipo_consulta","mensaje","avisos"] para dar el orden que uno quiera
         fields = '__all__'
+######
 
 class ActualizarEstadoEnvioForm(forms.ModelForm):
     class Meta:

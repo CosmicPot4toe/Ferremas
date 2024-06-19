@@ -41,9 +41,10 @@
 </style>
 
 <div class="login-container">
-    <div class="login-card">
+    <div class="login-card card-body">
         <h3 class="text-center">¡Inicia con tu cuenta FERREMAS!</h3>
         <hr>
+
         <form action="" method="POST">
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ next }}">

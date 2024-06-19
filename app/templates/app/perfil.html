@@ -1,0 +1,311 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block contenido %}
+<style>
+body {
+    font-family: Arial, sans-serif;
+}
+
+.dashboard {
+    display: flex;
+}
+
+.sidebar {
+    width: 200px;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5%;
+}
+
+.sidebar h2 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 10px;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: #000000;
+}
+
+.content {
+    padding: 20px;
+    margin-left: 200px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.section {
+        padding: 20px;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        background-color: #fff;
+    }
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.nav-list {
+    list-style: none;
+    padding: 0;
+}
+
+.nav-list li {
+    margin-bottom: 10px;
+}
+
+.nav-list a {
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    display: block;
+    padding: 10px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.nav-list a:hover {
+    background-color: #f0f0f0;
+    color: #380e53;
+}
+
+.nav-list a.active {
+    background-color: #380e53;
+    color: white;
+}
+.section {
+        padding: 20px;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        background-color: #fff;
+    }
+    .form-group label {
+        font-weight: bold;
+    }
+    .form-control {
+        max-width: 500px;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }
+</style>
+<br><br><br><br>
+<div class="dashboard">
+
+        <div class="sidebar">
+            <h2>Información de {{user.first_name}}</h2>
+            <hr>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a class="nav-link active" id="perfil-link" href="#" onclick="showSection('perfil')">Información del Cliente</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="direccion-link" href="#" onclick="showSection('direccion')">Dirección de Envío</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="pedidos-link" href="#" onclick="showSection('pedidos')">Pedidos Realizados</a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="content">
+            <br>
+            <div id="perfil" class="section">
+                <h2>Información del Cliente</h2>
+                <form id="update-info-form" method="post" action="{% url 'update_cliente_info' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" value="{{ user.first_name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="rut" id="rut-label">RUT</label>
+                        <input type="text" class="form-control" id="rut" name="rut" value="{{ user.rut }}" placeholder="Ej: 12.345.678-9" required>
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Actualizar Información</button>
+                </form>
+            </div>
+
+            <div id="direccion" class="section" style="display:none;">
+                <h2>Dirección de Envío</h2>
+                <form id="update-address-form" method="post" action="{% url 'update_cliente_direccion' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="direccion">Dirección</label>
+                        <input type="text" class="form-control" id="direccion" name="direccion" value="{{ user.direccion }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ciudad">Ciudad</label>
+                        <input type="text" class="form-control" id="ciudad" name="ciudad" value="{{ user.ciudad }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pais">País</label>
+                        <select id="country" name="pais" class="form-control crs-country" data-region-id="region" data-default-option="Seleccionar país"></select>
+                        <input type="hidden" id="country_code" name="pais_abreviado" value="{{ user.pais_abreviado }}">
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="region">Región</label>
+                        <select id="region" name="region" class="form-control crs-region" data-default-option="Seleccionar región">
+                            {% if user.region %}
+                                <option value="{{ user.region }}" selected>{{ user.region }}</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="codigo_postal">Código Postal</label>
+                        <input type="text" class="form-control" id="codigo_postal" name="codigo_postal" value="{{ user.codigo_postal }}" required>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="telefono">Teléfono</label>
+                        <input id="phone" name="telefono" type="tel" class="form-control" value="{{ user.telefono }}">
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Actualizar Dirección</button>
+                </form>
+            </div>
+
+            <div id="pedidos" class="section" style="display:none;">
+                <h2>Pedidos Realizados</h2>
+                <div class="table-responsive">
+                    {% include 'app/revisar_pedidos.html' %}
+                </div>
+            </div>
+        </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/country-region-selector@latest/dist/crs.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Inicializar country-region-selector para los campos de país y región
+        window.crs.init();
+
+        // Mantener la inicialización del teléfono
+        const input = document.querySelector("#phone");
+        const iti = window.intlTelInput(input, {
+            initialCountry: "{{ user.pais_abreviado|default:'auto' }}",
+            geoIpLookup: function(callback) {
+                fetch('https://ipinfo.io/json', { headers: { 'Accept': 'application/json' } })
+                    .then(response => response.json())
+                    .then(data => callback(data.country))
+                    .catch(() => callback("US"));
+            },
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+        });
+
+        // Actualizar el input hidden de país con el código del país seleccionado
+        input.addEventListener('countrychange', function() {
+            const countryData = iti.getSelectedCountryData();
+            document.querySelector("#country_code").value = countryData.iso2;
+        });
+
+        // Si hay un valor para el país, seleccionarlo
+        if ("{{ user.pais }}") {
+            document.querySelector("#country").value = "{{ user.pais }}";
+        }
+
+        // Si hay un valor para la región, añadirlo al selector
+        const region = "{{ user.region }}";
+        if (region) {
+            const regionSelect = document.getElementById('region');
+            const option = document.createElement('option');
+            option.value = region;
+            option.text = region;
+            option.selected = true;
+            regionSelect.add(option);
+        }
+
+        // Manejar el cambio de país
+        document.getElementById('country').addEventListener('change', function() {
+            const selectedCountry = document.getElementById('country').value;
+            window.crs.updateRegionList('country', 'region');  // Agregar esta línea para actualizar la lista de regiones
+
+            const rutLabel = document.getElementById('rut-label');
+            const rutInput = document.getElementById('rut');
+
+            if (selectedCountry === 'Chile') {
+                rutLabel.innerText = 'RUT';
+                rutInput.placeholder = 'Ej: 12.345.678-9';
+            } else {
+                rutLabel.innerText = 'Tax ID';
+                rutInput.placeholder = 'Enter your Tax ID';
+            }
+        });
+
+        // Inicializar los valores por defecto al cargar la página
+        const initialCountry = "{{ user.pais }}";
+        if (initialCountry) {
+            window.crs.set('country', initialCountry);
+            setTimeout(() => {
+                window.crs.set('region', "{{ user.region }}");
+            }, 500); // Asegurar que la lista de regiones se actualice correctamente
+        }
+    });
+
+    function showSection(sectionId) {
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(section => {
+            section.style.display = 'none';
+        });
+        document.getElementById(sectionId).style.display = 'block';
+
+        // Actualizar el estado del enlace activo
+        const links = document.querySelectorAll('.nav-link');
+        links.forEach(link => {
+            link.classList.remove('active');
+        });
+        document.getElementById(`${sectionId}-link`).classList.add('active');
+    }
+</script>
+{% endblock %}

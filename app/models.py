@@ -19,6 +19,7 @@ class User(AbstractUser):
     direccion = models.CharField(max_length=200,null=True)
     ciudad = models.CharField(max_length=200,null=True)
     pais = models.CharField(max_length=200,null=True)
+    pais_abreviado = models.CharField(max_length=200,null=True)
     region = models.CharField(max_length=200,null=True)
     codigo_postal = models.IntegerField(null=True)
 
@@ -61,13 +62,6 @@ class CategoriaProducto(TrackingModelMixin,models.Model):
     sub_tipo_producto = models.CharField(max_length=100)
     def __str__(self):
         return self.nombre_categoria
-
-class Contacto(models.Model):
-    id_contacto = models.AutoField(primary_key=True)
-    tipo_contacto = models.ForeignKey('TipoContacto', on_delete=models.CASCADE)
-    email = models.EmailField()
-    telefono = models.CharField(max_length=20)
-    direccion = models.CharField(max_length=200)
 
 class TipoContacto(models.Model):
     id_tipo_contacto = models.AutoField(primary_key=True)
@@ -118,7 +112,7 @@ opciones_consulta = [
 
 ]
 
-class Contactos(models.Model):
+class Contacto(models.Model):
     nombre = models.CharField(max_length=50)
     email = models.EmailField()
     tipo_consulta = models.IntegerField(choices=opciones_consulta)
