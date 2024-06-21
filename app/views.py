@@ -399,6 +399,21 @@ def envio(request: HttpRequest):
             envio_datos = form.cleaned_data
             request.session['envio_datos'] = envio_datos
 
+            if request.user.is_authenticated:
+                user = request.user
+                user.first_name = envio_datos['nombre'].split()[0] if envio_datos['nombre'] else user.first_name
+                user.last_name = ' '.join(envio_datos['nombre'].split()[1:]) if envio_datos['nombre'] else user.last_name
+                user.email = envio_datos['email'] or user.email
+                user.direccion = envio_datos['direccion'] or user.direccion
+                user.ciudad = envio_datos['ciudad'] or user.ciudad
+                user.pais = request.POST.get('pais_nombre') or user.pais
+                user.pais_abreviado = request.POST.get('pais_abreviado') or user.pais_abreviado
+                user.region = envio_datos['region'] or user.region
+                user.codigo_postal = envio_datos['codigo_postal'] or user.codigo_postal
+                user.telefono = envio_datos['telefono'] or user.telefono
+                user.rut = envio_datos['rut'] or user.rut
+                user.save()
+
             metodo_envio = 'envio-internacional' if envio_datos['pais'] != 'cl' else request.POST.get('metodo_envio', '')
             tienda_seleccionada_id = request.POST.get('tienda_select', '')
 
@@ -450,7 +465,32 @@ def envio(request: HttpRequest):
 
             return redirect(response['url'] + '?token_ws=' + response['token'])
     else:
-        form = DetalleEnvioForm(initial=request.session.get('envio_datos', {}))
+        initial_data = request.session.get('envio_datos', {})
+        if request.user.is_authenticated:
+            user = request.user
+        # Solo agregar datos que no sean None
+            if user.first_name != 'None':
+                initial_data['nombre'] = user.get_full_name()
+            if user.email:
+                initial_data['email'] = user.email
+            if user.direccion != 'None':
+                initial_data['direccion'] = user.direccion
+            if user.ciudad != 'None':
+                initial_data['ciudad'] = user.ciudad
+            if user.pais != 'None':
+                initial_data['pais'] = user.pais
+            if user.pais_abreviado != 'None':
+                initial_data['pais_abreviado'] = user.pais_abreviado
+            if user.region != 'None':
+                initial_data['region'] = user.region
+            if user.codigo_postal != 'None':
+                initial_data['codigo_postal'] = user.codigo_postal
+            if user.telefono != 'None':
+                initial_data['telefono'] = user.telefono
+            if user.rut != 'None':
+                initial_data['rut'] = user.rut
+
+    form = DetalleEnvioForm(initial=initial_data)
 
     productos_ids = [value["id"] for value in carrito_dict.values()]
     tiendas_disponibles = Tienda.objects.filter(

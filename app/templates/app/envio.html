@@ -97,7 +97,8 @@
                         </div>
                         
                         <!-- Campo hidden para almacenar el código del país -->
-                        <input type="hidden" name="pais" id="country_code">
+                        <input type="hidden" name="pais_abreviado" id="country_code">
+                        <input type="hidden" name="pais_nombre" id="country_name">
                         
                         <div id="detalle-envio" style="display: none;">
                             <p id="confirm-nombre"></p>
@@ -245,7 +246,7 @@
         // Mantener la inicialización del teléfono
         const input = document.querySelector("#phone");
         const iti = window.intlTelInput(input, {
-            initialCountry: "auto",
+            initialCountry: "{{ user.pais_abreviado|default:'auto' }}",
             geoIpLookup: function(callback) {
                 fetch('https://ipinfo.io/json', { headers: { 'Accept': 'application/json' } })
                     .then(response => response.json())
@@ -259,7 +260,68 @@
         input.addEventListener('countrychange', function() {
             const countryData = iti.getSelectedCountryData();
             document.querySelector("#country_code").value = countryData.iso2;
+            document.querySelector("#country_name").value = countryData.name;
         });
+    // Completar automáticamente los datos del usuario si están disponibles
+    const userPais = "{{ user.pais }}";
+    const userPaisAbreviado = "{{ user.pais_abreviado }}";
+    const userRegion = "{{ user.region }}";
+    const userTelefono = "{{ user.telefono }}";
+    const userRut = "{{ user.rut }}";
+    const userNombre = "{{ user.get_full_name }}";
+    const userEmail = "{{ user.email }}";
+    const userDireccion = "{{ user.direccion }}";
+    const userCiudad = "{{ user.ciudad }}";
+    const userCodigoPostal = "{{ user.codigo_postal }}";
+
+    if (userPais && userPais != 'None') {
+        document.getElementById('country').value = userPais;
+        document.getElementById('country').dispatchEvent(new Event('change'));
+    }
+
+    if (userPaisAbreviado && userPaisAbreviado != 'None') {
+        iti.setCountry(userPaisAbreviado);
+        document.getElementById('country_code').value = userPaisAbreviado;
+    }
+
+    if (userTelefono && userTelefono != 'None') {
+        document.getElementById('phone').value = userTelefono;
+    }
+
+    if (userRut && userRut != 'None') {
+        document.getElementById('id_rut').value = userRut;
+    }
+
+    if (userNombre && userNombre != 'None') {
+        document.getElementById('id_nombre').value = userNombre;
+    }
+
+    if (userEmail && userEmail != 'None') {
+        document.getElementById('id_email').value = userEmail;
+    }
+
+    if (userDireccion && userDireccion != 'None') {
+        document.getElementById('id_direccion').value = userDireccion;
+    }
+
+    if (userCiudad && userCiudad != 'None') {
+        document.getElementById('id_ciudad').value = userCiudad;
+    }
+
+    if (userCodigoPostal && userCodigoPostal != 'None') {
+        document.getElementById('id_codigo_postal').value = userCodigoPostal;
+    }
+
+    // Añadir la opción de región si el usuario está logueado y tiene una región seleccionada
+    if (userRegion && userRegion != 'None') {
+        const regionSelect = document.getElementById('region');
+        const option = document.createElement('option');
+        option.value = userRegion;
+        option.text = userRegion;
+        option.selected = true;
+        regionSelect.add(option);
+    }
+
 
         // Manejar el cambio de país
         document.getElementById('country').addEventListener('change', function() {

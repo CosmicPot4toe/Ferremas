@@ -55,12 +55,6 @@ body {
     background-color: rgba(0, 0, 0, 0.4);
 }
 
-.section {
-        padding: 20px;
-        border: 1px solid #dee2e6;
-        border-radius: 5px;
-        background-color: #fff;
-    }
 
 .modal-content {
     background-color: #fefefe;
@@ -166,7 +160,11 @@ body {
                         <input type="text" class="form-control" id="nombre" name="nombre" value="{{ user.first_name }}" required>
                     </div>
                     <div class="form-group">
+                        {% if user.pais != 'Chile' %}
+                        <label for="rut" id="rut-label">Tax ID</label>
+                        {% else %}
                         <label for="rut" id="rut-label">RUT</label>
+                        {% endif %}
                         <input type="text" class="form-control" id="rut" name="rut" value="{{ user.rut }}" placeholder="Ej: 12.345.678-9" required>
                     </div>
                     <br>
