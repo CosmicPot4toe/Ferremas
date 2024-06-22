@@ -501,6 +501,8 @@ def envio(request: HttpRequest):
 
     tiendas_validas = []
     for tienda in tiendas_disponibles:
+        if tienda.nombre == "Stock Online":
+            continue  # Skip "Stock Online" store
         tiene_todos_productos = all(
             Stock.objects.filter(sucursal=tienda, producto_id=producto_id, cantidad__gt=0).exists()
             for producto_id in productos_ids
@@ -656,7 +658,7 @@ def pedidos_pendientes(request):
     pedidos = DetallePedido.objects.filter(estado_envio__in=['Por Enviar', 'Por Retirar'])
     
     page = request.GET.get('page', 1)
-    paginator = Paginator(pedidos, 5)
+    paginator = Paginator(pedidos, 8)
     
     try:
         pedidos = paginator.page(page)

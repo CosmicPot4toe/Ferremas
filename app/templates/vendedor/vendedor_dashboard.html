@@ -177,7 +177,7 @@
             </div>
         </div>
 
-        <div id="pedidos_pendientes" class="table-container" style="display:none; width: 1000px; margin: 0 auto;">
+        <div id="pedidos_pendientes" class="table-container" style="display:none; width: 1300px; margin: 0 auto;">
             <h2>Pedidos Pendientes</h2>
             <br>
             <div class="table-responsive">
@@ -187,6 +187,7 @@
                             <th>Pedido</th>
                             <th>Cliente</th>
                             <th>Producto</th>
+                            <th>Tienda</th>
                             <th>Cantidad</th>
                             <th>Estado</th>
                             <th>Acciones</th>
@@ -198,6 +199,7 @@
                             <td>{{ pedido.id }}</td>
                             <td>{{ pedido.pedido.nombre }}</td>
                             <td>{{ pedido.producto_nombre }}</td>
+                            <td>{{ pedido.pedido.tienda_seleccionada }}</td>
                             <td>{{ pedido.cantidad }}</td>
                             <td>{{ pedido.estado_envio }}</td>
                             <td>

@@ -33,6 +33,9 @@
       transform: scale(1.1);
       color: #6351ce;
   }
+  h1{
+    font-size: 50px;
+  }
 </style>
 
 <!-- HTML Structure -->
@@ -71,8 +74,9 @@
 
 <br>
 
+<h1 class="text-center">¡Nuestras Categorias!</h1>
 <div class="container-flex">
-    <h1 class="text-center">Nuestras Categorías</h1>
+    
     <br><br>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 justify-content-center">
       <div class="col mt-3">
@@ -136,7 +140,7 @@
 
 <div class="container-flex">
     <h1 class="text-center">¡Productos Nuevos!</h1>
-    <br>
+    <br><br><br>
     <div class="row justify-content-center">
       {% load humanize %}
       {% for producto in productos %}
@@ -179,8 +183,100 @@
 </div>
 <br><br><br><br>
 
+<h1 class="text-center">Grandes Marcas y Proveedores!</h1>
+
+<div class="row">
+  <div class="col-md-12">
+      <div class="lc-block">
+          <div id="carouselLogos" class="carousel slide pt-5 pb-4" data-bs-ride="carousel">
+              <div class="carousel-inner px-5">
+                  <div class="carousel-item active">
+                      <div class="row">
+                          <div class="col-6 col-lg-2 align-self-center">
+                              <img class="d-block w-100 px-3 mb-3" src="https://static.wikia.nocookie.net/logopedia/images/9/91/Imperial_1974.svg/revision/latest/scale-to-width-down/1200?cb=20210208223847" alt="">
+                          </div>
+                          <div class="col-6 col-lg-2  align-self-center">
+                              <img class="d-block w-100 px-3  mb-3" src="https://cdn.worldvectorlogo.com/logos/sodimac-homecenter.svg" alt="">
+                          </div>
+                          <div class="col-6 col-lg-2  align-self-center">
+                              <img class="d-block w-100 px-3  mb-3" src="https://puntomaestro.cl/media/logo/stores/46/Logo_2019_Punto_Maestro_1__1_6.png" alt="">
+                          </div>
+                          <div class="col-6 col-lg-2  align-self-center">
+                              <img class="d-block w-100 px-3  mb-3" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Easy-Logo.svg/2048px-Easy-Logo.svg.png" alt="">
+                          </div>
+                          <div class="col-6 col-lg-2  align-self-center">
+                              <img class="d-block w-100 px-3  mb-3" src="https://www.thc.cl/public/img/logo-thc.png" alt="">
+                          </div>
+                          <div class="col-6 col-lg-2  align-self-center">
+                              <img class="d-block w-100 px-3  mb-3" src="https://logos-world.net/wp-content/uploads/2020/08/Bosch-Emblem.png" alt="">
+                          </div>
+                      </div>
+
+                  </div>
+                  <div class="carousel-item ">
+                      <div class="row">
+                          <div class="col-6 col-lg-2 align-self-center">
+                              <img class="d-block w-100 px-3 mb-3" src="https://cdn.livecanvas.com/media/logos/11.png" alt="">
+                          </div>
+                          <div class="col-6 col-lg-2  align-self-center">
+                              <img class="d-block w-100 px-3  mb-3" src="https://cdn.livecanvas.com/media/logos/2.png" alt="">
+                          </div>
+                          <div class="col-6 col-lg-2  align-self-center">
+                              <img class="d-block w-100 px-3  mb-3" src="https://cdn.livecanvas.com/media/logos/3.png" alt="">
+                          </div>
+                          <div class="col-6 col-lg-2  align-self-center">
+                              <img class="d-block w-100 px-3  mb-3" src="https://cdn.livecanvas.com/media/logos/12.png" alt="">
+                          </div>
+                          <div class="col-6 col-lg-2  align-self-center">
+                              <img class="d-block w-100 px-3  mb-3" src="https://cdn.livecanvas.com/media/logos/5.png" alt="">
+                          </div>
+                          <div class="col-6 col-lg-2  align-self-center">
+                              <img class="d-block w-100 px-3  mb-3" src="https://cdn.livecanvas.com/media/logos/6.png" alt="">
+                          </div>
+                      </div>
+
+                  </div>
+
+              </div>
+
+              <!--
+<ol class="carousel-indicators list-unstyled position-relative mt-3">
+<li data-bs-target="#carouselLogos" data-bs-slide-to="0" class="active bg-dark carousel-control-prev-icon"></li>
+<li data-bs-target="#carouselLogos" data-bs-slide-to="1" class="bg-dark"></li>
+</ol>
+-->
+
+              <div class="w-100 px-3 text-center mt-4">
+                  <a class="carousel-control-prev position-relative d-inline me-4" href="#carouselLogos" data-bs-slide="prev">
+                      <svg width="2em" height="2em" viewBox="0 0 16 16" class="text-dark" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                          <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"></path>
+                      </svg>
+                      <span class="visually-hidden">Previous</span>
+                  </a>
+                  <a class="carousel-control-next position-relative d-inline" href="#carouselLogos" data-bs-slide="next">
+                      <svg width="2em" height="2em" viewBox="0 0 16 16" class="text-dark" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                          <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"></path>
+                      </svg>
+                      <span class="visually-hidden">Next</span>
+                  </a>
+
+
+
+
+
+              </div>
+
+
+          </div>
+      </div><!-- /lc-block -->
+  </div><!-- /col -->
+</div>
+
+<br><br><br><br>
+
 
 <center><h1 class="text-center">¿Qué opinan nuestros clientes?</h1></center>
+<br><br>
 <figure class="snip1533">
     <figcaption>
       <blockquote>
