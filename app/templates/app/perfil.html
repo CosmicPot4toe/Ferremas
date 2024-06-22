@@ -280,6 +280,11 @@ body {
                 rutInput.placeholder = 'Enter your Tax ID';
             }
         });
+        const urlParams = new URLSearchParams(window.location.search);
+        const section = urlParams.get('section');
+        if (section) {
+        showSection(section);
+        }
 
         // Inicializar los valores por defecto al cargar la página
         const initialCountry = "{{ user.pais }}";

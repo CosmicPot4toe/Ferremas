@@ -4,51 +4,94 @@
 {% load crispy_forms_tags %}
 {% block contenido %}
 <style>
-.card-deck {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: stretch;
-    margin-top: 20px;
-}
-.card {
-    flex: 1;
-    margin: 10px;
-}
-.card-header {
-    background-color: #f8f9fa;
-    padding: 10px;
-    border-bottom: 1px solid #dee2e6;
-    text-align: center;
-}
-.card-body {
-    padding: 20px;
-}
-.product-item {
-    text-align: center;
-}
-.product-info {
-    text-align: center;
-}
-img {
-    display: block;
-    margin: 0 auto;
-}
+/* Estilos para la confirmación de pago */
 .page-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
+
 .page-header {
     text-align: center;
     margin-bottom: 40px;
 }
+
+.card-deck {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.card {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 20px;
+    flex: 1;
+    max-width: 45%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #2a0052;
+    color: white;
+    padding: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    text-align: center;
+    font-size: 1.25em;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.product-item {
+    text-align: center;
+}
+
+.product-info {
+    text-align: left;
+}
+
+.img-conf {
+    display: block;
+    margin: 0 auto;
+    width: 100px;
+    margin-bottom: 10px;
+}
+
 .button-container {
     text-align: center;
     margin-top: 20px;
 }
+
+.button-container a {
+    background-color: #0c6ea7;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 1.1em;
+}
+
+.button-container a:hover {
+    background-color: #2a0052;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .card {
+        max-width: 100%;
+    }
+}
 </style>
-<title>Ferremas | Pago realizado</title>
+<title>Ferremas | Confirmación de Pago</title>
 <br><br><br><br><br>
 <div class="container overflow-hidden" style="margin-top: 30px;">
     <div class="col-12 justify-content-center">
@@ -70,6 +113,7 @@ img {
         </div>
     </div>
 </div>
+<br><br><br>
 <div class="page-container">
     <div class="page-header">
         <h1>Confirmación de Pago</h1>
@@ -77,7 +121,7 @@ img {
     <div class="card-deck">
         <div class="card">
             <div class="card-header">
-                <h2>Detalles de la compra</h2>
+                Detalles de la compra
             </div>
             <div class="card-body">
                 <p><strong>Número de pedido:</strong> {{ response.buy_order }}</p>
@@ -89,13 +133,13 @@ img {
         </div>
         <div class="card">
             <div class="card-header">
-                <h2>Productos</h2>
+                Productos
             </div>
             <div class="card-body">
                 {% for item in carrito_dict %}
-                    <div class="product-item mb-3" style="width: 100%;">
-                        <img src="{{ item.imagen_url }}" alt="{{ item.producto_nombre }}" class="card-img-top" style="width: 100px; margin: 0 auto; display: block;">
-                        <div class="product-info mt-2" style="text-align: left;">
+                    <div class="product-item">
+                        <img src="{{ item.imagen_url }}" alt="{{ item.producto_nombre }}" class="img-conf">
+                        <div class="product-info mt-2">
                             <p><strong>Nombre:</strong> {{ item.producto_nombre }}</p>
                             <p><strong>Cantidad:</strong> {{ item.cantidad }}</p>
                             <p><strong>Precio unitario:</strong>
@@ -120,7 +164,7 @@ img {
         </div>
         <div class="card">
             <div class="card-header">
-                <h2>Detalle de envío</h2>
+                Detalle de envío
             </div>
             <div class="card-body">
                 <p><strong>Nombre:</strong> {{ pedido.nombre }}</p>
@@ -138,7 +182,7 @@ img {
         </div>
         <div class="card">
             <div class="card-header">
-                <h2>Total de la compra</h2>
+                Total de la compra
             </div>
             <div class="card-body">
                 <p><strong>Total:</strong> {{ total_carrito }}</p>
@@ -146,7 +190,8 @@ img {
         </div>
     </div>
     <div class="button-container">
-        <a href="{% url 'revisar_pedidos' %}" class="btn btn-primary">Ver mis pedidos</a>
+        <a href="{% url 'perfil' %}?section=pedidos" class="btn">Ver mis pedidos</a>
     </div>
 </div>
+<br><br>
 {% endblock %}
