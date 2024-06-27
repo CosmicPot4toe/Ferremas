@@ -115,31 +115,116 @@
         <h3 style="display: flex; justify-content: space-between;">Método de Envío <a href="#" id="cambiar-metodo-envio" style="font-size: 15px; color: black;">Cambiar</a></h3>
     </div>
     <div id="metodo-envio" style="display: none; text-align: left;">
-        <div id="envio-nacional">
-            <div>
-                <input type="radio" name="metodo_envio" value="envio-domicilio" id="envio-domicilio">
-                <label for="envio-domicilio">Envío a domicilio</label>
-            </div>
-            <div>
-                <input type="radio" name="metodo_envio" value="retiro-tienda" id="retiro-tienda">
-                <label for="retiro-tienda">Retiro en tienda</label>
-            </div>
-            <div id="select-tienda" style="display: none;">
-                <label for="tienda-select">Seleccione la tienda:</label>
-                <select id="tienda-select" name="tienda_select" class="form-control">
-                    {% for tienda in tiendas_validas %}
-                        <option value="{{ tienda.id_tienda }}">{{ tienda.nombre }} - {{ tienda.direccion }}</option>
-                    {% endfor %}
-                </select>
-                <br>
-            </div>
-        </div>
-        <div id="envio-internacional" style="display: none;">
-            <div>
-                <input type="radio" name="metodo_envio" value="envio-internacional" id="envio-internacional-radio">
-                <label for="envio-internacional-radio">Envío internacional</label>
-            </div>
-        </div>
+        {% if user.is_authenticated %}
+                                {% if user.pais == 'Chile' %}
+                                    <div id="envio-nacional" style="display: block;">
+                                        <div>
+                                            <input type="radio" name="metodo_envio" value="envio-domicilio" id="envio-domicilio">
+                                            <label for="envio-domicilio">Envío a domicilio</label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" name="metodo_envio" value="retiro-tienda" id="retiro-tienda">
+                                            <label for="retiro-tienda">Retiro en tienda</label>
+                                        </div>
+                                        <div id="select-tienda" style="display: none;">
+                                            <label for="tienda-select">Seleccione la tienda:</label>
+                                            <select id="tienda-select" name="tienda_select" class="form-control">
+                                                {% for tienda in tiendas_validas %}
+                                                    <option value="{{ tienda.id_tienda }}">{{ tienda.nombre }} - {{ tienda.direccion }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <br>
+                                        </div>
+        
+                                    </div>
+                                    <div id="envio-internacional" style="display: none;">
+                                        <div>
+                                            <input type="radio" name="metodo_envio" value="envio-internacional" id="envio-internacional-radio">
+                                            <label for="envio-internacional-radio">Envío internacional</label>
+                                        </div>
+                                    </div>
+                                {% elif user.pais != 'Chile' %}
+                                    <div id="envio-nacional" style="display: none;">
+                                        <div>
+                                            <input type="radio" name="metodo_envio" value="envio-domicilio" id="envio-domicilio">
+                                            <label for="envio-domicilio">Envío a domicilio</label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" name="metodo_envio" value="retiro-tienda" id="retiro-tienda">
+                                            <label for="retiro-tienda">Retiro en tienda</label>
+                                        </div>
+                                        <div id="select-tienda" style="display: none;">
+                                            <label for="tienda-select">Seleccione la tienda:</label>
+                                            <select id="tienda-select" name="tienda_select" class="form-control">
+                                                {% for tienda in tiendas_validas %}
+                                                    <option value="{{ tienda.id_tienda }}">{{ tienda.nombre }} - {{ tienda.direccion }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <br>
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="envio-internacional" style="display: block;">
+                                        <div>
+                                            <input type="radio" name="metodo_envio" value="envio-internacional" id="envio-internacional-radio">
+                                            <label for="envio-internacional-radio">Envío internacional</label>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                <div id="envio-nacional">
+                                    <div>
+                                        <input type="radio" name="metodo_envio" value="envio-domicilio" id="envio-domicilio">
+                                        <label for="envio-domicilio">Envío a domicilio</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" name="metodo_envio" value="retiro-tienda" id="retiro-tienda">
+                                        <label for="retiro-tienda">Retiro en tienda</label>
+                                    </div>
+                                    <div id="select-tienda" style="display: none;">
+                                        <label for="tienda-select">Seleccione la tienda:</label>
+                                        <select id="tienda-select" name="tienda_select" class="form-control">
+                                            {% for tienda in tiendas_validas %}
+                                                <option value="{{ tienda.id_tienda }}">{{ tienda.nombre }} - {{ tienda.direccion }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <br>
+                                    </div>
+                                </div>
+                                <div id="envio-internacional" style="display: none;">
+                                    <div>
+                                        <input type="radio" name="metodo_envio" value="envio-internacional" id="envio-internacional-radio">
+                                        <label for="envio-internacional-radio">Envío internacional</label>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% else %}
+                            <div id="envio-nacional">
+                                <div>
+                                    <input type="radio" name="metodo_envio" value="envio-domicilio" id="envio-domicilio">
+                                    <label for="envio-domicilio">Envío a domicilio</label>
+                                </div>
+                                <div>
+                                    <input type="radio" name="metodo_envio" value="retiro-tienda" id="retiro-tienda">
+                                    <label for="retiro-tienda">Retiro en tienda</label>
+                                </div>
+                                <div id="select-tienda" style="display: none;">
+                                    <label for="tienda-select">Seleccione la tienda:</label>
+                                    <select id="tienda-select" name="tienda_select" class="form-control">
+                                        {% for tienda in tiendas_validas %}
+                                            <option value="{{ tienda.id_tienda }}">{{ tienda.nombre }} - {{ tienda.direccion }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <br>
+                                </div>
+                            </div>
+                            <div id="envio-internacional" style="display: none;">
+                                <div>
+                                    <input type="radio" name="metodo_envio" value="envio-internacional" id="envio-internacional-radio">
+                                    <label for="envio-internacional-radio">Envío internacional</label>
+                                </div>
+                            </div>
+                            {% endif %}
+        
         <button type="button" class="btn w-100" style="background-color: black; color: #ffffff;" id="continue-to-pago">Continuar al Pago</button>
         <br><br>
     </div>
@@ -177,67 +262,66 @@
             </div>
     
             <!-- resumen del pedido -->
-<div class="col-md-4">
-    <div class="card" style="width: 400px;">
-        <div class="card-body">
-            
-            <a href="{% url 'carrito' %}" style="font-size: 15px; color: black;">Volver al carrito</a>
-            <h2>Resumen del Pedido</h2>
-            <hr>
-            {% for key, value in carrito_dict.items %}
-                <div class="row mb-3">
-                    <div class="col-4">
-                        <img src="{{ value.imagen_url }}" class="img-fluid" alt="{{ value.nombre }}">
+            <div class="col-md-4">
+                <div class="card" style="width: 400px;">
+                    <div class="card-body">
+                        
+                        <a href="{% url 'carrito' %}" style="font-size: 15px; color: black;">Volver al carrito</a>
+                        <h2>Resumen del Pedido</h2>
+                        <hr>
+                        {% for key, value in carrito_dict.items %}
+                            <div class="row mb-3">
+                                <div class="col-4">
+                                    <img src="{{ value.imagen_url }}" class="img-fluid" alt="{{ value.nombre }}">
+                                </div>
+                                <div class="col-8">
+                                    <h5 class="card-title">{{ value.marca }}</h5>
+                                    <p class="card-text">{{ value.nombre }}</p>
+                                    <p class="card-text">Cantidad: {{ value.cantidad }}</p>
+                                    <p class="card-text">Precio unitario:
+                                        ${{ value.precio_unitario_formatted }} {{ currency }}
+                                    </p>
+                                    <p class="card-text">Precio total: 
+                                        ${{ value.precio_total_formatted }} {{ currency }}
+                                </div>
+                            </div>
+                            <hr>
+                        {% endfor %}
+                        {% if currency == 'CLP' %}
+                            <div class="row">
+                                <div class="col">
+                                    <h6 class="text-start">Neto:</h6>
+                                </div>
+                                <div class="col text-end">
+                                    <p>${{ neto }} CLP</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <h6 class="text-start">IVA:</h6>
+                                </div>
+                                <div class="col text-end">
+                                    <p>${{ iva }} CLP</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="text-start">TOTAL:</h4>
+                            </div>
+                            <div class="col text-end">
+                                <h5>
+                                    {{ total_carrito_formatted }} 
+                                </h5>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-8">
-                        <h5 class="card-title">{{ value.marca }}</h5>
-                        <p class="card-text">{{ value.nombre }}</p>
-                        <p class="card-text">Cantidad: {{ value.cantidad }}</p>
-                        <p class="card-text">Precio unitario:
-                            ${{ value.precio_unitario_formatted }} {{ currency }}
-                        </p>
-                        <p class="card-text">Precio total: 
-                            ${{ value.precio_total_formatted }} {{ currency }}
-                    </div>
-                </div>
-                <hr>
-            {% endfor %}
-            {% if currency == 'CLP' %}
-                <div class="row">
-                    <div class="col">
-                        <h6 class="text-start">Neto:</h6>
-                    </div>
-                    <div class="col text-end">
-                        <p>${{ neto }} CLP</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <h6 class="text-start">IVA:</h6>
-                    </div>
-                    <div class="col text-end">
-                        <p>${{ iva }} CLP</p>
-                    </div>
-                </div>
-            {% endif %}
-            <div class="row">
-                <div class="col">
-                    <h4 class="text-start">TOTAL:</h4>
-                </div>
-                <div class="col text-end">
-                    <h5>
-                        {{ total_carrito_formatted }} 
-                    </h5>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-        </div>
-    </div>
+                    </div>
+                </div>
 </form>
-
-
+<br><br>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Inicializar country-region-selector para los campos de país y región
