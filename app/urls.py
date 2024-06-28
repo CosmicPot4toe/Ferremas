@@ -64,4 +64,7 @@ urlpatterns = [
     path('update_cliente_info/', update_cliente_info, name='update_cliente_info'),
     path('update_cliente_direccion/', update_cliente_direccion, name='update_cliente_direccion'),
     path('get_pedido_detalles/<int:pedido_id>/', get_pedido_detalles, name='get_pedido_detalles'),
+     path('contador/', views.contador_dashboard, name='contador_dashboard'),
+    path('contador/finalizar_pedido/<int:pedido_id>/', views.finalizar_pedido, name='finalizar_pedido'),
+    path('contador/get_pedido_detalles/<int:pedido_id>/', views.get_pedido_detalles, name='get_pedido_detalles'),
 ]

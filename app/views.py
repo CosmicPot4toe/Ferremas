@@ -1187,3 +1187,32 @@ def get_pedido_detalles(request, pedido_id):
 
     detalles_html = render_to_string('app/revisar_pedidos.html', {'detalles': detalles})
     return JsonResponse({'success': True, 'detalles_html': detalles_html})
+
+@login_required
+def contador_dashboard(request):
+    if request.user.type != 'Con':
+        return redirect('login')
+
+    pedidos = DetallePedido.objects.filter(estado_envio__in=['Enviado', 'En Sucursal'])
+
+    context = {
+        'pedidos': pedidos,
+    }
+    return render(request, 'contador/contador_dashboard.html', context)
+
+@login_required
+def finalizar_pedido(request, pedido_id):
+    detalle_pedido = get_object_or_404(DetallePedido, id=pedido_id)
+    detalle_pedido.estado_envio = 'Finalizado'
+    detalle_pedido.save()
+
+    msgs.success(request, 'El pedido ha sido finalizado.')
+    return JsonResponse({'success': True, 'message': 'Pedido finalizado.'})
+
+@login_required
+def get_pedido_detalles(request, pedido_id):
+    pedido = get_object_or_404(Pedido, id=pedido_id)
+    detalles = pedido.detallepedido_set.all()
+
+    detalles_html = render_to_string('app/revisar_pedidos.html', {'detalles': detalles})
+    return JsonResponse({'success': True, 'detalles_html': detalles_html})

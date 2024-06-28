@@ -101,6 +101,9 @@
                     {% if user.type == 'Adm' %}
                         <li><a class="nav-link" href="{% url 'admin_dashboard' %}" style="color: black;">Dashboard</a></li>
                     {% endif %}
+                    {% if user.type == 'Con' %}
+                        <li><a class="nav-link" href="{% url 'contador_dashboard' %}" style="color: black;">Dashboard</a></li>
+                    {% endif %}
                     {% if user.type == 'Ven' %}
                         <li><a class="nav-link" href="{% url 'vendedor_dashboard' %}" style="color: black;">Dashboard</a></li>
                     {% endif %}
